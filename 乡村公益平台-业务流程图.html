@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乡村公益平台 - 业务流程图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #2c5aa0;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .flowchart {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        .flow-container {
+            min-width: 1200px;
+            position: relative;
+        }
+        
+        .flow-step {
+            display: inline-block;
+            vertical-align: top;
+            margin: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-box {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            width: 200px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .step-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .step-box.start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .step-box.process {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-color: #f093fb;
+        }
+        
+        .step-box.decision {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-color: #4facfe;
+            border-radius: 50px;
+        }
+        
+        .step-box.end {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border-color: #43e97b;
+        }
+        
+        .step-box.admin {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border-color: #fa709a;
+        }
+        
+        .step-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .step-desc {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .arrow {
+            position: absolute;
+            font-size: 20px;
+            color: #6c757d;
+            z-index: 10;
+        }
+        
+        .arrow-right {
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .arrow-down {
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .flow-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .flow-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 20px;
+        }
+        
+        .branch-label {
+            background: #e9ecef;
+            color: #495057;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .branch-label.yes {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .branch-label.no {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .legend {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .legend h3 {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+        }
+        
+        .legend-item {
+            display: inline-block;
+            margin: 5px 15px 5px 0;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .swimlane {
+            background: #f8f9fa;
+            border-left: 4px solid #2c5aa0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .swimlane h3 {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .parallel-flows {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+        }
+        
+        .flow-column {
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        .column-header {
+            background: #2c5aa0;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+        }
+        
+        .column-content {
+            background: white;
+            border: 2px solid #2c5aa0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 20px;
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>乡村公益平台 - 业务流程图</h1>
+            <p>基于PRD V3.0的核心业务流程设计</p>
+        </div>
+
+        <div class="flowchart">
+            <!-- 主流程开始 -->
+            <div class="flow-row">
+                <div class="flow-step">
+                    <div class="step-box start">
+                        <div class="step-icon">🌐</div>
+                        <div class="step-title">游客访问</div>
+                        <div class="step-desc">浏览公益项目</div>
+                    </div>
+                    <div class="arrow arrow-right">→</div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-box process">
+                        <div class="step-icon">🏘️</div>
+                        <div class="step-title">选择村庄</div>
+                        <div class="step-desc">搜索并选择所在村庄</div>
+                    </div>
+                    <div class="arrow arrow-right">→</div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-box decision">
+                        <div class="step-icon">❓</div>
+                        <div class="step-title">村庄是否已入驻</div>
+                        <div class="step-desc">检查村庄状态</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分支流程 -->
+            <div class="parallel-flows">
+                <!-- 村庄已入驻流程 -->
+                <div class="flow-column">
+                    <div class="column-header">✅ 村庄已入驻</div>
+                    <div class="column-content">
+                        <div class="flow-step" style="margin: 20px auto;">
+                            <div class="step-box process">
+                                <div class="step-icon">📝</div>
+                                <div class="step-title">用户注册</div>
+                                <div class="step-desc">填写姓名、手机号</div>
+                            </div>
+                            <div class="arrow arrow-down">↓</div>
+                        </div>
+                        
+                        <div class="flow-step" style="margin: 20px auto;">
+                            <div class="step-box process">
+                                <div class="step-icon">⏳</div>
+                                <div class="step-title">状态：未审核</div>
+                                <div class="step-desc">等待村委审核身份</div>
+                            </div>
+                            <div class="arrow arrow-down">↓</div>
+                        </div>
+                        
+                        <div class="flow-step" style="margin: 20px auto;">
+                            <div class="step-box admin">
+                                <div class="step-icon">👥</div>
+                                <div class="step-title">村委审核</div>
+                                <div class="step-desc">确认村民身份</div>
+                            </div>
+                            <div class="arrow arrow-down">↓</div>
+                        </div>
+                        
+                        <div class="flow-step" style="margin: 20px auto;">
+                            <div class="step-box decision">
+                                <div class="step-icon">✅</div>
+                                <div class="step-title">审核通过？</div>
+                                <div class="step-desc">身份验证结果</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                            <div style="text-align: center;">
+                                <div class="branch-label yes">通过</div>
+                                <div class="flow-step">
+                                    <div class="step-box end">
+                                        <div class="step-icon">🎉</div>
+                                        <div class="step-title">正式村民</div>
+                                        <div class="step-desc">可申请公益项目</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="branch-label no">驳回</div>
+                                <div class="flow-step">
+                                    <div class="step-box process">
+                                        <div class="step-icon">❌</div>
+                                        <div class="step-title">审核失败</div>
+                                        <div class="step-desc">无法申请项目</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 村庄未入驻流程 -->
+                <div class="flow-column">
+                    <div class="column-header">❌ 村庄未入驻</div>
+                    <div class="column-content">
+                        <div class="flow-step" style="margin: 20px auto;">
+                            <div class="step-box process">
+                                <div class="step-icon">📋</div>
+                                <div class="step-title">登记村庄信息</div>
+                                <div class="step-desc">填写村庄基本信息</div>
+                            </div>
+                            <div class="arrow arrow-down">↓</div>
+                        </div>
+                        
+                        <div class="flow-step" style="margin: 20px auto;">
+                            <div class="step-box admin">
+                                <div class="step-icon">📞</div>
+                                <div class="step-title">生成销售线索</div>
+                                <div class="step-desc">推送给BD团队</div>
+                            </div>
+                            <div class="arrow arrow-down">↓</div>
+                        </div>
+                        
+                        <div class="flow-step" style="margin: 20px auto;">
+                            <div class="step-box process">
+                                <div class="step-icon">🤝</div>
+                                <div class="step-title">BD跟进</div>
+                                <div class="step-desc">联系村委洽谈入驻</div>
+                            </div>
+                            <div class="arrow arrow-down">↓</div>
+                        </div>
+                        
+                        <div class="flow-step" style="margin: 20px auto;">
+                            <div class="step-box end">
+                                <div class="step-icon">🏘️</div>
+                                <div class="step-title">村庄入驻</div>
+                                <div class="step-desc">开通平台服务</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 公益申请流程 -->
+            <div class="swimlane">
+                <h3>🎯 公益申请核心流程（已审核村民）</h3>
+                <div class="flow-row">
+                    <div class="flow-step">
+                        <div class="step-box start">
+                            <div class="step-icon">📱</div>
+                            <div class="step-title">浏览项目</div>
+                            <div class="step-desc">查看可申请的公益项目</div>
+                        </div>
+                        <div class="arrow arrow-right">→</div>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <div class="step-box process">
+                            <div class="step-icon">📝</div>
+                            <div class="step-title">填写申请</div>
+                            <div class="step-desc">提交申请表单</div>
+                        </div>
+                        <div class="arrow arrow-right">→</div>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <div class="step-box admin">
+                            <div class="step-icon">🔍</div>
+                            <div class="step-title">村委核实</div>
+                            <div class="step-desc">验证申请真实性</div>
+                        </div>
+                        <div class="arrow arrow-right">→</div>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <div class="step-box decision">
+                            <div class="step-icon">⚖️</div>
+                            <div class="step-title">情况属实？</div>
+                            <div class="step-desc">核实结果</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: center; margin-top: 30px;">
+                    <div style="text-align: center; margin: 0 40px;">
+                        <div class="branch-label yes">属实</div>
+                        <div class="flow-step">
+                            <div class="step-box end">
+                                <div class="step-icon">📤</div>
+                                <div class="step-title">提交公益方</div>
+                                <div class="step-desc">转交给公益机构</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin: 0 40px;">
+                        <div class="branch-label no">不符</div>
+                        <div class="flow-step">
+                            <div class="step-box process">
+                                <div class="step-icon">🚫</div>
+                                <div class="step-title">驳回申请</div>
+                                <div class="step-desc">通知申请人</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 村庄公共项目流程 -->
+            <div class="swimlane">
+                <h3>🏗️ 村庄公共项目流程（替代百人投票）</h3>
+                <div class="flow-row">
+                    <div class="flow-step">
+                        <div class="step-box admin">
+                            <div class="step-icon">🏛️</div>
+                            <div class="step-title">村委发起</div>
+                            <div class="step-desc">申请公共项目</div>
+                        </div>
+                        <div class="arrow arrow-right">→</div>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <div class="step-box process">
+                            <div class="step-icon">📢</div>
+                            <div class="step-title">全村公示</div>
+                            <div class="step-desc">3天公示期</div>
+                        </div>
+                        <div class="arrow arrow-right">→</div>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <div class="step-box process">
+                            <div class="step-icon">💬</div>
+                            <div class="step-title">村民评论</div>
+                            <div class="step-desc">实名评论反馈</div>
+                        </div>
+                        <div class="arrow arrow-right">→</div>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <div class="step-box admin">
+                            <div class="step-icon">✅</div>
+                            <div class="step-title">村委确认</div>
+                            <div class="step-desc">查看意见后确认</div>
+                        </div>
+                        <div class="arrow arrow-right">→</div>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <div class="step-box end">
+                            <div class="step-icon">🚀</div>
+                            <div class="step-title">正式提交</div>
+                            <div class="step-desc">申请提交至平台</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图例说明 -->
+            <div class="legend">
+                <h3>📋 流程图例说明</h3>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></span>
+                    开始/用户操作
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></span>
+                    系统处理
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></span>
+                    判断节点
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></span>
+                    村委操作
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></span>
+                    结束/完成
+                </div>
+            </div>
+
+            <!-- 关键策略说明 -->
+            <div style="margin-top: 40px; padding: 30px; background: #e3f2fd; border-radius: 12px; border-left: 6px solid #2196f3;">
+                <h3 style="color: #1976d2; margin-bottom: 15px;">🎯 核心战略转变</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <h4 style="color: #d32f2f; margin-bottom: 10px;">❌ 旧战略（已废止）</h4>
+                        <ul style="color: #666; line-height: 1.8;">
+                            <li>OA工具为核心</li>
+                            <li>积分-浇水-助力金系统</li>
+                            <li>100人村民投票机制</li>
+                            <li>村委作为"准入守门人"</li>
+                            <li>高摩擦、低转化</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #388e3c; margin-bottom: 10px;">✅ 新战略（当前）</h4>
+                        <ul style="color: #666; line-height: 1.8;">
+                            <li>公益项目为核心引流</li>
+                            <li>平台对所有人开放</li>
+                            <li>3天公示替代投票</li>
+                            <li>村委作为"身份验证者"</li>
+                            <li>低摩擦、高转化</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
