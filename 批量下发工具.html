@@ -142,6 +142,26 @@
             box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
         }
         
+        .amount-display {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .chinese-amount {
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        
+        .wan-amount {
+            font-size: 16px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        
         .btn {
             padding: 12px 24px;
             border: none;
@@ -536,6 +556,10 @@
                         <div class="form-group">
                             <label class="form-label">统一金额（元）</label>
                             <input type="number" class="form-input" id="uniformAmount" placeholder="每个村庄的助力金额" min="1" step="0.01">
+                            <div class="amount-display" id="amountDisplay">
+                                <div class="chinese-amount" id="chineseAmount">请输入金额</div>
+                                <div class="wan-amount" id="wanAmount" style="display: none;"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">有效期</label>
@@ -841,6 +865,103 @@
             appState.currentTab = tabId;
         }
         
+        // 数字转汉字大写
+        function numberToChinese(num) {
+            if (isNaN(num) || num < 0) return '';
+            
+            const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+            const units = ['', '拾', '佰', '仟'];
+            const bigUnits = ['', '万', '亿'];
+            
+            if (num === 0) return '零元整';
+            
+            // 分离整数和小数部分
+            const parts = num.toString().split('.');
+            let integerPart = parseInt(parts[0]);
+            let decimalPart = parts[1] || '';
+            
+            let result = '';
+            let unitIndex = 0;
+            
+            // 处理整数部分
+            while (integerPart > 0) {
+                const section = integerPart % 10000;
+                if (section > 0) {
+                    let sectionStr = '';
+                    let tempSection = section;
+                    let localUnitIndex = 0;
+                    
+                    while (tempSection > 0) {
+                        const digit = tempSection % 10;
+                        if (digit > 0) {
+                            sectionStr = digits[digit] + units[localUnitIndex] + sectionStr;
+                        } else if (sectionStr && tempSection > 0) {
+                            sectionStr = '零' + sectionStr;
+                        }
+                        tempSection = Math.floor(tempSection / 10);
+                        localUnitIndex++;
+                    }
+                    
+                    result = sectionStr + bigUnits[unitIndex] + result;
+                }
+                integerPart = Math.floor(integerPart / 10000);
+                unitIndex++;
+            }
+            
+            result += '元';
+            
+            // 处理小数部分
+            if (decimalPart) {
+                if (decimalPart.length >= 1 && decimalPart[0] !== '0') {
+                    result += digits[parseInt(decimalPart[0])] + '角';
+                }
+                if (decimalPart.length >= 2 && decimalPart[1] !== '0') {
+                    result += digits[parseInt(decimalPart[1])] + '分';
+                }
+            } else {
+                result += '整';
+            }
+            
+            return result;
+        }
+        
+        // 格式化万元显示
+        function formatWanAmount(num) {
+            if (num >= 10000) {
+                const wan = (num / 10000).toFixed(2);
+                return `${wan} 万元`;
+            }
+            return '';
+        }
+        
+        // 更新金额显示
+        function updateAmountDisplay() {
+            const amountInput = document.getElementById('uniformAmount');
+            const chineseAmount = document.getElementById('chineseAmount');
+            const wanAmount = document.getElementById('wanAmount');
+            
+            if (!amountInput || !chineseAmount || !wanAmount) return;
+            
+            const amount = parseFloat(amountInput.value);
+            
+            if (isNaN(amount) || amount <= 0) {
+                chineseAmount.textContent = '请输入金额';
+                wanAmount.style.display = 'none';
+                return;
+            }
+            
+            // 显示汉字大写
+            chineseAmount.textContent = numberToChinese(amount);
+            
+            // 如果超过1万元，显示万元格式
+            if (amount >= 10000) {
+                wanAmount.textContent = formatWanAmount(amount);
+                wanAmount.style.display = 'block';
+            } else {
+                wanAmount.style.display = 'none';
+            }
+        }
+
         // 切换下发方式
         function toggleSendMethod() {
             console.log('🎯 toggleSendMethod被调用');
@@ -1458,6 +1579,14 @@
                 console.log('添加了 onchange 兼容性绑定');
             } else {
                 console.error('未找到下发方式选择器元素！');
+            }
+            
+            // 绑定金额输入框事件
+            const uniformAmountInput = document.getElementById('uniformAmount');
+            if (uniformAmountInput) {
+                uniformAmountInput.addEventListener('input', updateAmountDisplay);
+                uniformAmountInput.addEventListener('change', updateAmountDisplay);
+                console.log('金额输入框事件绑定成功');
             }
             
             // 绑定标签页切换事件
