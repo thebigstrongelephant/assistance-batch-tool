@@ -843,13 +843,26 @@
         
         // 切换下发方式
         function toggleSendMethod() {
-            console.log('toggleSendMethod被调用');
-            const method = document.getElementById('sendMethod').value;
+            console.log('🎯 toggleSendMethod被调用');
+            
+            const sendMethodElement = document.getElementById('sendMethod');
+            if (!sendMethodElement) {
+                console.error('❌ 找不到 sendMethod 元素');
+                return;
+            }
+            
+            const method = sendMethodElement.value;
             console.log('选择的方式:', method);
             
             const regionSection = document.getElementById('regionSendSection');
             const excelSection = document.getElementById('excelImportSection');
             const currentMethodSpan = document.getElementById('currentMethod');
+            
+            console.log('元素检查:', {
+                regionSection: !!regionSection,
+                excelSection: !!excelSection,
+                currentMethodSpan: !!currentMethodSpan
+            });
             
             // 更新状态显示
             currentMethodSpan.textContent = method || '未选择';
@@ -1436,8 +1449,15 @@
             // 绑定下发方式选择事件
             const sendMethodSelect = document.getElementById('sendMethod');
             if (sendMethodSelect) {
+                console.log('找到下发方式选择器元素');
                 sendMethodSelect.addEventListener('change', toggleSendMethod);
                 console.log('下发方式选择事件绑定成功');
+                
+                // 添加额外的兼容性绑定
+                sendMethodSelect.onchange = toggleSendMethod;
+                console.log('添加了 onchange 兼容性绑定');
+            } else {
+                console.error('未找到下发方式选择器元素！');
             }
             
             // 绑定标签页切换事件
