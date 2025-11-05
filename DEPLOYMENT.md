@@ -81,7 +81,6 @@ git push -u origin main
 - **首页**: `https://YOUR_USERNAME.github.io/rural-charity-platform/`
 - **乡村公益平台**: `https://YOUR_USERNAME.github.io/rural-charity-platform/乡村公益平台完整版-新版.html`
 - **批量下发工具**: `https://YOUR_USERNAME.github.io/rural-charity-platform/批量下发工具.html`
-- **助力金管理**: `https://YOUR_USERNAME.github.io/rural-charity-platform/助力金下发管理界面.html`
 - **小程序体验**: `https://YOUR_USERNAME.github.io/rural-charity-platform/公益项目小程序体验.html`
 
 ## 🔄 更新部署
