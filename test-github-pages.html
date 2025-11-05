@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pages 功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+        .hidden {
+            display: none;
+        }
+        .visible {
+            display: block;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 GitHub Pages 功能测试</h1>
+    
+    <div class="test-section">
+        <h2>下发方式选择测试</h2>
+        
+        <div class="form-group">
+            <label for="sendMethod">下发方式</label>
+            <select id="sendMethod">
+                <option value="">请选择下发方式</option>
+                <option value="region">按地区下发</option>
+                <option value="excel">Excel导入村庄ID</option>
+            </select>
+        </div>
+        
+        <div class="status">
+            当前状态：<span id="currentMethod">未选择</span>
+        </div>
+        
+        <div id="regionSection" class="hidden">
+            <h3>✅ 按地区下发模式已激活</h3>
+            <p>这里应该显示地区选择器...</p>
+        </div>
+        
+        <div id="excelSection" class="hidden">
+            <h3>✅ Excel导入模式已激活</h3>
+            <p>这里应该显示文件上传器...</p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>调试信息</h2>
+        <div id="debugInfo">
+            <p>页面加载时间: <span id="loadTime"></span></p>
+            <p>JavaScript状态: <span id="jsStatus">检查中...</span></p>
+            <p>事件绑定状态: <span id="eventStatus">检查中...</span></p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 测试页面开始加载...');
+        
+        // 记录加载时间
+        document.getElementById('loadTime').textContent = new Date().toLocaleString();
+        
+        function toggleSendMethod() {
+            console.log('🎯 toggleSendMethod 被调用');
+            
+            const method = document.getElementById('sendMethod').value;
+            const currentMethodSpan = document.getElementById('currentMethod');
+            const regionSection = document.getElementById('regionSection');
+            const excelSection = document.getElementById('excelSection');
+            
+            console.log('选择的方式:', method);
+            
+            // 更新状态显示
+            currentMethodSpan.textContent = method || '未选择';
+            
+            // 隐藏所有区域
+            regionSection.className = 'hidden';
+            excelSection.className = 'hidden';
+            
+            // 显示对应区域
+            if (method === 'region') {
+                regionSection.className = 'visible';
+                console.log('✅ 显示地区选择模式');
+            } else if (method === 'excel') {
+                excelSection.className = 'visible';
+                console.log('✅ 显示Excel导入模式');
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM 加载完成');
+            document.getElementById('jsStatus').textContent = '正常';
+            
+            // 绑定事件
+            const sendMethodSelect = document.getElementById('sendMethod');
+            if (sendMethodSelect) {
+                sendMethodSelect.addEventListener('change', toggleSendMethod);
+                document.getElementById('eventStatus').textContent = '已绑定';
+                console.log('✅ 事件监听器绑定成功');
+            } else {
+                document.getElementById('eventStatus').textContent = '绑定失败';
+                console.error('❌ 找不到 sendMethod 元素');
+            }
+        });
+        
+        // 额外的调试信息
+        window.addEventListener('load', function() {
+            console.log('🏁 页面完全加载完成');
+        });
+    </script>
+</body>
+</html>
