@@ -1,10 +1,16 @@
-# 助力金批量下发工具
+# 乡村公益平台
 
-一个完整的助力金批量下发管理系统，支持多种下发方式、运营活动配置和实时监控。
+一个完整的乡村公益平台系统，包含助力金批量下发管理、公益项目申请审核、村委管理等功能模块。
 
 ## 🎯 功能特点
 
-### 📤 批量下发
+### 🏘️ 乡村公益平台核心功能
+- **身份管理**：游客、村民、村两委多角色支持
+- **公益项目**：项目发布、申请、审核完整流程
+- **助力金管理**：申请、审核、发放全流程管理
+- **村庄管理**：村庄创建、认证、管理功能
+
+### 📤 批量下发工具
 - **多种下发方式**：按地区下发、Excel导入村庄ID
 - **地区选择**：支持省/市/镇/村四级筛选，包含"全部"选项
 - **助力金配置**：统一金额设置、有效期选择、自定义说明
@@ -27,39 +33,65 @@
 
 ## 🚀 在线预览
 
-访问地址：[https://your-username.github.io/assistance-batch-tool/](https://your-username.github.io/assistance-batch-tool/)
+访问地址：[https://your-username.github.io/rural-charity-platform/](https://your-username.github.io/rural-charity-platform/)
+
+### 📱 页面导航
+- **首页**：[index.html](index.html) - 平台介绍和功能导航
+- **乡村公益平台**：[乡村公益平台完整版-新版.html](乡村公益平台完整版-新版.html) - 主要业务平台
+- **批量下发工具**：[批量下发工具.html](批量下发工具.html) - 助力金批量管理
+- **助力金管理**：[助力金下发管理界面.html](助力金下发管理界面.html) - 助力金审核管理
+- **小程序体验**：[公益项目小程序体验.html](公益项目小程序体验.html) - 移动端体验
+- **功能测试**：[功能测试验证.html](功能测试验证.html) - 功能验证页面
 
 ## 📱 界面展示
 
-- **PC端优化**：响应式设计，适配不同屏幕尺寸
-- **标签页导航**：清晰的功能模块划分
+- **多端适配**：PC端、移动端响应式设计
+- **角色切换**：支持不同身份角色的界面切换
 - **实时交互**：拖拽上传、实时预览、智能验证
 - **用户体验**：加载状态、通知提示、错误处理
+- **现代化UI**：Material Design风格，美观易用
 
 ## 🛠️ 技术栈
 
 - **前端**：HTML5 + CSS3 + JavaScript (ES6+)
-- **样式**：自定义CSS，现代化UI设计
+- **样式**：自定义CSS + Material Design风格
 - **交互**：原生JavaScript，无依赖框架
 - **部署**：GitHub Pages
+- **响应式**：支持PC端和移动端
 
 ## 📦 本地运行
 
 1. 克隆仓库
 ```bash
-git clone https://github.com/your-username/assistance-batch-tool.git
-cd assistance-batch-tool
+git clone https://github.com/your-username/rural-charity-platform.git
+cd rural-charity-platform
 ```
 
 2. 直接打开HTML文件
 ```bash
-# 使用浏览器打开
-open 批量下发工具.html
+# 使用浏览器打开主页
+open index.html
 # 或者使用本地服务器
 python -m http.server 8000
 ```
 
+3. 访问不同功能模块
+```bash
+# 乡村公益平台主要功能
+open 乡村公益平台完整版-新版.html
+# 批量下发工具
+open 批量下发工具.html
+# 助力金管理
+open 助力金下发管理界面.html
+```
+
 ## 🔧 配置说明
+
+### 身份角色配置
+- **游客-未创建村**：待村两委入驻审核后即可成功申请
+- **游客-已创建村未认证村民**：需要村两委认证后才能申请
+- **已认证村民**：可以正常申请公益项目
+- **村两委**：具有审核和管理权限
 
 ### 地区数据配置
 在JavaScript中修改 `cities` 和相关数据结构来配置实际的地区数据。
@@ -74,6 +106,20 @@ python -m http.server 8000
 - `village_id` - 村庄ID（必填）
 - `village_name` - 村庄名称（可选）
 - `amount` - 助力金额（可选）
+
+## 🎨 界面特色
+
+### 乡村公益平台主界面
+- 身份选择和角色切换
+- 公益项目展示和申请
+- 村庄管理和认证流程
+- 助力金申请和审核
+
+### 管理后台界面
+- 批量下发工具
+- 审核管理界面
+- 数据统计和监控
+- 运营活动配置
 
 ## 📄 许可证
 

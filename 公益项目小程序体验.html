@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乡村公益平台 - 小程序体验</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Roboto, Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .phone-container {
+            max-width: 375px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 25px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 812px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: #000;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .page {
+            display: none;
+            height: calc(100% - 44px);
+            overflow-y: auto;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* 发现页面样式 */
+        .discover-page {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+        
+        .discover-header {
+            padding: 20px;
+            color: white;
+        }
+        
+        .discover-nav {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            padding-bottom: 5px;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .nav-item.active {
+            border-bottom-color: white;
+        }
+        
+        .discover-subtitle {
+            text-align: center;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content-area {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            min-height: 600px;
+            padding: 20px;
+        }
+        
+        .tab-bar {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 25px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-item.active {
+            background: white;
+            color: #4CAF50;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+        
+        .project-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .project-info {
+            padding: 15px;
+        }
+        
+        .project-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .project-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .project-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stats-left {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .apply-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* 项目详情页面样式 */
+        .detail-page {
+            background: white;
+        }
+        
+        .detail-header {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .detail-content {
+            padding: 20px;
+        }
+        
+        .detail-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .detail-meta {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .meta-label {
+            color: #666;
+        }
+        
+        .meta-value {
+            font-weight: 600;
+        }
+        
+        .detail-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .section-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+        }
+        
+        .amount-display {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .amount-number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .amount-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .remaining-count {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .apply-button {
+            width: 100%;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        /* 申请表单页面样式 */
+        .form-page {
+            background: white;
+        }
+        
+        .form-header {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .form-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .form-content {
+            padding: 20px;
+        }
+        
+        .identity-selector {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .selector-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .identity-options {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .identity-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .identity-option.selected {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+        
+        .apply-type-selector {
+            background: #fff3e0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .apply-options {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .apply-option {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ffcc80;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-size: 14px;
+        }
+        
+        .apply-option.selected {
+            border-color: #ff9800;
+            background: #fff3e0;
+            color: #ff9800;
+            font-weight: 600;
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .required {
+            color: #f44336;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        .village-selector {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .village-search {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 2px solid #2196f3;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2196f3;
+        }
+        
+        .village-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .village-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid #e3f2fd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .village-item:hover {
+            background: #f3e5f5;
+            border-color: #2196f3;
+        }
+        
+        .village-item.selected {
+            background: #e8f5e9;
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .village-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .village-location {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .village-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        
+        .status-active {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+        
+        .status-new {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+        
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload:hover {
+            border-color: #4CAF50;
+            background: #f8fff8;
+        }
+        
+        .upload-icon {
+            font-size: 32px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* 进度页面样式 */
+        .progress-page {
+            background: white;
+        }
+        
+        .progress-header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+        
+        .progress-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .progress-subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .progress-content {
+            padding: 30px 20px;
+        }
+        
+        .progress-timeline {
+            position: relative;
+        }
+        
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            width: 2px;
+            height: 30px;
+            background: #e9ecef;
+        }
+        
+        .timeline-item.completed::after {
+            background: #4CAF50;
+        }
+        
+        .timeline-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .timeline-icon.completed {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .timeline-icon.current {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .timeline-icon.pending {
+            background: #e9ecef;
+            color: #999;
+        }
+        
+        .timeline-content {
+            flex: 1;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .timeline-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        /* 弹窗样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px;
+            max-width: 300px;
+            width: 100%;
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .modal-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .modal-btn.primary {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .modal-btn.secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            padding: 10px 0;
+        }
+        
+        .nav-item-bottom {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+            color: #999;
+        }
+        
+        .nav-label {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .nav-item-bottom.active .nav-icon,
+        .nav-item-bottom.active .nav-label {
+            color: #4CAF50;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 400px) {
+            .phone-container {
+                margin: 10px;
+                border-radius: 0;
+                padding: 0;
+            }
+            
+            .phone-screen {
+                border-radius: 0;
+                height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="phone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <span>16:33 🔇</span>
+                <span>📶 📶 95%</span>
+            </div>
+
+            <!-- 发现页面（公益项目展示） -->
+            <div id="discover" class="page active discover-page">
+                <!-- 头图展示公益项目 -->
+                <div class="hero-banner" style="position: relative; height: 200px; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"white\" opacity=\"0.1\"/><circle cx=\"80\" cy=\"40\" r=\"3\" fill=\"white\" opacity=\"0.1\"/><circle cx=\"40\" cy=\"80\" r=\"2\" fill=\"white\" opacity=\"0.1\"/></svg>'); background-size: 50px 50px;"></div>
+                    <div style="position: relative; z-index: 2; padding: 30px 20px; text-align: center; color: white;">
+                        <h1 style="margin: 0 0 10px 0; font-size: 24px; font-weight: bold;">🌟 乡村公益平台</h1>
+                        <p style="margin: 0 0 15px 0; opacity: 0.9; font-size: 14px;">让爱心传递到每一个角落</p>
+                        <div style="display: flex; justify-content: center; gap: 20px; font-size: 12px;">
+                            <div><strong>156</strong><br>参与村庄</div>
+                            <div><strong>5.2万</strong><br>受益村民</div>
+                            <div><strong>328万</strong><br>助力金额</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="discover-header" style="background: transparent; padding: 15px 20px;">
+                    <div class="discover-nav">
+                        <a href="#" class="nav-item active" style="color: #333;">发现</a>
+                        <a href="#" class="nav-item" style="color: #666;" onclick="showPage('my-page')">我的</a>
+                    </div>
+                </div>
+                
+                <div class="content-area" style="margin-top: -20px;">
+                    <!-- 测试按钮 -->
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <button onclick="testFunction()" style="background: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">测试JavaScript</button>
+                    </div>
+
+                    <!-- 快速入口 -->
+                    <div class="quick-actions" style="display: flex; justify-content: space-around; padding: 20px; background: white; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+                        <div class="action-item" onclick="enterAsVillager()" style="text-align: center; cursor: pointer;">
+                            <div style="width: 50px; height: 50px; background: #4CAF50; border-radius: 25px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 24px; color: white;">🏠</div>
+                            <div style="font-size: 12px; color: #333;">村民申请</div>
+                        </div>
+                        <div class="action-item" onclick="enterAsVisitor()" style="text-align: center; cursor: pointer;">
+                            <div style="width: 50px; height: 50px; background: #2196F3; border-radius: 25px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 24px; color: white;">👤</div>
+                            <div style="font-size: 12px; color: #333;">游客浏览</div>
+                        </div>
+                        <div class="action-item" onclick="enterAsAdmin()" style="text-align: center; cursor: pointer;">
+                            <div style="width: 50px; height: 50px; background: #FF9800; border-radius: 25px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 24px; color: white;">🏛️</div>
+                            <div style="font-size: 12px; color: #333;">村委审核</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 热门公益项目 -->
+                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0; color: #333; font-size: 18px;">🔥 热门公益项目</h3>
+                        <span style="font-size: 12px; color: #999;">更多 ></span>
+                    </div>
+                    
+                    <div class="project-card" onclick="showProjectDetail('elderly-care')">
+                        <div class="project-image">
+                            👴👵
+                            <div class="project-badge">助老金</div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-title">安心到家助老关爱券</div>
+                            <div class="project-meta">
+                                <span>申请时间：2025-10-28 至 2025-12-31</span>
+                            </div>
+                            <div class="project-desc">每位老人将获得一张100元"助老关爱券"，包含居家安全隐患排查、消除服务和居家安全物资</div>
+                            <div class="project-stats">
+                                <div class="stats-left">
+                                    <span>全国156个村庄参与 · 3.2万老人受益</span>
+                                </div>
+                                <button class="apply-btn" onclick="event.stopPropagation(); quickApply('elderly-care')">立即申请</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card" onclick="showProjectDetail('children-growth')">
+                        <div class="project-image">
+                            👶🎨
+                            <div class="project-badge">成长基金</div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-title">童心长桌宴</div>
+                            <div class="project-meta">
+                                <span>特色饮食 · 特色餐厅 · 民俗活动</span>
+                            </div>
+                            <div class="project-desc">为乡村儿童提供营养餐和文化体验活动，促进身心健康发展</div>
+                            <div class="project-stats">
+                                <div class="stats-left">
+                                    <span>全国89个村庄参与 · 1.8万儿童受益</span>
+                                </div>
+                                <button class="apply-btn" onclick="event.stopPropagation(); quickApply('children-growth')">立即申请</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 我的页面 -->
+            <div id="my-page" class="page discover-page">
+                <div class="discover-header">
+                    <div class="discover-nav">
+                        <a href="#" class="nav-item" onclick="showPage('discover')">← 返回</a>
+                        <a href="#" class="nav-item active">我的</a>
+                    </div>
+                    <div class="discover-subtitle">个人中心</div>
+                </div>
+                
+                <div class="content-area">
+                    <!-- 身份选择卡片 -->
+                    <div class="identity-selection" style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 15px; color: #333;">选择您的身份</h3>
+                        
+                        <div class="identity-card" onclick="enterAsVillager()" style="background: linear-gradient(135deg, #4CAF50, #45a049); color: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 32px;">🏠</div>
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0;">村民身份</h4>
+                                    <p style="margin: 0; opacity: 0.9; font-size: 14px;">已认证村民，可直接申请公益项目</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="identity-card" onclick="enterAsVisitor()" style="background: linear-gradient(135deg, #2196F3, #1976D2); color: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 32px;">👤</div>
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0;">游客身份</h4>
+                                    <p style="margin: 0; opacity: 0.9; font-size: 14px;">外来访客，需要村庄认证后才能申请</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="identity-card" onclick="enterAsAdmin()" style="background: linear-gradient(135deg, #FF9800, #F57C00); color: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 32px;">🏛️</div>
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0;">村两委身份</h4>
+                                    <p style="margin: 0; opacity: 0.9; font-size: 14px;">村委会成员，负责审核村民身份和申请</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 功能入口 -->
+                    <div class="function-menu" style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+                        <h4 style="margin: 0 0 15px 0; color: #333;">功能菜单</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div onclick="showHelp()" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                                <div style="font-size: 24px; margin-bottom: 5px;">❓</div>
+                                <div style="font-size: 12px; color: #666;">使用帮助</div>
+                            </div>
+                            <div onclick="showContact()" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                                <div style="font-size: 24px; margin-bottom: 5px;">📞</div>
+                                <div style="font-size: 12px; color: #666;">联系客服</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 村民页面 -->
+            <div id="villager-page" class="page discover-page">
+                <div class="discover-header">
+                    <div class="discover-nav">
+                        <a href="#" class="nav-item" onclick="showPage('identity-select')">← 返回</a>
+                        <a href="#" class="nav-item active">村民页面</a>
+                    </div>
+                    <div class="discover-subtitle">欢迎回来，张三 · 张家寨村村民</div>
+                </div>
+                
+                <div class="content-area">
+                    <div class="tab-bar">
+                        <div class="tab-item active">推荐</div>
+                        <div class="tab-item">我的申请</div>
+                        <div class="tab-item">村务公开</div>
+                        <div class="tab-item">邻里互助</div>
+                    </div>
+                    
+                    <!-- 村民个人信息卡片 -->
+                    <div class="villager-info-card" style="background: linear-gradient(135deg, #e8f5e9, #f1f8e9); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 60px; height: 60px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white;">张</div>
+                            <div>
+                                <h3 style="margin: 0; color: #333;">张三</h3>
+                                <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">张家寨村 · 已认证村民</p>
+                                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                    <span style="background: #4CAF50; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">已申请2项</span>
+                                    <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">审核中1项</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card" onclick="showProjectDetail('elderly-care')">
+                        <div class="project-image">
+                            👴👵
+                            <div class="project-badge">助老金</div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-title">安心到家助老关爱券</div>
+                            <div class="project-meta">
+                                <span>申请时间：2025-10-28 至 2025-12-31</span>
+                            </div>
+                            <div class="project-desc">每位老人将获得一张100元"助老关爱券"，包含居家安全隐患排查、消除服务和居家安全物资</div>
+                            <div class="project-stats">
+                                <div class="stats-left">
+                                    <span>全国156个村庄参与 · 3.2万老人受益</span>
+                                </div>
+                                <button class="apply-btn" onclick="event.stopPropagation(); quickApply('elderly-care')">立即申请</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card" onclick="showProjectDetail('children-growth')">
+                        <div class="project-image">
+                            👶🎨
+                            <div class="project-badge">成长基金</div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-title">童心长桌宴</div>
+                            <div class="project-meta">
+                                <span>特色饮食 · 特色餐厅 · 民俗活动</span>
+                            </div>
+                            <div class="project-desc">川南古镇，大菜之北，🧑‍🍳村民，苗寨胜其间。山</div>
+                            <div class="project-stats">
+                                <div class="stats-left">
+                                    <span>全国89个村庄参与 · 1.8万儿童受益</span>
+                                </div>
+                                <button class="apply-btn" onclick="event.stopPropagation(); quickApply('children-growth')">立即申请</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游客页面 -->
+            <div id="visitor-page" class="page discover-page">
+                <div class="discover-header">
+                    <div class="discover-nav">
+                        <a href="#" class="nav-item" onclick="showPage('identity-select')">← 返回</a>
+                        <a href="#" class="nav-item active">游客页面</a>
+                    </div>
+                    <div class="discover-subtitle">欢迎访问乡村公益平台 · 了解公益项目</div>
+                </div>
+                
+                <div class="content-area">
+                    <div class="tab-bar">
+                        <div class="tab-item active">项目展示</div>
+                        <div class="tab-item">村庄风采</div>
+                        <div class="tab-item">公益故事</div>
+                        <div class="tab-item">如何参与</div>
+                    </div>
+                    
+                    <!-- 游客提示卡片 -->
+                    <div class="visitor-info-card" style="background: linear-gradient(135deg, #e3f2fd, #f3e5f5); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">👋</div>
+                        <h3 style="margin: 0 0 8px 0; color: #333;">欢迎来到乡村公益平台</h3>
+                        <p style="margin: 0; color: #666; font-size: 14px;">您可以浏览公益项目，了解乡村发展动态</p>
+                        <button style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 12px; margin-top: 10px; cursor: pointer;" onclick="showVillageRegistration()">申请入驻村庄</button>
+                    </div>
+                    
+                    <div class="project-card" onclick="showProjectDetail('elderly-care', 'visitor')">
+                        <div class="project-image">
+                            👴👵
+                            <div class="project-badge">助老金</div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-title">安心到家助老关爱券</div>
+                            <div class="project-meta">
+                                <span>申请时间：2025-10-28 至 2025-12-31</span>
+                            </div>
+                            <div class="project-desc">每位老人将获得一张100元"助老关爱券"，包含居家安全隐患排查、消除服务和居家安全物资</div>
+                            <div class="project-stats">
+                                <div class="stats-left">
+                                    <span>全国参与村庄156个 · 受益老人3.2万人</span>
+                                </div>
+                                <button class="apply-btn" onclick="event.stopPropagation(); showProjectDetail('elderly-care', 'visitor')">了解详情</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card" onclick="showProjectDetail('children-growth', 'visitor')">
+                        <div class="project-image">
+                            👶🎨
+                            <div class="project-badge">成长基金</div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-title">童心长桌宴</div>
+                            <div class="project-meta">
+                                <span>特色饮食 · 特色餐厅 · 民俗活动</span>
+                            </div>
+                            <div class="project-desc">川南古镇，大菜之北，🧑‍🍳村民，苗寨胜其间。山</div>
+                            <div class="project-stats">
+                                <div class="stats-left">
+                                    <span>全国参与村庄89个 · 受益儿童1.8万人</span>
+                                </div>
+                                <button class="apply-btn" onclick="event.stopPropagation(); showProjectDetail('children-growth', 'visitor')">了解详情</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 村两委审核页面 -->
+            <div id="admin-page" class="page discover-page">
+                <div class="discover-header">
+                    <div class="discover-nav">
+                        <a href="#" class="nav-item" onclick="showPage('identity-select')">← 返回</a>
+                        <a href="#" class="nav-item active">村两委审核</a>
+                    </div>
+                    <div class="discover-subtitle">张家寨村委会 · 李主任</div>
+                </div>
+                
+                <div class="content-area">
+                    <div class="tab-bar">
+                        <div class="tab-item active">待审核</div>
+                        <div class="tab-item">已审核</div>
+                        <div class="tab-item">统计报告</div>
+                        <div class="tab-item">村务管理</div>
+                    </div>
+                    
+                    <!-- 审核统计卡片 -->
+                    <div class="admin-stats-card" style="background: linear-gradient(135deg, #fff3e0, #fce4ec); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #333;">今日审核概况</h3>
+                        <div style="display: flex; justify-content: space-between; text-align: center;">
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: #ff9800;">8</div>
+                                <div style="font-size: 12px; color: #666;">待审核</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: #4CAF50;">15</div>
+                                <div style="font-size: 12px; color: #666;">已通过</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: #f44336;">2</div>
+                                <div style="font-size: 12px; color: #666;">已拒绝</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: #2196F3;">25</div>
+                                <div style="font-size: 12px; color: #666;">总申请</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 待审核申请列表 -->
+                    <div class="application-card" style="background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 4px solid #ff9800;">
+                        <div style="padding: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                                <div>
+                                    <h4 style="margin: 0; color: #333;">张三 - 安心到家助老关爱券</h4>
+                                    <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">身份证：130***********1234 · 年龄：72岁</p>
+                                </div>
+                                <span style="background: #fff3e0; color: #ff9800; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">待审核</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 12px; color: #999;">申请时间：2025-11-03 14:30</span>
+                                <div style="display: flex; gap: 8px;">
+                                    <button style="background: #f44336; color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer;" onclick="handleApplication('reject', 'zhang-san')">拒绝</button>
+                                    <button style="background: #4CAF50; color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer;" onclick="handleApplication('approve', 'zhang-san')">通过</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="application-card" style="background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 4px solid #ff9800;">
+                        <div style="padding: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                                <div>
+                                    <h4 style="margin: 0; color: #333;">李四 - 童心长桌宴</h4>
+                                    <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">身份证：130***********5678 · 年龄：8岁（家长代申请）</p>
+                                </div>
+                                <span style="background: #fff3e0; color: #ff9800; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">待审核</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 12px; color: #999;">申请时间：2025-11-03 15:20</span>
+                                <div style="display: flex; gap: 8px;">
+                                    <button style="background: #f44336; color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer;" onclick="handleApplication('reject', 'li-si')">拒绝</button>
+                                    <button style="background: #4CAF50; color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer;" onclick="handleApplication('approve', 'li-si')">通过</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 项目详情页面 -->
+            <div id="project-detail" class="page detail-page">
+                <div class="detail-header">
+                    <button class="back-btn" onclick="showPage('discover')">←</button>
+                    <span id="detail-emoji">👴👵</span>
+                </div>
+                
+                <div class="detail-content">
+                    <h2 class="detail-title" id="detail-title">安心到家助老关爱券</h2>
+                    
+                    <div class="detail-meta">
+                        <div class="meta-row">
+                            <span class="meta-label">申请时间</span>
+                            <span class="meta-value" id="detail-time">2025-10-28 至 2025-12-31</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">服务范围</span>
+                            <span class="meta-value" id="detail-scope">全国村庄</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">受益人群</span>
+                            <span class="meta-value" id="detail-target">本村/社区70岁以上老人（符合八大类一类家庭）</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">发起方</span>
+                            <span class="meta-value" id="detail-sponsor">深圳壹基金公益基金会</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">资助方</span>
+                            <span class="meta-value" id="detail-funder">腾讯基金会、加油耕耘者基金</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3 class="section-title">一、什么是安心到家"助老关爱券"？</h3>
+                        <div class="section-content" id="detail-description">
+                            每位老人将获得一张100元"助老关爱券"，包含居家安全隐患排查、消除服务和居家安全物资
+                        </div>
+                    </div>
+                    
+                    <div class="amount-display">
+                        <div class="amount-number" id="detail-amount">100</div>
+                        <div class="amount-label">助力金/份</div>
+                        <div class="remaining-count" id="detail-remaining">剩余4741份</div>
+                    </div>
+                    
+                    <button class="apply-button" onclick="startApplication()">立即申请</button>
+                </div>
+            </div>
+
+            <!-- 申请表单页面 -->
+            <div id="application-form" class="page form-page">
+                <div class="form-header">
+                    <button class="back-btn" onclick="goBackFromForm()">←</button>
+                    <h2 class="form-title">公益项目申请</h2>
+                </div>
+                
+                <div class="form-content">
+                    <!-- 用户状态提示 -->
+                    <div class="user-status-card" id="user-status-card" style="background: #e8f5e9; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span id="status-icon" style="font-size: 20px;">✅</span>
+                            <span id="status-text" style="font-weight: 600; color: #4CAF50;">已认证村民</span>
+                        </div>
+                        <div id="status-desc" style="font-size: 14px; color: #666;">张三 · 张家寨村 · 可直接申请公益项目</div>
+                    </div>
+
+                    <!-- 申请类型选择 -->
+                    <div class="apply-type-selector" id="apply-type-section">
+                        <div class="selector-title">申请类型</div>
+                        <div class="apply-options">
+                            <div class="apply-option" onclick="selectApplyType('self')">
+                                👤 为自己申请
+                            </div>
+                            <div class="apply-option" onclick="selectApplyType('family')">
+                                👨‍👩‍👧‍👦 替家人申请
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 村庄选择（游客/未认证村民状态） -->
+                    <div class="village-selector" id="village-section" style="display: none;">
+                        <div class="selector-title">选择村庄</div>
+                        <div class="village-search">
+                            <input type="text" class="search-input" placeholder="搜索村庄名称..." oninput="searchVillages(this.value)">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <div class="village-list" id="village-list">
+                            <div class="village-item" onclick="selectVillage('zhangjiazhai', '张家寨村', '河北省石家庄市张家庄镇', 'active')">
+                                <div class="village-name">张家寨村</div>
+                                <div class="village-location">河北省石家庄市张家庄镇</div>
+                                <span class="village-status status-active">已入驻</span>
+                            </div>
+                            <div class="village-item" onclick="selectVillage('lijiazhuang', '李家庄村', '河北省石家庄市李家营镇', 'new')">
+                                <div class="village-name">李家庄村</div>
+                                <div class="village-location">河北省石家庄市李家营镇</div>
+                                <span class="village-status status-new">新入驻</span>
+                            </div>
+                            <div class="village-item" onclick="showCreateVillageModal()">
+                                <div class="village-name">+ 我的村庄不在列表中</div>
+                                <div class="village-location">点击添加新村庄</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 申请表单 -->
+                    <div class="form-section" id="form-fields" style="display: none;">
+                        <div class="form-group" id="name-group">
+                            <label class="form-label">
+                                <span id="name-label">姓名</span>
+                                <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="applicant-name" placeholder="请输入真实姓名">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                身份证号码
+                                <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="id-card" placeholder="请输入18位身份证号码" oninput="validateIdCard()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                性别
+                                <span class="required">*</span>
+                            </label>
+                            <select class="form-select" id="gender">
+                                <option value="">请选择性别</option>
+                                <option value="male">男</option>
+                                <option value="female">女</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                联系电话
+                                <span class="required">*</span>
+                            </label>
+                            <input type="tel" class="form-input" id="phone" placeholder="请输入手机号码">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                公益类型
+                                <span class="required">*</span>
+                            </label>
+                            <select class="form-select" id="project-type">
+                                <option value="">请选择公益类型</option>
+                                <option value="elderly-care">助老关爱</option>
+                                <option value="children-growth">儿童成长</option>
+                                <option value="education-support">教育资助</option>
+                                <option value="medical-aid">医疗救助</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                证明文件
+                                <span class="required">*</span>
+                            </label>
+                            <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                                <div class="upload-icon">📎</div>
+                                <div class="upload-text">点击上传相关证明文件<br>支持图片、PDF格式</div>
+                            </div>
+                            <input type="file" id="file-input" style="display: none;" accept="image/*,.pdf" onchange="handleFileUpload(this)">
+                        </div>
+
+                        <button class="submit-btn" onclick="submitApplication()" disabled id="submit-btn">
+                            提交申请
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 申请进度页面 -->
+            <div id="application-progress" class="page progress-page">
+                <div class="progress-header">
+                    <div class="success-icon">✅</div>
+                    <h2 class="progress-title">申请提交成功</h2>
+                    <p class="progress-subtitle">您的申请已进入审核流程</p>
+                </div>
+                
+                <div class="progress-content">
+                    <div class="progress-timeline">
+                        <div class="timeline-item completed">
+                            <div class="timeline-icon completed">✓</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">村民填写完成</div>
+                                <div class="timeline-desc">您已成功提交申请信息</div>
+                                <div class="timeline-time">2025-11-03 16:30</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item current">
+                            <div class="timeline-icon current">⏳</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">村两委审核核对</div>
+                                <div class="timeline-desc">村委会正在核实您的申请信息和资格</div>
+                                <div class="timeline-time">预计1-3个工作日</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item pending">
+                            <div class="timeline-icon pending">📋</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">确认最终名单</div>
+                                <div class="timeline-desc">村委会确认符合条件的申请人名单</div>
+                                <div class="timeline-time">待村委审核完成</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item pending">
+                            <div class="timeline-icon pending">🏛️</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">提交平台审核</div>
+                                <div class="timeline-desc">名单提交至公益平台进行最终审核</div>
+                                <div class="timeline-time">预计3-5个工作日</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item pending">
+                            <div class="timeline-icon pending">📢</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">村民议事公示</div>
+                                <div class="timeline-desc">在村内进行公示，接受村民监督</div>
+                                <div class="timeline-time">公示期3天</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item pending">
+                            <div class="timeline-icon pending">🎉</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">完成发放</div>
+                                <div class="timeline-desc">助力金发放到您的账户</div>
+                                <div class="timeline-time">公示期结束后</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="apply-button" onclick="showPage('discover')">返回首页</button>
+                </div>
+            </div>
+
+            <!-- 弹窗 -->
+            <div id="project-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-icon">🎉</div>
+                        <div class="modal-title">发现新的公益项目</div>
+                        <div class="modal-desc">
+                            近期有多个公益项目开放申请，快来看看有没有适合您的项目吧！
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="closeModal()">稍后查看</button>
+                        <button class="modal-btn primary" onclick="closeModal()">立即查看</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="create-village-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-icon">🏘️</div>
+                        <div class="modal-title">村庄未入驻</div>
+                        <div class="modal-desc">
+                            您的村庄暂未入驻平台，我们会联系村委会协助入驻。您可以先填写申请，村庄入驻后会自动处理。
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="closeModal()">取消</button>
+                        <button class="modal-btn primary" onclick="continueWithNewVillage()">继续申请</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 身份选择弹窗 -->
+            <div id="identity-select-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-icon">🎯</div>
+                        <div class="modal-title">选择身份申请</div>
+                        <div class="modal-desc">
+                            请选择您的身份来申请公益项目
+                        </div>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <div class="identity-option" onclick="selectIdentityAndApply('verified-villager')" style="margin-bottom: 10px; padding: 15px; border: 2px solid #4CAF50; border-radius: 8px; cursor: pointer; background: #f8fff8;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 20px;">🏠</span>
+                                <div>
+                                    <div style="font-weight: 600; color: #4CAF50;">已认证村民</div>
+                                    <div style="font-size: 12px; color: #666;">可直接申请</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="identity-option" onclick="selectIdentityAndApply('unverified-villager')" style="margin-bottom: 10px; padding: 15px; border: 2px solid #ff9800; border-radius: 8px; cursor: pointer; background: #fff8f0;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 20px;">⏳</span>
+                                <div>
+                                    <div style="font-weight: 600; color: #ff9800;">未认证村民</div>
+                                    <div style="font-size: 12px; color: #666;">需要村委审核</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="identity-option" onclick="selectIdentityAndApply('visitor')" style="padding: 15px; border: 2px solid #2196F3; border-radius: 8px; cursor: pointer; background: #f0f8ff;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 20px;">👤</span>
+                                <div>
+                                    <div style="font-weight: 600; color: #2196F3;">游客</div>
+                                    <div style="font-size: 12px; color: #666;">需要村庄和身份审核</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="closeModal()">取消</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 项目推荐弹窗 -->
+            <div id="project-recommend-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-icon">🎉</div>
+                        <div class="modal-title">发现新的公益项目</div>
+                        <div class="modal-desc">
+                            近期有多个公益项目开放申请，快来看看有没有适合您的项目吧！
+                        </div>
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <span style="font-size: 24px;">👴👵</span>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">安心到家助老关爱券</div>
+                                <div style="font-size: 12px; color: #666;">100元/份 · 剩余4741份</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <span style="font-size: 24px;">👶🎨</span>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">童心长桌宴</div>
+                                <div style="font-size: 12px; color: #666;">200元/份 · 剩余2156份</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="closeModal()">稍后查看</button>
+                        <button class="modal-btn primary" onclick="closeModal()">立即查看</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部导航 -->
+            <div class="bottom-nav">
+                <div class="nav-item-bottom active">
+                    <div class="nav-icon">🏠</div>
+                    <div class="nav-label">首页</div>
+                </div>
+                <div class="nav-item-bottom">
+                    <div class="nav-icon">👤</div>
+                    <div class="nav-label">小明</div>
+                </div>
+                <div class="nav-item-bottom">
+                    <div class="nav-icon">📋</div>
+                    <div class="nav-label">我的</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局状态管理
+        const appState = {
+            currentPage: 'discover',
+            userIdentity: null, // 'verified-villager', 'unverified-villager', 'visitor'
+            userStatus: null, // 'verified', 'pending', 'new'
+            applyType: null, // 'self' or 'family'
+            selectedVillage: null,
+            currentProject: null,
+            formData: {},
+            villageStatus: null // 'exists', 'pending', 'new'
+        };
+
+        // 项目数据
+        const projects = {
+            'elderly-care': {
+                title: '安心到家助老关爱券',
+                emoji: '👴👵',
+                time: '2025-10-28 至 2025-12-31',
+                scope: '全国村庄',
+                target: '本村/社区70岁以上老人（符合八大类一类家庭）',
+                sponsor: '深圳壹基金公益基金会',
+                funder: '腾讯基金会、加油耕耘者基金',
+                description: '每位老人将获得一张100元"助老关爱券"，包含居家安全隐患排查、消除服务和居家安全物资',
+                amount: 100,
+                remaining: 4741
+            },
+            'children-growth': {
+                title: '童心长桌宴',
+                emoji: '👶🎨',
+                time: '2025-11-01 至 2025-12-15',
+                scope: '全国村庄',
+                target: '6-12岁儿童',
+                sponsor: '中国儿童少年基金会',
+                funder: '腾讯基金会、字节跳动公益',
+                description: '为乡村儿童提供营养餐和文化体验活动，促进身心健康发展',
+                amount: 200,
+                remaining: 2156
+            }
+        };
+
+        // 页面切换
+        function showPage(pageId) {
+            console.log('showPage called with:', pageId);
+            try {
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                const targetPage = document.getElementById(pageId);
+                if (!targetPage) {
+                    throw new Error(`Page with id '${pageId}' not found`);
+                }
+                
+                targetPage.classList.add('active');
+                appState.currentPage = pageId;
+                console.log('Page switched to:', pageId);
+            } catch (error) {
+                console.error('Error in showPage:', error);
+                alert('页面切换错误：' + error.message);
+            }
+        }
+
+        // 身份入口函数
+        function enterAsVillager() {
+            console.log('enterAsVillager called');
+            try {
+                appState.userIdentity = 'verified-villager';
+                appState.userStatus = 'verified';
+                appState.selectedVillage = {
+                    id: 'zhangjiazhai',
+                    name: '张家寨村',
+                    location: '河北省石家庄市张家庄镇'
+                };
+                showPage('villager-page');
+                
+                // 显示项目推荐弹窗
+                setTimeout(() => {
+                    showProjectRecommendModal();
+                }, 1000);
+            } catch (error) {
+                console.error('Error in enterAsVillager:', error);
+                alert('进入村民页面时出错：' + error.message);
+            }
+        }
+
+        function enterAsVisitor() {
+            console.log('enterAsVisitor called');
+            try {
+                appState.userIdentity = 'visitor';
+                appState.userStatus = 'new';
+                showPage('visitor-page');
+                
+                // 显示项目推荐弹窗
+                setTimeout(() => {
+                    showProjectRecommendModal();
+                }, 1000);
+            } catch (error) {
+                console.error('Error in enterAsVisitor:', error);
+                alert('进入游客页面时出错：' + error.message);
+            }
+        }
+
+        function enterAsAdmin() {
+            console.log('enterAsAdmin called');
+            try {
+                appState.userIdentity = 'admin';
+                showPage('admin-page');
+            } catch (error) {
+                console.error('Error in enterAsAdmin:', error);
+                alert('进入管理页面时出错：' + error.message);
+            }
+        }
+
+        // 快速申请入口
+        function quickApply(projectId) {
+            console.log('quickApply called with:', projectId);
+            try {
+                appState.currentProject = projectId;
+                
+                // 根据当前用户状态决定流程
+                if (!appState.userIdentity) {
+                    // 未选择身份，显示身份选择弹窗
+                    showIdentitySelectModal(projectId);
+                } else {
+                    startApplicationFlow();
+                }
+            } catch (error) {
+                console.error('Error in quickApply:', error);
+                alert('申请时出错：' + error.message);
+            }
+        }
+
+        // 显示项目详情
+        function showProjectDetail(projectId, userType = null) {
+            const project = projects[projectId];
+            if (!project) return;
+
+            appState.currentProject = projectId;
+            appState.userType = userType;
+            
+            // 更新详情页内容
+            document.getElementById('detail-emoji').textContent = project.emoji;
+            document.getElementById('detail-title').textContent = project.title;
+            document.getElementById('detail-time').textContent = project.time;
+            document.getElementById('detail-scope').textContent = project.scope;
+            document.getElementById('detail-target').textContent = project.target;
+            document.getElementById('detail-sponsor').textContent = project.sponsor;
+            document.getElementById('detail-funder').textContent = project.funder;
+            document.getElementById('detail-description').textContent = project.description;
+            document.getElementById('detail-amount').textContent = project.amount;
+            document.getElementById('detail-remaining').textContent = `剩余${project.remaining}份`;
+
+            // 根据用户类型更新按钮文字
+            const applyButton = document.querySelector('.apply-button');
+            if (userType === 'visitor') {
+                applyButton.textContent = '需要村民身份才能申请';
+                applyButton.style.background = '#ccc';
+                applyButton.disabled = true;
+            } else {
+                applyButton.textContent = '立即申请';
+                applyButton.style.background = '#4CAF50';
+                applyButton.disabled = false;
+            }
+
+            showPage('project-detail');
+        }
+
+        // 开始申请流程
+        function startApplicationFlow() {
+            updateUserStatusCard();
+            showPage('application-form');
+        }
+
+        // 更新用户状态卡片
+        function updateUserStatusCard() {
+            const statusCard = document.getElementById('user-status-card');
+            const statusIcon = document.getElementById('status-icon');
+            const statusText = document.getElementById('status-text');
+            const statusDesc = document.getElementById('status-desc');
+            const villageSection = document.getElementById('village-section');
+            
+            if (appState.userIdentity === 'verified-villager') {
+                statusCard.style.background = '#e8f5e9';
+                statusIcon.textContent = '✅';
+                statusText.textContent = '已认证村民';
+                statusText.style.color = '#4CAF50';
+                statusDesc.textContent = '张三 · 张家寨村 · 可直接申请公益项目';
+                villageSection.style.display = 'none';
+            } else if (appState.userIdentity === 'unverified-villager') {
+                statusCard.style.background = '#fff3e0';
+                statusIcon.textContent = '⏳';
+                statusText.textContent = '村民身份待审核';
+                statusText.style.color = '#ff9800';
+                statusDesc.textContent = '您的村民身份正在审核中，可先填写申请信息';
+                villageSection.style.display = 'block';
+            } else if (appState.userIdentity === 'visitor') {
+                statusCard.style.background = '#e3f2fd';
+                statusIcon.textContent = '👤';
+                statusText.textContent = '游客身份';
+                statusText.style.color = '#2196F3';
+                statusDesc.textContent = '需要选择村庄并等待村委审核后才能申请';
+                villageSection.style.display = 'block';
+            }
+        }
+
+        // 开始申请（从详情页）
+        function startApplication() {
+            startApplicationFlow();
+        }
+
+        // 选择身份
+        function selectIdentity(identity) {
+            appState.userIdentity = identity;
+            
+            // 更新UI
+            document.querySelectorAll('.identity-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+
+            // 显示申请类型选择
+            document.getElementById('apply-type-section').style.display = 'block';
+
+            // 根据身份显示不同内容
+            if (identity === 'visitor') {
+                document.getElementById('village-section').style.display = 'block';
+            } else {
+                document.getElementById('village-section').style.display = 'none';
+                // 村民身份自动填充村庄信息
+                appState.selectedVillage = {
+                    id: 'zhangjiazhai',
+                    name: '张家寨村',
+                    location: '河北省石家庄市张家庄镇'
+                };
+            }
+        }
+
+        // 选择申请类型
+        function selectApplyType(type) {
+            appState.applyType = type;
+            
+            // 更新UI
+            document.querySelectorAll('.apply-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+
+            // 更新表单标签
+            const nameLabel = document.getElementById('name-label');
+            if (type === 'family') {
+                nameLabel.textContent = '家人姓名';
+            } else {
+                nameLabel.textContent = '姓名';
+            }
+
+            // 显示表单字段
+            document.getElementById('form-fields').style.display = 'block';
+            
+            // 如果是村民身份，自动填充一些信息
+            if (appState.userIdentity === 'villager' && type === 'self') {
+                document.getElementById('applicant-name').value = '张三';
+                document.getElementById('phone').value = '138****1234';
+            }
+
+            validateForm();
+        }
+
+        // 搜索村庄
+        function searchVillages(keyword) {
+            const villages = [
+                { id: 'zhangjiazhai', name: '张家寨村', location: '河北省石家庄市张家庄镇', status: 'active' },
+                { id: 'lijiazhuang', name: '李家庄村', location: '河北省石家庄市李家营镇', status: 'new' },
+                { id: 'wangjiawan', name: '王家湾村', location: '河北省保定市王村镇', status: 'active' },
+                { id: 'xiaowangzhuang', name: '小王庄村', location: '山东省济南市小庄镇', status: 'new' }
+            ];
+
+            const filteredVillages = villages.filter(village => 
+                village.name.includes(keyword) || village.location.includes(keyword)
+            );
+
+            const villageList = document.getElementById('village-list');
+            villageList.innerHTML = '';
+
+            filteredVillages.forEach(village => {
+                const statusClass = village.status === 'active' ? 'status-active' : 'status-new';
+                const statusText = village.status === 'active' ? '已入驻' : '新入驻';
+                
+                villageList.innerHTML += `
+                    <div class="village-item" onclick="selectVillage('${village.id}', '${village.name}', '${village.location}', '${village.status}')">
+                        <div class="village-name">${village.name}</div>
+                        <div class="village-location">${village.location}</div>
+                        <span class="village-status ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+            });
+
+            villageList.innerHTML += `
+                <div class="village-item" onclick="showCreateVillageModal()">
+                    <div class="village-name">+ 我的村庄不在列表中</div>
+                    <div class="village-location">点击添加新村庄</div>
+                </div>
+            `;
+        }
+
+        // 选择村庄
+        function selectVillage(id, name, location, status) {
+            appState.selectedVillage = { id, name, location, status };
+            
+            // 更新UI
+            document.querySelectorAll('.village-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+
+            // 显示表单字段
+            document.getElementById('form-fields').style.display = 'block';
+            validateForm();
+        }
+
+        // 身份证验证
+        function validateIdCard() {
+            const idCard = document.getElementById('id-card').value;
+            const gender = document.getElementById('gender');
+            
+            if (idCard.length === 18) {
+                // 提取性别信息（第17位，奇数为男，偶数为女）
+                const genderDigit = parseInt(idCard.charAt(16));
+                const detectedGender = genderDigit % 2 === 1 ? 'male' : 'female';
+                
+                // 自动设置性别
+                gender.value = detectedGender;
+                
+                // 验证年龄（这里简化处理）
+                const birthYear = parseInt(idCard.substring(6, 10));
+                const currentYear = new Date().getFullYear();
+                const age = currentYear - birthYear;
+                
+                // 根据项目类型验证年龄
+                if (appState.currentProject === 'elderly-care' && age < 70) {
+                    alert('该项目要求申请人年龄70岁以上');
+                    return false;
+                }
+            }
+            
+            validateForm();
+            return true;
+        }
+
+        // 文件上传处理
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const uploadArea = input.parentElement;
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">✅</div>
+                    <div class="upload-text">已上传：${file.name}</div>
+                `;
+                validateForm();
+            }
+        }
+
+        // 表单验证
+        function validateForm() {
+            const name = document.getElementById('applicant-name').value;
+            const idCard = document.getElementById('id-card').value;
+            const gender = document.getElementById('gender').value;
+            const phone = document.getElementById('phone').value;
+            const projectType = document.getElementById('project-type').value;
+            const fileInput = document.getElementById('file-input');
+            
+            const isValid = name && idCard.length === 18 && gender && phone && projectType && 
+                           fileInput.files.length > 0 && 
+                           (appState.userIdentity === 'villager' || appState.selectedVillage);
+            
+            document.getElementById('submit-btn').disabled = !isValid;
+        }
+
+        // 提交申请
+        function submitApplication() {
+            // 收集表单数据
+            appState.formData = {
+                name: document.getElementById('applicant-name').value,
+                idCard: document.getElementById('id-card').value,
+                gender: document.getElementById('gender').value,
+                phone: document.getElementById('phone').value,
+                projectType: document.getElementById('project-type').value,
+                applyType: appState.applyType,
+                village: appState.selectedVillage,
+                userIdentity: appState.userIdentity
+            };
+
+            // 模拟提交过程
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = '提交中...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                updateProgressTimeline();
+                showPage('application-progress');
+            }, 2000);
+        }
+
+        // 更新进度时间线
+        function updateProgressTimeline() {
+            const timeline = document.querySelector('.progress-timeline');
+            let timelineHTML = '';
+            
+            if (appState.userIdentity === 'verified-villager') {
+                // 已审核村民流程
+                timelineHTML = `
+                    <div class="timeline-item completed">
+                        <div class="timeline-icon completed">✓</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村民填写完成</div>
+                            <div class="timeline-desc">您已成功提交申请信息</div>
+                            <div class="timeline-time">2025-11-03 16:30</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item current">
+                        <div class="timeline-icon current">⏳</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村两委审核核对</div>
+                            <div class="timeline-desc">村委会正在核实您的申请信息和资格</div>
+                            <div class="timeline-time">预计1-3个工作日</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">📋</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">确认最终名单</div>
+                            <div class="timeline-desc">村委会确认符合条件的申请人名单</div>
+                            <div class="timeline-time">待村委审核完成</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">🏛️</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">提交平台审核</div>
+                            <div class="timeline-desc">名单提交至公益平台进行最终审核</div>
+                            <div class="timeline-time">预计3-5个工作日</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">📢</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村民议事公示</div>
+                            <div class="timeline-desc">在村内进行公示，接受村民监督</div>
+                            <div class="timeline-time">公示期3天</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">🎉</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">完成发放</div>
+                            <div class="timeline-desc">助力金发放到您的账户</div>
+                            <div class="timeline-time">公示期结束后</div>
+                        </div>
+                    </div>
+                `;
+            } else if (appState.userIdentity === 'unverified-villager') {
+                // 未认证村民流程
+                timelineHTML = `
+                    <div class="timeline-item current">
+                        <div class="timeline-icon current">⏳</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村民身份待审核</div>
+                            <div class="timeline-desc">村委会正在审核您的村民身份</div>
+                            <div class="timeline-time">预计1-2个工作日</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item completed">
+                        <div class="timeline-icon completed">✓</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村民填写完成</div>
+                            <div class="timeline-desc">您已成功提交申请信息</div>
+                            <div class="timeline-time">2025-11-03 16:30</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">📋</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村两委审核核对</div>
+                            <div class="timeline-desc">村委会核实申请信息和资格</div>
+                            <div class="timeline-time">待身份审核完成</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">🏛️</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">提交平台审核</div>
+                            <div class="timeline-desc">名单提交至公益平台进行最终审核</div>
+                            <div class="timeline-time">预计3-5个工作日</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">📢</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村民议事公示</div>
+                            <div class="timeline-desc">在村内进行公示，接受村民监督</div>
+                            <div class="timeline-time">公示期3天</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">🎉</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">完成发放</div>
+                            <div class="timeline-desc">助力金发放到您的账户</div>
+                            <div class="timeline-time">公示期结束后</div>
+                        </div>
+                    </div>
+                `;
+            } else if (appState.userIdentity === 'visitor') {
+                // 游客流程
+                timelineHTML = `
+                    <div class="timeline-item current">
+                        <div class="timeline-icon current">⏳</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村委待创建</div>
+                            <div class="timeline-desc">等待村委会创建村庄并审核您的身份</div>
+                            <div class="timeline-time">预计3-5个工作日</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">👤</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村民身份待审核</div>
+                            <div class="timeline-desc">村委会审核您的村民身份</div>
+                            <div class="timeline-time">待村庄创建完成</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item completed">
+                        <div class="timeline-icon completed">✓</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村民填写完成</div>
+                            <div class="timeline-desc">您已成功提交申请信息</div>
+                            <div class="timeline-time">2025-11-03 16:30</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">📋</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村两委审核核对</div>
+                            <div class="timeline-desc">村委会核实申请信息和资格</div>
+                            <div class="timeline-time">待身份审核完成</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">🏛️</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">提交平台审核</div>
+                            <div class="timeline-desc">名单提交至公益平台进行最终审核</div>
+                            <div class="timeline-time">预计3-5个工作日</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">📢</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">村民议事公示</div>
+                            <div class="timeline-desc">在村内进行公示，接受村民监督</div>
+                            <div class="timeline-time">公示期3天</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon pending">🎉</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">完成发放</div>
+                            <div class="timeline-desc">助力金发放到您的账户</div>
+                            <div class="timeline-time">公示期结束后</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            timeline.innerHTML = timelineHTML;
+        }
+
+        // 显示弹窗
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('show');
+            });
+        }
+
+        // 显示创建村庄弹窗
+        function showCreateVillageModal() {
+            showModal('create-village-modal');
+        }
+
+        // 继续新村庄申请
+        function continueWithNewVillage() {
+            closeModal();
+            appState.selectedVillage = {
+                id: 'new-village',
+                name: '新村庄',
+                location: '待入驻',
+                status: 'pending'
+            };
+            document.getElementById('form-fields').style.display = 'block';
+            validateForm();
+        }
+
+        // 从申请表单返回
+        function goBackFromForm() {
+            if (appState.userType) {
+                showPage('project-detail');
+            } else {
+                showPage('identity-select');
+            }
+        }
+
+        // 显示村庄注册
+        function showVillageRegistration() {
+            alert('村庄入驻功能开发中，请联系平台客服：400-123-4567');
+        }
+
+        // 处理申请审核
+        function handleApplication(action, applicantId) {
+            const actionText = action === 'approve' ? '通过' : '拒绝';
+            const confirmText = `确定要${actionText}这个申请吗？`;
+            
+            if (confirm(confirmText)) {
+                // 模拟审核处理
+                const card = event.target.closest('.application-card');
+                const statusSpan = card.querySelector('span');
+                const buttonsDiv = card.querySelector('div:last-child div:last-child');
+                
+                if (action === 'approve') {
+                    statusSpan.textContent = '已通过';
+                    statusSpan.style.background = '#e8f5e9';
+                    statusSpan.style.color = '#4CAF50';
+                    card.style.borderLeftColor = '#4CAF50';
+                } else {
+                    statusSpan.textContent = '已拒绝';
+                    statusSpan.style.background = '#ffebee';
+                    statusSpan.style.color = '#f44336';
+                    card.style.borderLeftColor = '#f44336';
+                }
+                
+                buttonsDiv.innerHTML = `<span style="font-size: 12px; color: #999;">已处理</span>`;
+                
+                // 更新统计数据
+                updateAdminStats(action);
+            }
+        }
+
+        // 更新管理员统计数据
+        function updateAdminStats(action) {
+            const statsCard = document.querySelector('.admin-stats-card');
+            const pendingElement = statsCard.children[1].children[0].children[0];
+            const approvedElement = statsCard.children[1].children[1].children[0];
+            const rejectedElement = statsCard.children[1].children[2].children[0];
+            
+            let pending = parseInt(pendingElement.textContent);
+            let approved = parseInt(approvedElement.textContent);
+            let rejected = parseInt(rejectedElement.textContent);
+            
+            pending--;
+            if (action === 'approve') {
+                approved++;
+            } else {
+                rejected++;
+            }
+            
+            pendingElement.textContent = pending;
+            approvedElement.textContent = approved;
+            rejectedElement.textContent = rejected;
+        }
+
+        // 显示身份选择弹窗
+        function showIdentitySelectModal(projectId) {
+            appState.currentProject = projectId;
+            showModal('identity-select-modal');
+        }
+
+        // 选择身份并申请
+        function selectIdentityAndApply(identity) {
+            appState.userIdentity = identity;
+            
+            if (identity === 'verified-villager') {
+                appState.userStatus = 'verified';
+                appState.selectedVillage = {
+                    id: 'zhangjiazhai',
+                    name: '张家寨村',
+                    location: '河北省石家庄市张家庄镇'
+                };
+            } else if (identity === 'unverified-villager') {
+                appState.userStatus = 'pending';
+            } else if (identity === 'visitor') {
+                appState.userStatus = 'new';
+            }
+            
+            closeModal();
+            startApplicationFlow();
+        }
+
+        // 显示项目推荐弹窗
+        function showProjectRecommendModal() {
+            showModal('project-recommend-modal');
+        }
+
+        // 显示帮助
+        function showHelp() {
+            alert('使用帮助：\n1. 选择身份进入对应页面\n2. 浏览公益项目并申请\n3. 等待村委审核\n4. 查看申请进度');
+        }
+
+        // 显示联系方式
+        function showContact() {
+            alert('联系客服：\n电话：400-123-4567\n微信：rural-welfare\n邮箱：service@rural-welfare.com');
+        }
+
+        // 测试函数
+        function testFunction() {
+            alert('JavaScript正常工作！所有交互功能已恢复！');
+            console.log('Test function called - All interactions restored');
+            
+            // 测试各个主要功能
+            console.log('Testing main functions:');
+            console.log('- enterAsVillager:', typeof enterAsVillager);
+            console.log('- enterAsVisitor:', typeof enterAsVisitor);
+            console.log('- enterAsAdmin:', typeof enterAsAdmin);
+            console.log('- showProjectDetail:', typeof showProjectDetail);
+            console.log('- quickApply:', typeof quickApply);
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            try {
+                // 初始化搜索
+                searchVillages('');
+                
+                // 设置默认页面为发现页面
+                showPage('discover');
+                
+                console.log('Initialization completed');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('页面初始化错误：' + error.message);
+            }
+        });
+
+        // 监听表单输入变化
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('form-input') || e.target.classList.contains('form-select')) {
+                validateForm();
+            }
+        });
+    </script>
+</body>
+</html>
