@@ -1061,10 +1061,16 @@
             });
             
             // 显示选中的标签内容
-            document.getElementById(tabId).classList.add('active');
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
             
             // 添加选中标签的active状态
-            event.target.classList.add('active');
+            const activeNavTab = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+            if (activeNavTab) {
+                activeNavTab.classList.add('active');
+            }
             
             state.currentTab = tabId;
         }
@@ -1217,8 +1223,10 @@
         function loadVillagesByRegion() {
             const province = document.getElementById('province').value;
             const city = document.getElementById('city').value;
+            const county = document.getElementById('county').value;
             const town = document.getElementById('town').value;
-            const filter = document.getElementById('villageFilter').value;
+            const village = document.getElementById('village').value;
+            const starFilter = document.getElementById('villageStarFilter').value;
             
             if (!province) {
                 showNotification('请先选择省份', 'error');
@@ -1254,16 +1262,10 @@
                 return;
             }
             
-            // 根据筛选条件过滤村庄
-            if (filter !== 'all') {
-                villages = villages.filter(v => {
-                    switch(filter) {
-                        case 'active': return v.status === '活跃';
-                        case 'new': return v.status === '新入驻';
-                        case 'normal': return v.status === '正常';
-                        default: return true;
-                    }
-                });
+            // 根据星级筛选条件过滤村庄
+            if (starFilter !== 'all') {
+                const targetStar = parseInt(starFilter);
+                villages = villages.filter(v => v.star === targetStar);
             }
             
             state.batchConfig.villages = villages;
@@ -1332,7 +1334,8 @@
                     id: `V${String(i).padStart(4, '0')}`,
                     name: `村庄${i}`,
                     region: `${provinces[i % provinces.length]}${cities[i % cities.length]}镇${Math.floor(i/10) + 1}`,
-                    status: statuses[i % statuses.length]
+                    status: statuses[i % statuses.length],
+                    star: (i % 5) + 1  // 1-5星随机分配
                 });
             }
             return villages;
@@ -1350,7 +1353,8 @@
                     id: `${province.toUpperCase()}${String(i).padStart(3, '0')}`,
                     name: `${provinceName}村庄${i}`,
                     region: `${provinceName}${cities[i % cities.length]}镇${Math.floor(i/5) + 1}`,
-                    status: statuses[i % statuses.length]
+                    status: statuses[i % statuses.length],
+                    star: (i % 5) + 1
                 });
             }
             return villages;
@@ -1368,7 +1372,8 @@
                     id: `${city.toUpperCase()}${String(i).padStart(3, '0')}`,
                     name: `${cityName}村庄${i}`,
                     region: `${provinceName}${cityName}镇${Math.floor(i/3) + 1}`,
-                    status: statuses[i % statuses.length]
+                    status: statuses[i % statuses.length],
+                    star: (i % 5) + 1
                 });
             }
             return villages;
@@ -1387,7 +1392,8 @@
                     id: `${town.toUpperCase()}${String(i).padStart(2, '0')}`,
                     name: `${townName}村${i}`,
                     region: `${provinceName}${cityName}${townName}`,
-                    status: statuses[i % statuses.length]
+                    status: statuses[i % statuses.length],
+                    star: (i % 5) + 1
                 });
             }
             return villages;
