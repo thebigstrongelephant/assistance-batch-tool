@@ -512,6 +512,24 @@
             font-size: 14px;
             line-height: 1.6;
         }
+        
+        .parse-stats {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #1565c0;
+        }
+        
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -530,7 +548,6 @@
         <div class="nav-tabs-container">
             <div class="nav-tab active" onclick="switchTab('batch-send')">📤 批量下发</div>
             <div class="nav-tab" onclick="switchTab('activity-config')">⚙️ 运营活动配置</div>
-            <div class="nav-tab" onclick="switchTab('fluctuation-monitor')">📊 助力金波动监控</div>
             <div class="nav-tab" onclick="switchTab('audit-management')">📋 审核管理</div>
         </div>
     </div>
@@ -564,7 +581,7 @@
                             <label class="form-label">省份</label>
                             <select class="form-select" id="province" onchange="loadCities()">
                                 <option value="">请选择省份</option>
-                                <option value="all">全部省份</option>
+                                <option value="all">✅ 全选</option>
                                 <option value="hebei">河北省</option>
                                 <option value="beijing">北京市</option>
                                 <option value="shandong">山东省</option>
@@ -573,24 +590,39 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">城市</label>
-                            <select class="form-select" id="city" onchange="loadTowns()">
+                            <label class="form-label">市</label>
+                            <select class="form-select" id="city" onchange="loadCounties()">
                                 <option value="">请先选择省份</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">乡镇</label>
-                            <select class="form-select" id="town" onchange="loadVillages()">
-                                <option value="">请先选择城市</option>
+                            <label class="form-label">县</label>
+                            <select class="form-select" id="county" onchange="loadTowns()">
+                                <option value="">请先选择市</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">村庄筛选</label>
-                            <select class="form-select" id="villageFilter">
-                                <option value="all">全部村庄</option>
-                                <option value="active">活跃村庄</option>
-                                <option value="new">新入驻村庄</option>
-                                <option value="normal">正常村庄</option>
+                            <label class="form-label">镇</label>
+                            <select class="form-select" id="town" onchange="loadVillages()">
+                                <option value="">请先选择县</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">乡村</label>
+                            <select class="form-select" id="village">
+                                <option value="">请先选择镇</option>
+                                <option value="all">✅ 全量乡村</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">村庄星级筛选</label>
+                            <select class="form-select" id="villageStarFilter">
+                                <option value="all">全部星级</option>
+                                <option value="5">⭐⭐⭐⭐⭐ 5星村庄</option>
+                                <option value="4">⭐⭐⭐⭐ 4星村庄</option>
+                                <option value="3">⭐⭐⭐ 3星村庄</option>
+                                <option value="2">⭐⭐ 2星村庄</option>
+                                <option value="1">⭐ 1星村庄</option>
                             </select>
                         </div>
                     </div>
@@ -601,14 +633,44 @@
 
                 <!-- Excel导入 -->
                 <div class="form-section" id="excelImportSection" style="display: none;">
-                    <div class="section-title">Excel文件导入</div>
-                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-                        <div class="upload-icon">📁</div>
-                        <div class="upload-text">点击上传或拖拽Excel文件到此处</div>
-                        <div class="upload-hint">支持 .xlsx, .xls 格式，文件大小不超过10MB</div>
+                    <div class="section-title">表格数据导入</div>
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" style="flex: 1;">
+                            <div class="upload-icon">📁</div>
+                            <div class="upload-text">点击上传或拖拽Excel文件到此处</div>
+                            <div class="upload-hint">支持 .xlsx, .xls 格式，文件大小不超过10MB</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <button class="btn btn-secondary" onclick="fillDemoData()">
+                                🎯 一键填入虚拟数据
+                            </button>
+                            <button class="btn btn-outline" onclick="downloadTemplate()">
+                                📥 下载Excel模板
+                            </button>
+                        </div>
                     </div>
                     <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleFileUpload(event)">
                     <div class="file-list" id="fileList"></div>
+                    
+                    <!-- 解析结果展示 -->
+                    <div id="parseResultSection" style="display: none;">
+                        <div class="section-title">📊 解析结果</div>
+                        <div id="parseStats" class="parse-stats"></div>
+                        <div class="table-container">
+                            <table class="preview-table" id="parseResultTable">
+                                <thead>
+                                    <tr>
+                                        <th>村庄ID</th>
+                                        <th>村庄名称</th>
+                                        <th>助力金金额</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="parseResultBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     
                     <div class="template-preview">
                         <div class="template-title">📋 Excel模板格式说明</div>
@@ -616,8 +678,7 @@
                             <strong>必需列：</strong><br>
                             • 村庄ID (village_id) - 必填<br>
                             • 村庄名称 (village_name) - 可选，用于核对<br>
-                            • 助力金额 (amount) - 可选，不填则使用统一金额<br><br>
-                            <button class="btn btn-outline" onclick="downloadTemplate()">📥 下载Excel模板</button>
+                            • 助力金额 (amount) - 可选，不填则使用统一金额<br>
                         </div>
                     </div>
                 </div>
@@ -633,9 +694,10 @@
                         <div class="form-group">
                             <label class="form-label">有效期</label>
                             <select class="form-select" id="validityPeriod">
-                                <option value="1">1天</option>
-                                <option value="7" selected>1周</option>
-                                <option value="30">1个月</option>
+                                <option value="3">三天</option>
+                                <option value="7" selected>一周</option>
+                                <option value="14">两周</option>
+                                <option value="30">一个月</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -740,60 +802,40 @@
                 </div>
 
                 <div class="activity-config">
-                    <div class="activity-title">🏆 村庄活跃度奖励活动</div>
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <label class="switch">
-                            <input type="checkbox" id="activityReward" onchange="toggleActivityReward()">
-                            <span class="slider"></span>
-                        </label>
-                        <span>启用村庄活跃度奖励机制</span>
-                    </div>
-                    
-                    <div id="activityRewardConfig" style="display: none;">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label">活跃度阈值（申请数）</label>
-                                <input type="number" class="form-input" id="activityThreshold" value="10" min="1">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">奖励倍数</label>
-                                <select class="form-select" id="rewardMultiplier">
-                                    <option value="1.2">1.2倍</option>
-                                    <option value="1.5" selected>1.5倍</option>
-                                    <option value="2.0">2.0倍</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="activity-config">
-                    <div class="activity-title">📅 节假日特殊活动</div>
+                    <div class="activity-title">📅 节假日定时任务助力金</div>
                     <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
                         <label class="switch">
                             <input type="checkbox" id="holidayActivity" onchange="toggleHolidayActivity()">
                             <span class="slider"></span>
                         </label>
-                        <span>启用节假日特殊助力金活动</span>
+                        <span>启用节假日定时任务助力金</span>
                     </div>
                     
                     <div id="holidayConfig" style="display: none;">
                         <div class="form-grid">
                             <div class="form-group">
-                                <label class="form-label">活动开始时间</label>
+                                <label class="form-label">定时执行时间</label>
                                 <input type="datetime-local" class="form-input" id="holidayStartTime">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">活动结束时间</label>
+                                <label class="form-label">任务结束时间</label>
                                 <input type="datetime-local" class="form-input" id="holidayEndTime">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">特殊金额（元）</label>
+                                <label class="form-label">助力金额（元）</label>
                                 <input type="number" class="form-input" id="holidayAmount" value="200" min="1" step="0.01">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">活动主题</label>
-                                <input type="text" class="form-input" id="holidayTheme" placeholder="如：春节特别活动">
+                                <label class="form-label">任务名称</label>
+                                <input type="text" class="form-input" id="holidayTheme" placeholder="如：春节助力金定时发放">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">执行频率</label>
+                                <select class="form-select" id="taskFrequency">
+                                    <option value="once">仅执行一次</option>
+                                    <option value="daily">每日执行</option>
+                                    <option value="weekly">每周执行</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -805,66 +847,7 @@
             </div>
         </div>
 
-        <!-- 助力金波动监控 -->
-        <div id="fluctuation-monitor" class="tab-content">
-            <div class="chart-container">
-                <div class="chart-title">📈 助力金下发趋势（最近30天）</div>
-                <div class="chart-placeholder">
-                    📊 这里将显示助力金下发趋势图表<br>
-                    包含：每日下发金额、兑换金额、剩余金额等数据
-                </div>
-            </div>
 
-            <div class="chart-container">
-                <div class="chart-title">🏘️ 各地区助力金分布</div>
-                <div class="chart-placeholder">
-                    🗺️ 这里将显示各地区助力金分布图表<br>
-                    包含：省份分布、城市排行、村庄活跃度等
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">⚠️ 异常波动监控</div>
-                <table class="preview-table">
-                    <thead>
-                        <tr>
-                            <th>时间</th>
-                            <th>异常类型</th>
-                            <th>涉及地区</th>
-                            <th>异常金额</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>2025-11-03 14:30</td>
-                            <td>单日下发异常增长</td>
-                            <td>河北省石家庄市</td>
-                            <td>¥156,789</td>
-                            <td><span class="status-badge status-pending">待处理</span></td>
-                            <td><button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">查看详情</button></td>
-                        </tr>
-                        <tr>
-                            <td>2025-11-03 12:15</td>
-                            <td>兑换率异常下降</td>
-                            <td>山东省济南市</td>
-                            <td>¥89,456</td>
-                            <td><span class="status-badge status-processing">处理中</span></td>
-                            <td><button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">查看详情</button></td>
-                        </tr>
-                        <tr>
-                            <td>2025-11-02 16:45</td>
-                            <td>大额助力金集中下发</td>
-                            <td>北京市朝阳区</td>
-                            <td>¥234,567</td>
-                            <td><span class="status-badge status-approved">已处理</span></td>
-                            <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">查看记录</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
         <!-- 审核管理 -->
         <div id="audit-management" class="tab-content">
@@ -1102,22 +1085,24 @@
         function loadCities() {
             const province = document.getElementById('province').value;
             const citySelect = document.getElementById('city');
+            const countySelect = document.getElementById('county');
             const townSelect = document.getElementById('town');
+            const villageSelect = document.getElementById('village');
             
             // 重置下级选择器
-            townSelect.innerHTML = '<option value="">请先选择城市</option>';
+            countySelect.innerHTML = '<option value="">请先选择市</option>';
+            townSelect.innerHTML = '<option value="">请先选择县</option>';
+            villageSelect.innerHTML = '<option value="">请先选择镇</option>';
             
             if (province === 'all') {
                 // 选择全部省份时，显示全部城市选项
                 citySelect.innerHTML = `
-                    <option value="">请选择城市</option>
-                    <option value="all">全部城市</option>
+                    <option value="">请选择市</option>
+                    <option value="all">✅ 全选</option>
                     <option value="shijiazhuang">石家庄市</option>
                     <option value="baoding">保定市</option>
                     <option value="tangshan">唐山市</option>
-                    <option value="dongcheng">北京东城区</option>
-                    <option value="xicheng">北京西城区</option>
-                    <option value="chaoyang">北京朝阳区</option>
+                    <option value="dongcheng">北京市</option>
                     <option value="jinan">济南市</option>
                     <option value="qingdao">青岛市</option>
                 `;
@@ -1133,10 +1118,7 @@
                     { value: 'handan', text: '邯郸市' }
                 ],
                 'beijing': [
-                    { value: 'dongcheng', text: '东城区' },
-                    { value: 'xicheng', text: '西城区' },
-                    { value: 'chaoyang', text: '朝阳区' },
-                    { value: 'haidian', text: '海淀区' }
+                    { value: 'beijing', text: '北京市' }
                 ],
                 'shandong': [
                     { value: 'jinan', text: '济南市' },
@@ -1155,35 +1137,73 @@
                 ]
             };
             
-            citySelect.innerHTML = '<option value="">请选择城市</option>';
+            citySelect.innerHTML = '<option value="">请选择市</option>';
             if (province && cities[province]) {
-                citySelect.innerHTML += '<option value="all">全部城市</option>';
+                citySelect.innerHTML += '<option value="all">✅ 全选</option>';
                 cities[province].forEach(city => {
                     citySelect.innerHTML += `<option value="${city.value}">${city.text}</option>`;
                 });
             }
         }
 
-        // 加载乡镇列表
-        function loadTowns() {
+        // 加载县列表
+        function loadCounties() {
             const city = document.getElementById('city').value;
+            const countySelect = document.getElementById('county');
             const townSelect = document.getElementById('town');
+            const villageSelect = document.getElementById('village');
             
-            townSelect.innerHTML = '<option value="">请选择乡镇</option>';
+            // 重置下级选择器
+            townSelect.innerHTML = '<option value="">请先选择县</option>';
+            villageSelect.innerHTML = '<option value="">请先选择镇</option>';
             
-            if (city === 'all') {
-                // 选择全部城市时，显示全部乡镇选项
-                townSelect.innerHTML += '<option value="all">全部乡镇</option>';
+            countySelect.innerHTML = '<option value="">请选择县</option>';
+            if (city === 'all' || city) {
+                countySelect.innerHTML += '<option value="all">✅ 全选</option>';
+                countySelect.innerHTML += '<option value="county1">示例县1</option>';
+                countySelect.innerHTML += '<option value="county2">示例县2</option>';
+                countySelect.innerHTML += '<option value="county3">示例县3</option>';
+            }
+        }
+
+        // 加载镇列表
+        function loadTowns() {
+            const county = document.getElementById('county').value;
+            const townSelect = document.getElementById('town');
+            const villageSelect = document.getElementById('village');
+            
+            // 重置下级选择器
+            villageSelect.innerHTML = '<option value="">请先选择镇</option>';
+            
+            townSelect.innerHTML = '<option value="">请选择镇</option>';
+            
+            if (county === 'all' || county) {
+                townSelect.innerHTML += '<option value="all">✅ 全选</option>';
                 townSelect.innerHTML += '<option value="zhangjiazhuang">张家庄镇</option>';
                 townSelect.innerHTML += '<option value="lijiaying">李家营镇</option>';
                 townSelect.innerHTML += '<option value="wangcun">王村镇</option>';
                 townSelect.innerHTML += '<option value="xiaozhuang">小庄镇</option>';
                 townSelect.innerHTML += '<option value="dongzhen">东镇</option>';
                 townSelect.innerHTML += '<option value="xizhen">西镇</option>';
-                return;
             }
+        }
+
+        // 加载乡村列表
+        function loadVillages() {
+            const town = document.getElementById('town').value;
+            const villageSelect = document.getElementById('village');
             
-            // 模拟乡镇数据
+            villageSelect.innerHTML = '<option value="">请选择乡村</option>';
+            
+            if (town === 'all' || town) {
+                villageSelect.innerHTML += '<option value="all">✅ 全量乡村</option>';
+                villageSelect.innerHTML += '<option value="village1">示例村1</option>';
+                villageSelect.innerHTML += '<option value="village2">示例村2</option>';
+                villageSelect.innerHTML += '<option value="village3">示例村3</option>';
+                villageSelect.innerHTML += '<option value="village4">示例村4</option>';
+                villageSelect.innerHTML += '<option value="village5">示例村5</option>';
+            }
+        }
             if (city) {
                 townSelect.innerHTML += '<option value="all">全部乡镇</option>';
                 townSelect.innerHTML += '<option value="zhangjiazhuang">张家庄镇</option>';
@@ -1373,6 +1393,65 @@
             return villages;
         }
 
+        // 一键填入虚拟数据
+        function fillDemoData() {
+            const demoData = [
+                { villageId: 'V001', villageName: '张家村', amount: 100 },
+                { villageId: 'V002', villageName: '李家庄', amount: 150 },
+                { villageId: 'V003', villageName: '王家屯', amount: 200 },
+                { villageId: 'V004', villageName: '赵家湾', amount: 120 },
+                { villageId: 'V005', villageName: '陈家坡', amount: 180 },
+                { villageId: 'V006', villageName: '刘家沟', amount: 90 },
+                { villageId: 'V007', villageName: '马家岭', amount: 160 },
+                { villageId: 'V008', villageName: '孙家营', amount: 110 },
+                { villageId: 'V009', villageName: '周家堡', amount: 140 },
+                { villageId: 'V010', villageName: '吴家寨', amount: 170 }
+            ];
+            
+            displayParseResult(demoData);
+            showNotification('虚拟数据已填入，可以进行后续操作演示');
+        }
+
+        // 显示解析结果
+        function displayParseResult(data) {
+            const parseResultSection = document.getElementById('parseResultSection');
+            const parseStats = document.getElementById('parseStats');
+            const parseResultBody = document.getElementById('parseResultBody');
+            
+            // 计算统计数据
+            const totalVillages = data.length;
+            const totalAmount = data.reduce((sum, item) => sum + item.amount, 0);
+            const maxAmount = Math.max(...data.map(item => item.amount));
+            const minAmount = Math.min(...data.map(item => item.amount));
+            const maxAmountVillages = data.filter(item => item.amount === maxAmount);
+            const minAmountVillages = data.filter(item => item.amount === minAmount);
+            
+            // 显示统计信息
+            parseStats.innerHTML = `
+                <strong>📊 解析统计：</strong><br>
+                总共 <strong>${totalVillages}</strong> 个村庄，总助力金 <strong>${totalAmount}</strong> 元，
+                其中单村最高助力金为 <strong>${maxAmount}</strong> 元，共 <strong>${maxAmountVillages.length}</strong> 个，
+                包含 ${maxAmountVillages.map(v => v.villageName).join('、')} 等；
+                最低单村助力金为 <strong>${minAmount}</strong> 元，共 <strong>${minAmountVillages.length}</strong> 个，
+                包含 ${minAmountVillages.map(v => v.villageName).join('、')} 等。
+            `;
+            
+            // 显示表格数据
+            parseResultBody.innerHTML = '';
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.villageId}</td>
+                    <td>${item.villageName}</td>
+                    <td>¥${item.amount}</td>
+                    <td><span class="status-badge status-approved">解析成功</span></td>
+                `;
+                parseResultBody.appendChild(row);
+            });
+            
+            parseResultSection.style.display = 'block';
+        }
+
         // 处理文件上传
         function handleFileUpload(event) {
             const file = event.target.files[0];
@@ -1407,15 +1486,16 @@
             
             // 模拟解析Excel文件
             setTimeout(() => {
-                const villages = [
-                    { id: 'V101', name: '导入村庄1', region: '河北省石家庄市', status: '正常', amount: 100 },
-                    { id: 'V102', name: '导入村庄2', region: '河北省石家庄市', status: '正常', amount: 150 },
-                    { id: 'V103', name: '导入村庄3', region: '河北省石家庄市', status: '正常', amount: 200 }
+                const parseData = [
+                    { villageId: 'V101', villageName: '导入村庄1', amount: 100 },
+                    { villageId: 'V102', villageName: '导入村庄2', amount: 150 },
+                    { villageId: 'V103', villageName: '导入村庄3', amount: 200 },
+                    { villageId: 'V104', villageName: '导入村庄4', amount: 120 },
+                    { villageId: 'V105', villageName: '导入村庄5', amount: 180 }
                 ];
                 
-                state.batchConfig.villages = villages;
-                updateVillagePreview();
-                showNotification('Excel文件解析成功，共导入 ' + villages.length + ' 个村庄');
+                displayParseResult(parseData);
+                showNotification('Excel文件解析成功，共导入 ' + parseData.length + ' 个村庄');
             }, 1000);
         }
 
