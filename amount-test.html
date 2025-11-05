@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金额转换测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #2c5aa0;
+            outline: none;
+        }
+        .amount-display {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #2c5aa0;
+        }
+        .chinese-amount {
+            font-size: 16px;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        .wan-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .test-examples {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e9ecef;
+            border-radius: 6px;
+        }
+        .example {
+            margin: 10px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .example:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>💰 金额转换功能测试</h1>
+        
+        <div class="form-group">
+            <label for="amountInput">输入金额（元）</label>
+            <input type="number" id="amountInput" placeholder="请输入金额" min="0" step="0.01">
+            
+            <div class="amount-display">
+                <div class="chinese-amount" id="chineseAmount">请输入金额</div>
+                <div class="wan-amount" id="wanAmount" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <div class="test-examples">
+            <h3>📝 测试示例（点击快速填入）</h3>
+            <div class="example" onclick="testAmount(100)">100元 → 壹佰元整</div>
+            <div class="example" onclick="testAmount(1000)">1,000元 → 壹仟元整</div>
+            <div class="example" onclick="testAmount(10000)">10,000元 → 壹万元整 (红色显示)</div>
+            <div class="example" onclick="testAmount(12345.67)">12,345.67元 → 壹万贰仟叁佰肆拾伍元陆角柒分</div>
+            <div class="example" onclick="testAmount(50000)">50,000元 → 伍万元整 (红色显示)</div>
+            <div class="example" onclick="testAmount(123456.78)">123,456.78元 → 拾贰万叁仟肆佰伍拾陆元柒角捌分</div>
+        </div>
+    </div>
+
+    <script>
+        // 数字转汉字大写
+        function numberToChinese(num) {
+            if (isNaN(num) || num < 0) return '';
+            
+            const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+            const units = ['', '拾', '佰', '仟'];
+            const bigUnits = ['', '万', '亿'];
+            
+            if (num === 0) return '零元整';
+            
+            // 分离整数和小数部分
+            const parts = num.toString().split('.');
+            let integerPart = parseInt(parts[0]);
+            let decimalPart = parts[1] || '';
+            
+            let result = '';
+            let unitIndex = 0;
+            
+            // 处理整数部分
+            while (integerPart > 0) {
+                const section = integerPart % 10000;
+                if (section > 0) {
+                    let sectionStr = '';
+                    let tempSection = section;
+                    let localUnitIndex = 0;
+                    
+                    while (tempSection > 0) {
+                        const digit = tempSection % 10;
+                        if (digit > 0) {
+                            sectionStr = digits[digit] + units[localUnitIndex] + sectionStr;
+                        } else if (sectionStr && tempSection > 0) {
+                            sectionStr = '零' + sectionStr;
+                        }
+                        tempSection = Math.floor(tempSection / 10);
+                        localUnitIndex++;
+                    }
+                    
+                    result = sectionStr + bigUnits[unitIndex] + result;
+                }
+                integerPart = Math.floor(integerPart / 10000);
+                unitIndex++;
+            }
+            
+            result += '元';
+            
+            // 处理小数部分
+            if (decimalPart) {
+                if (decimalPart.length >= 1 && decimalPart[0] !== '0') {
+                    result += digits[parseInt(decimalPart[0])] + '角';
+                }
+                if (decimalPart.length >= 2 && decimalPart[1] !== '0') {
+                    result += digits[parseInt(decimalPart[1])] + '分';
+                }
+            } else {
+                result += '整';
+            }
+            
+            return result;
+        }
+        
+        // 格式化万元显示
+        function formatWanAmount(num) {
+            if (num >= 10000) {
+                const wan = (num / 10000).toFixed(2);
+                return `${wan} 万元`;
+            }
+            return '';
+        }
+        
+        // 更新金额显示
+        function updateAmountDisplay() {
+            const amountInput = document.getElementById('amountInput');
+            const chineseAmount = document.getElementById('chineseAmount');
+            const wanAmount = document.getElementById('wanAmount');
+            
+            const amount = parseFloat(amountInput.value);
+            
+            if (isNaN(amount) || amount <= 0) {
+                chineseAmount.textContent = '请输入金额';
+                wanAmount.style.display = 'none';
+                return;
+            }
+            
+            // 显示汉字大写
+            chineseAmount.textContent = numberToChinese(amount);
+            
+            // 如果超过1万元，显示万元格式
+            if (amount >= 10000) {
+                wanAmount.textContent = formatWanAmount(amount);
+                wanAmount.style.display = 'block';
+            } else {
+                wanAmount.style.display = 'none';
+            }
+        }
+        
+        // 测试特定金额
+        function testAmount(amount) {
+            document.getElementById('amountInput').value = amount;
+            updateAmountDisplay();
+        }
+        
+        // 页面加载完成后绑定事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountInput = document.getElementById('amountInput');
+            amountInput.addEventListener('input', updateAmountDisplay);
+            amountInput.addEventListener('change', updateAmountDisplay);
+        });
+    </script>
+</body>
+</html>
