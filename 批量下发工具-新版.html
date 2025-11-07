@@ -13,16 +13,32 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Roboto, Arial, sans-serif;
-            background: #f5f7fa;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
             color: #333;
             line-height: 1.6;
+            min-height: 100vh;
         }
         
         .header {
-            background: #2c5aa0;
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
             color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            z-index: -1;
         }
         
         .header-content {
@@ -35,9 +51,11 @@
         }
         
         .nav-tabs {
-            background: white;
-            border-bottom: 2px solid #e9ecef;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(233,236,239,0.3);
             padding: 0 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
         
         .nav-tabs-container {
@@ -47,21 +65,26 @@
         }
         
         .nav-tab {
-            padding: 15px 25px;
+            padding: 18px 30px;
             cursor: pointer;
             border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 500;
+            position: relative;
+            border-radius: 12px 12px 0 0;
+            margin: 0 2px;
         }
         
         .nav-tab:hover {
-            background: #f8f9fa;
+            background: rgba(44, 90, 160, 0.08);
+            transform: translateY(-2px);
         }
         
         .nav-tab.active {
             color: #2c5aa0;
             border-bottom-color: #2c5aa0;
-            background: #f8f9fa;
+            background: rgba(44, 90, 160, 0.12);
+            box-shadow: 0 -2px 12px rgba(44, 90, 160, 0.15);
         }
         
         .container {
@@ -79,11 +102,19 @@
         }
         
         .card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
             margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
         }
         
         .card-title {
@@ -97,11 +128,19 @@
         }
         
         .form-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            background: #fafbfc;
+            margin-bottom: 35px;
+            padding: 30px;
+            border: 1px solid rgba(233,236,239,0.3);
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(250,251,252,0.8) 0%, rgba(255,255,255,0.6) 100%);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .form-section:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
         }
         
         .section-title {
@@ -132,17 +171,26 @@
         }
         
         .form-input, .form-select, .form-textarea {
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
+            padding: 16px 20px;
+            border: 2px solid rgba(233,236,239,0.5);
+            border-radius: 12px;
             font-size: 14px;
-            transition: all 0.2s ease;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
             border-color: #2c5aa0;
-            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+            box-shadow: 0 0 0 4px rgba(44, 90, 160, 0.15);
+            background: rgba(255,255,255,0.95);
+            transform: translateY(-2px);
+        }
+        
+        .form-input:hover, .form-select:hover, .form-textarea:hover {
+            border-color: rgba(44, 90, 160, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         
         .form-textarea {
@@ -151,41 +199,70 @@
         }
         
         .btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
         }
         
         .btn-primary {
-            background: #2c5aa0;
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
             color: white;
         }
         
         .btn-primary:hover {
-            background: #1e3f73;
+            background: linear-gradient(135deg, #1e3f73 0%, #2c5aa0 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(44, 90, 160, 0.3);
         }
         
         .btn-secondary {
-            background: #6c757d;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         }
         
         .btn-outline {
-            background: transparent;
+            background: rgba(255,255,255,0.1);
             color: #2c5aa0;
-            border: 2px solid #2c5aa0;
+            border: 2px solid rgba(44, 90, 160, 0.3);
+            backdrop-filter: blur(10px);
         }
         
         .btn-outline:hover {
-            background: #2c5aa0;
-            color: white;
+            background: rgba(44, 90, 160, 0.1);
+            border-color: #2c5aa0;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(44, 90, 160, 0.2);
         }
         
         .hidden-section {
@@ -198,8 +275,84 @@
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { 
+                opacity: 0; 
+                transform: translateY(-20px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+        
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .card {
+            animation: slideInFromLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* 加载动画 */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 页面加载效果 */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader-content {
+            text-align: center;
+            color: white;
+        }
+        
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 20px;
         }
         
         .upload-area {
@@ -230,23 +383,50 @@
         }
         
         .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
             border-left: 4px solid #2c5aa0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(44, 90, 160, 0.05) 0%, rgba(44, 90, 160, 0.02) 100%);
+            z-index: -1;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            border-left-color: #1e3f73;
         }
         
         .stat-value {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 28px;
+            font-weight: 700;
             color: #2c5aa0;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .stat-label {
             font-size: 14px;
             color: #666;
-            margin-top: 5px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         
         .amount-display {
@@ -270,27 +450,297 @@
             color: #dc3545;
         }
         
+        .wan-amount.approximate::before {
+            content: "近似 ";
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 多选下拉框样式 */
+        select[multiple] {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid rgba(233,236,239,0.5);
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        select[multiple] option {
+            padding: 8px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+        }
+        
+        select[multiple] option:checked {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
+            color: white;
+        }
+        
+        /* 地区选择层级样式 */
+        .region-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .region-arrow {
+            color: #666;
+            font-weight: bold;
+        }
+        
+        /* 附件展示样式 */
+        .attachment-display {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .attachment-item:last-child {
+            border-bottom: none;
+        }
+        
+        .attachment-icon {
+            font-size: 24px;
+        }
+        
+        .attachment-info {
+            flex: 1;
+        }
+        
+        .attachment-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .attachment-size {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 星级筛选模块样式 */
+        .star-filter-modules {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .star-module {
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 80px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .star-module:hover {
+            border-color: #2c5aa0;
+            background: rgba(44, 90, 160, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 90, 160, 0.15);
+        }
+        
+        .star-module.active {
+            border-color: #2c5aa0;
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
+        }
+        
+        .star-module.active:hover {
+            background: linear-gradient(135deg, #1e3f73 0%, #2c5aa0 100%);
+        }
+        
+        .star-text {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        /* 任务单预览新样式 */
+        .summary-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(44, 90, 160, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .summary-item-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .summary-item-inline .summary-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .summary-item-inline .summary-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+        
+        .execution-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .execution-notice-small {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 11px;
+            color: #666;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            max-width: 200px;
+            line-height: 1.3;
+            z-index: 10;
+        }
+        
+        .notice-icon {
+            font-size: 20px;
+            color: #ffc107;
+        }
+        
+        .notice-content {
+            flex: 1;
+            font-size: 14px;
+            color: #856404;
+            line-height: 1.5;
+        }
+        
+        .detail-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(233, 236, 239, 0.5);
+        }
+        
+        .detail-title {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .detail-item {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+        
+        .detail-label {
+            min-width: 80px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        /* 村庄数量显示优化 */
+        .village-count-display {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .village-selection-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .village-count-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
+            margin: 10px 0;
+        }
+        
+        .village-count-text {
+            color: #666;
+            font-size: 14px;
+        }
+        
         .result-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
         }
         
         .result-table th,
         .result-table td {
-            padding: 12px;
+            padding: 16px 20px;
             text-align: left;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid rgba(233,236,239,0.3);
         }
         
         .result-table th {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, rgba(248,249,250,0.9) 0%, rgba(233,236,239,0.5) 100%);
             font-weight: 600;
             color: #495057;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        
+        .result-table tr {
+            transition: all 0.2s ease;
         }
         
         .result-table tr:hover {
-            background: #f8f9fa;
+            background: rgba(44, 90, 160, 0.05);
+            transform: scale(1.01);
+        }
+        
+        .result-table tr:last-child td {
+            border-bottom: none;
         }
         
         .message-preview {
@@ -334,6 +784,73 @@
             font-weight: bold;
             color: #856404;
             margin-bottom: 20px;
+        }
+        
+        /* 任务状态样式 */
+        .task-status-info {
+            background: rgba(44, 90, 160, 0.05);
+            border: 1px solid rgba(44, 90, 160, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .task-status-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .task-status-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .task-submit-time {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .task-status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-submitted {
+            background: linear-gradient(135deg, rgba(255,243,205,0.9) 0%, rgba(255,243,205,0.7) 100%);
+            color: #856404;
+            border: 1px solid rgba(133,100,4,0.2);
+        }
+        
+        .status-pending-review {
+            background: linear-gradient(135deg, rgba(255,243,205,0.9) 0%, rgba(255,243,205,0.7) 100%);
+            color: #856404;
+            border: 1px solid rgba(133,100,4,0.2);
+        }
+        
+        .status-review-rejected {
+            background: linear-gradient(135deg, rgba(248,215,218,0.9) 0%, rgba(248,215,218,0.7) 100%);
+            color: #721c24;
+            border: 1px solid rgba(114,28,36,0.2);
+        }
+        
+        .status-approved-pending {
+            background: linear-gradient(135deg, rgba(209,236,241,0.9) 0%, rgba(209,236,241,0.7) 100%);
+            color: #0c5460;
+            border: 1px solid rgba(12,84,96,0.2);
+        }
+        
+        .status-completed {
+            background: linear-gradient(135deg, rgba(212,237,218,0.9) 0%, rgba(212,237,218,0.7) 100%);
+            color: #155724;
+            border: 1px solid rgba(21,87,36,0.2);
         }
         
         .summary-grid {
@@ -393,6 +910,239 @@
         .checkbox-item input[type="checkbox"] {
             width: 18px;
             height: 18px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #e0a800 0%, #ffc107 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(20px);
+            margin: 3% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 85%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .detail-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .activity-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.03) 0%, rgba(40, 167, 69, 0.01) 100%);
+            z-index: -1;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            border-left-color: #20c997;
+        }
+        
+        .activity-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 10px;
+        }
+        
+        .activity-meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .activity-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .activity-stat {
+            text-align: center;
+        }
+        
+        .activity-stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .activity-stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, rgba(255,243,205,0.9) 0%, rgba(255,243,205,0.7) 100%);
+            color: #856404;
+            border-color: rgba(133,100,4,0.2);
+        }
+        
+        .status-approved {
+            background: linear-gradient(135deg, rgba(212,237,218,0.9) 0%, rgba(212,237,218,0.7) 100%);
+            color: #155724;
+            border-color: rgba(21,87,36,0.2);
+        }
+        
+        .status-rejected {
+            background: linear-gradient(135deg, rgba(248,215,218,0.9) 0%, rgba(248,215,218,0.7) 100%);
+            color: #721c24;
+            border-color: rgba(114,28,36,0.2);
+        }
+        
+        .status-processing {
+            background: linear-gradient(135deg, rgba(209,236,241,0.9) 0%, rgba(209,236,241,0.7) 100%);
+            color: #0c5460;
+            border-color: rgba(12,84,96,0.2);
+        }
+        
+        .status-warning {
+            background: linear-gradient(135deg, rgba(255,243,205,0.9) 0%, rgba(255,193,7,0.3) 100%);
+            color: #856404;
+            border-color: rgba(255,193,7,0.3);
         }
         
         .download-link {
@@ -488,6 +1238,15 @@
     </style>
 </head>
 <body>
+    <!-- 页面加载器 -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <h3>善治美平台公益 to C 开放</h3>
+            <p>助力金发放工具加载中...</p>
+        </div>
+    </div>
+
     <div class="header">
         <div class="header-content">
             <h1>🎯 善治美平台公益 to C 开放 - 助力金发放工具</h1>
@@ -513,6 +1272,7 @@
         <div id="batch-send" class="tab-content active">
             <div class="card">
                 <div class="card-title">📤 批量下发配置</div>
+                <p style="color: #666; margin-bottom: 30px;">配置助力金批量下发任务，支持按地区下发和Excel导入两种方式</p>
                 
                 <!-- F1.1 下发方式选择 -->
                 <div class="form-section">
@@ -534,68 +1294,68 @@
                 <div class="form-section hidden-section" id="regionSendSection">
                     <div class="section-title">🌍 选择地区下发</div>
                     
-                    <!-- 地区选择 -->
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">省份</label>
-                            <select class="form-select" id="province">
-                                <option value="">请选择省份</option>
-                                <option value="all">✅ 全选</option>
+                    <!-- 地区选择 - 层级结构一行显示 -->
+                    <div class="form-group">
+                        <label class="form-label">选择地区</label>
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <select class="form-select" id="province" style="min-width: 120px;" onchange="updateRegionSelector('city', this.value)">
+                                <option value="">选择省份</option>
+                                <option value="all">✅ 全国</option>
+                                <option value="yunnan">云南省</option>
                                 <option value="hebei">河北省</option>
                                 <option value="beijing">北京市</option>
                                 <option value="shandong">山东省</option>
                                 <option value="henan">河南省</option>
                                 <option value="shanxi">山西省</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">市</label>
-                            <select class="form-select" id="city">
-                                <option value="">请先选择省份</option>
+                            <span style="color: #666;">></span>
+                            <select class="form-select" id="city" style="min-width: 120px;" onchange="updateRegionSelector('county', this.value)">
+                                <option value="">选择市</option>
+                                <option value="all">✅ 全部市</option>
+                            </select>
+                            <span style="color: #666;">></span>
+                            <select class="form-select" id="county" style="min-width: 120px;" onchange="updateRegionSelector('town', this.value)">
+                                <option value="">选择县</option>
+                                <option value="all">✅ 全部县</option>
+                            </select>
+                            <span style="color: #666;">></span>
+                            <select class="form-select" id="town" style="min-width: 120px;" onchange="updateRegionSelector('village', this.value)">
+                                <option value="">选择镇</option>
+                                <option value="all">✅ 全部镇</option>
+                            </select>
+                            <span style="color: #666;">></span>
+                            <select class="form-select" id="village" style="min-width: 120px;">
+                                <option value="">选择村</option>
+                                <option value="all">✅ 全部村</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">县</label>
-                            <select class="form-select" id="county">
-                                <option value="">请先选择市</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">镇</label>
-                            <select class="form-select" id="town">
-                                <option value="">请先选择县</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">乡村</label>
-                            <select class="form-select" id="village">
-                                <option value="">请先选择镇</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">村庄星级筛选</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="star5" value="5" checked>
-                                    <label for="star5">⭐⭐⭐⭐⭐ 5星</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="star4" value="4" checked>
-                                    <label for="star4">⭐⭐⭐⭐ 4星</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="star3" value="3" checked>
-                                    <label for="star3">⭐⭐⭐ 3星</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="star2" value="2" checked>
-                                    <label for="star2">⭐⭐ 2星</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="star1" value="1" checked>
-                                    <label for="star1">⭐ 1星</label>
-                                </div>
+                    </div>
+                    
+                    <!-- 村庄星级筛选 - 模块化展示 -->
+                    <div class="form-group">
+                        <label class="form-label">村庄星级筛选</label>
+                        <div class="star-filter-modules" id="starFilterModules">
+                            <div class="star-module active" data-star="5" onclick="toggleStarModule(this)">
+                                <div class="star-text">五星</div>
                             </div>
+                            <div class="star-module active" data-star="4" onclick="toggleStarModule(this)">
+                                <div class="star-text">四星</div>
+                            </div>
+                            <div class="star-module active" data-star="3" onclick="toggleStarModule(this)">
+                                <div class="star-text">三星</div>
+                            </div>
+                            <div class="star-module active" data-star="2" onclick="toggleStarModule(this)">
+                                <div class="star-text">二星</div>
+                            </div>
+                            <div class="star-module active" data-star="1" onclick="toggleStarModule(this)">
+                                <div class="star-text">一星</div>
+                            </div>
+                            <div class="star-module active" data-star="0" onclick="toggleStarModule(this)">
+                                <div class="star-text">零星</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-top: 10px;">
+                            点击模块选择/取消选择对应星级，默认全选
                         </div>
                     </div>
                     
@@ -607,6 +1367,9 @@
                     
                     <!-- 村庄数量显示 -->
                     <div class="village-count-display hidden-section" id="villageCountDisplay">
+                        <div class="village-selection-info" id="villageSelectionInfo">
+                            选择了 云南省 曲靖市 宣威市 双河乡 的 全星级 村庄
+                        </div>
                         <div class="village-count-number" id="villageCountNumber">0</div>
                         <div class="village-count-text" id="villageCountText">个村庄</div>
                     </div>
@@ -641,6 +1404,16 @@
                             </div>
                         </div>
                         <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                        
+                        <!-- 虚拟数据按钮 -->
+                        <div style="margin-top: 15px; text-align: center; display: flex; gap: 10px; justify-content: center;">
+                            <button class="btn btn-success btn-small" onclick="loadVirtualSuccessData()">
+                                ✅ 虚拟成功数据
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="loadVirtualErrorData()">
+                                ❌ 虚拟错误数据
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- F1.3.1 Excel解析结果 -->
@@ -658,8 +1431,7 @@
                                     <tr>
                                         <th>村庄ID</th>
                                         <th>村庄名称</th>
-                                        <th>助力金金额（元）</th>
-                                        <th>操作</th>
+                                        <th>助力金金额</th>
                                     </tr>
                                 </thead>
                                 <tbody id="resultTableBody">
@@ -690,8 +1462,14 @@
                 </div>
 
                 <!-- F1.4 助力金有效期配置 -->
-                <div class="form-section hidden-section" id="validitySection">
+                <div class="form-section hidden-section" id="validitySection" style="position: relative;">
                     <div class="section-title">⏰ 助力金有效期配置</div>
+                    
+                    <!-- 执行说明 - 右上角小提醒 -->
+                    <div class="execution-notice-small">
+                        审批通过后，系统将在每日早上8点～晚上6点期间自动执行下发
+                    </div>
+                    
                     <div class="form-group">
                         <label class="form-label">有效期<span style="color: red;">*</span></label>
                         <select class="form-select" id="validityPeriod" required>
@@ -724,7 +1502,7 @@
                     
                     <div class="form-group">
                         <label class="form-label">消息内容模板</label>
-                        <textarea class="form-textarea" id="messageTemplate" readonly>恭喜您！{village_name} 村两委为您下发助力金 ¥{amount} 元，有效期至 {expire_date}，请及时查看并兑换。感谢您对善治美平台公益的支持！</textarea>
+                        <textarea class="form-textarea" id="messageTemplate" readonly>恭喜你，{village_name}获得了助力金 {amount} 元，有效期为{validity_days}天，近期有老年人助老公益项目可供申请，请尽快申请。</textarea>
                     </div>
                     
                     <!-- F1.5.1 消息预览 -->
@@ -735,7 +1513,7 @@
                             恭喜您！张家村 村两委为您下发助力金 ¥100.00 元，有效期至 2025-11-12，请及时查看并兑换。感谢您对善治美平台公益的支持！
                         </div>
                         <div class="message-meta">
-                            推送对象：村两委+村支书身份 | 预计推送时间：审核通过后立即发送
+                            推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
                         </div>
                     </div>
                 </div>
@@ -744,33 +1522,84 @@
                 <div class="task-summary hidden-section" id="taskSummary">
                     <div class="task-summary-title">📋 任务单预览</div>
                     
-                    <div class="summary-grid">
-                        <div>
-                            <div class="summary-item">
-                                <span class="summary-label">任务提交人：</span>
-                                <span class="summary-value" id="summarySubmitter">张三</span>
+                    <!-- 任务提交人单独一行 -->
+                    <div class="summary-row" style="margin-bottom: 15px;">
+                        <div class="summary-item-inline">
+                            <span class="summary-label">任务提交人：</span>
+                            <span class="summary-value" id="summarySubmitter">张三</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 后续三个信息单独一行，字体变大 -->
+                    <div class="summary-row" style="font-size: 18px; font-weight: 600;">
+                        <div class="summary-item-inline">
+                            <span class="summary-label">任务覆盖村庄数：</span>
+                            <span class="summary-value" id="summaryVillageCount">0</span>
+                        </div>
+                        <div class="summary-item-inline">
+                            <span class="summary-label">任务助力金：</span>
+                            <span class="summary-value" id="summaryTotalAmount">¥0.00</span>
+                        </div>
+                        <div class="summary-item-inline">
+                            <span class="summary-label">有效期：</span>
+                            <span class="summary-value" id="summaryValidity">未设置</span>
+                        </div>
+                    </div>
+                    
+
+                    
+                    <!-- 执行说明移到任务单预览下方 -->
+                    <div class="execution-notice">
+                        <div class="notice-icon">⏰</div>
+                        <div class="notice-content">
+                            <strong>执行说明：</strong>审批通过后，系统将在每日早上8点～晚上6点期间自动执行下发。有效期为执行成功后开始计算的有效期时间。
+                        </div>
+                    </div>
+                    
+                    <!-- 详细信息 -->
+                    <div class="detail-section">
+                        <h4 class="detail-title">📍 村庄明细</h4>
+                        <div class="detail-item">
+                            <span class="detail-label">下发方式：</span>
+                            <span class="detail-value" id="summaryMethod">未选择</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">村庄范围：</span>
+                            <span class="detail-value" id="summaryVillageInfo">未选择</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">金额详情：</span>
+                            <span class="detail-value" id="summaryAmountInfo">未设置</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 模版消息预览 -->
+                    <div style="margin: 20px 0;">
+                        <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
+                        <div class="message-preview">
+                            <div class="message-header" id="taskPreviewTitle">🎉 您有新的助力金到账！</div>
+                            <div class="message-content" id="taskPreviewContent">
+                                恭喜您！张家村 村两委为您下发助力金 ¥100.00 元，有效期至 2025-11-12，请及时查看并兑换。感谢您对善治美平台公益的支持！
                             </div>
-                            <div class="summary-item">
-                                <span class="summary-label">任务覆盖村庄数：</span>
-                                <span class="summary-value" id="summaryVillageCount">0</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">任务总涉及助力金：</span>
-                                <span class="summary-value" id="summaryTotalAmount">¥0.00</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">有效期：</span>
-                                <span class="summary-value" id="summaryValidity">未设置</span>
+                            <div class="message-meta">
+                                推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
                             </div>
                         </div>
-                        <div>
-                            <div class="summary-item">
-                                <span class="summary-label">下发村庄：</span>
-                                <span class="summary-value" id="summaryVillageInfo">未选择</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">村庄金额：</span>
-                                <span class="summary-value" id="summaryAmountInfo">未设置</span>
+                    </div>
+                    
+                    <!-- Excel附件展示 -->
+                    <div class="hidden-section" id="excelAttachmentDisplay" style="margin: 20px 0;">
+                        <h4 style="color: #2c5aa0; margin-bottom: 10px;">📎 Excel附件</h4>
+                        <div class="attachment-display">
+                            <div class="attachment-item" id="attachmentItem">
+                                <div class="attachment-icon">📊</div>
+                                <div class="attachment-info">
+                                    <div class="attachment-name" id="attachmentName">助力金下发名单.xlsx</div>
+                                    <div class="attachment-size" id="attachmentSize">文件大小: 2.5MB | 上传时间: 2025-11-07 15:30</div>
+                                </div>
+                                <button class="btn btn-outline btn-small" onclick="downloadAttachment()">
+                                    📥 下载
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -799,12 +1628,108 @@
                 <div class="card-title">⚙️ 运营活动配置</div>
                 <p style="color: #666; margin-bottom: 30px;">配置自动化运营活动，激励特定用户行为或在特定节日活跃气氛</p>
                 
+                <!-- 活动统计 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">进行中活动</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">历史活动</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">¥5.2万</div>
+                        <div class="stat-label">活动总投入</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">参与率</div>
+                    </div>
+                </div>
+                
                 <!-- 已生效活动展示 -->
                 <div class="form-section">
                     <div class="section-title">✅ 已生效活动</div>
-                    <div id="activeActivities">
-                        <p style="color: #666; text-align: center; padding: 20px;">暂无已生效的活动</p>
+                    
+                    <div class="activity-card">
+                        <div class="activity-title">🎯 村委首次获取助力金奖励</div>
+                        <div class="activity-meta">
+                            创建时间：2025-10-15 | 状态：<span class="status-badge status-approved">进行中</span> | 有效期：长期有效
+                        </div>
+                        <div class="activity-stats">
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">156</div>
+                                <div class="activity-stat-label">已参与村庄</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">¥7,800</div>
+                                <div class="activity-stat-label">已发放奖励</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">¥50</div>
+                                <div class="activity-stat-label">单次奖励</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-outline btn-small" onclick="viewActivityDetail('ACT001')">📊 查看详情</button>
+                            <button class="btn btn-warning btn-small" onclick="pauseActivity('ACT001')">⏸️ 暂停活动</button>
+                        </div>
                     </div>
+                    
+                    <div class="activity-card">
+                        <div class="activity-title">🎊 春节特别奖励活动</div>
+                        <div class="activity-meta">
+                            创建时间：2025-01-20 | 状态：<span class="status-badge status-approved">进行中</span> | 有效期：2025-02-29
+                        </div>
+                        <div class="activity-stats">
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">89</div>
+                                <div class="activity-stat-label">已参与村庄</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">¥8,900</div>
+                                <div class="activity-stat-label">已发放奖励</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">¥100</div>
+                                <div class="activity-stat-label">单次奖励</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-outline btn-small" onclick="viewActivityDetail('ACT002')">📊 查看详情</button>
+                            <button class="btn btn-warning btn-small" onclick="pauseActivity('ACT002')">⏸️ 暂停活动</button>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-card">
+                        <div class="activity-title">🏆 优秀村庄月度奖励</div>
+                        <div class="activity-meta">
+                            创建时间：2025-10-01 | 状态：<span class="status-badge status-approved">进行中</span> | 有效期：长期有效
+                        </div>
+                        <div class="activity-stats">
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">23</div>
+                                <div class="activity-stat-label">已参与村庄</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">¥11,500</div>
+                                <div class="activity-stat-label">已发放奖励</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">¥500</div>
+                                <div class="activity-stat-label">单次奖励</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-outline btn-small" onclick="viewActivityDetail('ACT003')">📊 查看详情</button>
+                            <button class="btn btn-warning btn-small" onclick="pauseActivity('ACT003')">⏸️ 暂停活动</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="createNewActivity()">➕ 创建新活动</button>
                 </div>
                 
                 <!-- F2.1 村委首次获取助力金 -->
@@ -865,12 +1790,20 @@
                 <!-- F3.1 审核数据看板 -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-value" id="pendingCount">0</div>
+                        <div class="stat-value">23</div>
                         <div class="stat-label">待审核任务</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value" id="todayApprovedCount">0</div>
+                        <div class="stat-value">8</div>
                         <div class="stat-label">今日已审核</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">本月总任务</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">审核通过率</div>
                     </div>
                 </div>
                 
@@ -883,18 +1816,73 @@
                             <tr>
                                 <th>任务ID</th>
                                 <th>申请人</th>
-                                <th>申请时间</th>
+                                <th>提交时间</th>
                                 <th>下发方式</th>
                                 <th>涉及村庄</th>
                                 <th>总金额</th>
-                                <th>状态</th>
+                                <th>任务状态</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody id="historyTasksBody">
                             <tr>
-                                <td colspan="8" style="text-align: center; color: #666; padding: 40px;">
-                                    暂无历史任务记录
+                                <td>TASK20251107001</td>
+                                <td>张三</td>
+                                <td>2025-11-07 14:30</td>
+                                <td>按地区下发</td>
+                                <td>156个</td>
+                                <td>¥15,600 (1.6万元)</td>
+                                <td><span class="task-status-badge status-pending-review">待审核</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107001')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TASK20251107002</td>
+                                <td>李四</td>
+                                <td>2025-11-07 13:15</td>
+                                <td>Excel导入</td>
+                                <td>89个</td>
+                                <td>¥12,450 (1.2万元)</td>
+                                <td><span class="task-status-badge status-approved-pending">已通过待执行</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107002')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TASK20251107003</td>
+                                <td>王五</td>
+                                <td>2025-11-07 11:45</td>
+                                <td>按地区下发</td>
+                                <td>234个</td>
+                                <td>¥23,400 (2.3万元)</td>
+                                <td><span class="task-status-badge status-completed">已完成下发</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107003')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TASK20251106001</td>
+                                <td>赵六</td>
+                                <td>2025-11-06 16:20</td>
+                                <td>Excel导入</td>
+                                <td>67个</td>
+                                <td><strong>¥8,040</strong></td>
+                                <td><span class="task-status-badge status-review-rejected">审核驳回</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251106001')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TASK20251106002</td>
+                                <td>孙七</td>
+                                <td>2025-11-06 14:10</td>
+                                <td>按地区下发</td>
+                                <td>123个</td>
+                                <td>¥18,450 (1.8万元)</td>
+                                <td><span class="task-status-badge status-completed">已完成下发</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251106002')">📊 查看详情</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -909,37 +1897,240 @@
                 <div class="card-title">🔍 审核管理</div>
                 <p style="color: #666; margin-bottom: 30px;">此页面为管理者专用，用于审核待处理的助力金下发申请</p>
                 
+                <!-- 审核统计 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">待审核任务</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">今日已审核</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">2.5小时</div>
+                        <div class="stat-label">平均审核时长</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">通过率</div>
+                    </div>
+                </div>
+                
                 <div class="form-section">
                     <div class="section-title">⏳ 待审核任务</div>
                     
-                    <table class="result-table">
-                        <thead>
-                            <tr>
-                                <th>任务ID</th>
-                                <th>申请人</th>
-                                <th>提交时间</th>
-                                <th>下发方式</th>
-                                <th>村庄数量</th>
-                                <th>总金额</th>
-                                <th>状态</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="auditTasksBody">
-                            <tr>
-                                <td colspan="8" style="text-align: center; color: #666; padding: 40px;">
-                                    暂无待审核任务
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <!-- 待审核任务列表 - 展开式显示 -->
+                    <div id="auditTasksList">
+                        <!-- 任务1 -->
+                        <div class="task-summary" style="margin-bottom: 30px;">
+                            <div class="task-summary-title">📋 任务详情 - TASK20251107001</div>
+                            
+                            <!-- 任务提交人和提交时间 -->
+                            <div class="summary-row" style="margin-bottom: 15px;">
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">任务提交人：</span>
+                                    <span class="summary-value">张三</span>
+                                </div>
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">提交时间：</span>
+                                    <span class="summary-value">2025-11-07 14:30</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 后续三个信息单独一行，字体变大 -->
+                            <div class="summary-row" style="font-size: 18px; font-weight: 600;">
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">任务覆盖村庄数：</span>
+                                    <span class="summary-value">156</span>
+                                </div>
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">任务助力金：</span>
+                                    <span class="summary-value">¥15,600 (1.6万元)</span>
+                                </div>
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">有效期：</span>
+                                    <span class="summary-value">一周</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 执行说明 -->
+                            <div class="execution-notice">
+                                <div class="notice-icon">⏰</div>
+                                <div class="notice-content">
+                                    <strong>执行说明：</strong>审批通过后，系统将在每日早上8点～晚上6点期间自动执行下发。有效期为执行成功后开始计算的有效期时间。
+                                </div>
+                            </div>
+                            
+                            <!-- 详细信息 -->
+                            <div class="detail-section">
+                                <h4 class="detail-title">📍 村庄明细</h4>
+                                <div class="detail-item">
+                                    <span class="detail-label">下发方式：</span>
+                                    <span class="detail-value">按地区下发</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">村庄范围：</span>
+                                    <span class="detail-value">河北省石家庄市 的 156 个村庄</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">金额详情：</span>
+                                    <span class="detail-value">每个村庄均为 100元</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 备注信息 -->
+                            <div class="detail-section">
+                                <h4 class="detail-title">📝 备注信息</h4>
+                                <div class="detail-item">
+                                    <span class="detail-value" style="line-height: 1.6;">针对河北省石家庄市所有5星级村庄进行助力金下发，用于激励村庄积极参与平台活动。</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 模版消息预览 -->
+                            <div style="margin: 20px 0;">
+                                <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
+                                <div class="message-preview">
+                                    <div class="message-header">🎉 您有新的助力金到账！</div>
+                                    <div class="message-content">
+                                        恭喜你，张家村获得了助力金 100 元，有效期为7天，近期有老年人助老公益项目可供申请，请尽快申请。
+                                    </div>
+                                    <div class="message-meta">
+                                        推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 审核操作按钮 -->
+                            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #f1f3f4;">
+                                <button class="btn btn-success" onclick="approveTask('TASK20251107001')">✅ 通过审核</button>
+                                <button class="btn btn-danger" onclick="rejectTask('TASK20251107001')">❌ 驳回申请</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 任务2 -->
+                        <div class="task-summary" style="margin-bottom: 30px;">
+                            <div class="task-summary-title">📋 任务详情 - TASK20251107004</div>
+                            
+                            <!-- 任务提交人和提交时间 -->
+                            <div class="summary-row" style="margin-bottom: 15px;">
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">任务提交人：</span>
+                                    <span class="summary-value">周八</span>
+                                </div>
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">提交时间：</span>
+                                    <span class="summary-value">2025-11-07 16:45</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 后续三个信息单独一行，字体变大 -->
+                            <div class="summary-row" style="font-size: 18px; font-weight: 600;">
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">任务覆盖村庄数：</span>
+                                    <span class="summary-value">45</span>
+                                </div>
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">任务助力金：</span>
+                                    <span class="summary-value"><strong>¥6,750</strong></span>
+                                </div>
+                                <div class="summary-item-inline">
+                                    <span class="summary-label">有效期：</span>
+                                    <span class="summary-value">两周</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 执行说明 -->
+                            <div class="execution-notice">
+                                <div class="notice-icon">⏰</div>
+                                <div class="notice-content">
+                                    <strong>执行说明：</strong>审批通过后，系统将在每日早上8点～晚上6点期间自动执行下发。有效期为执行成功后开始计算的有效期时间。
+                                </div>
+                            </div>
+                            
+                            <!-- 详细信息 -->
+                            <div class="detail-section">
+                                <h4 class="detail-title">📍 村庄明细</h4>
+                                <div class="detail-item">
+                                    <span class="detail-label">下发方式：</span>
+                                    <span class="detail-value">Excel导入</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">村庄范围：</span>
+                                    <span class="detail-value">导入了 张家村、李家村、王家村 等 45 个村庄</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">金额详情：</span>
+                                    <span class="detail-value">每个村庄均为 150元</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 备注信息 -->
+                            <div class="detail-section">
+                                <h4 class="detail-title">📝 备注信息</h4>
+                                <div class="detail-item">
+                                    <span class="detail-value" style="line-height: 1.6;">根据Excel文件导入的村庄列表进行定向助力金发放，主要针对近期活跃度较高的村庄。</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Excel附件展示 -->
+                            <div style="margin: 20px 0;">
+                                <h4 style="color: #2c5aa0; margin-bottom: 10px;">📎 Excel附件</h4>
+                                <div class="attachment-display">
+                                    <div class="attachment-item">
+                                        <div class="attachment-icon">📊</div>
+                                        <div class="attachment-info">
+                                            <div class="attachment-name">助力金下发名单.xlsx</div>
+                                            <div class="attachment-size">文件大小: 1.2MB | 上传时间: 2025-11-07 15:45</div>
+                                        </div>
+                                        <button class="btn btn-outline btn-small" onclick="downloadAttachment()">
+                                            📥 下载
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 模版消息预览 -->
+                            <div style="margin: 20px 0;">
+                                <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
+                                <div class="message-preview">
+                                    <div class="message-header">🎉 您有新的助力金到账！</div>
+                                    <div class="message-content">
+                                        恭喜你，张家村获得了助力金 150 元，有效期为14天，近期有老年人助老公益项目可供申请，请尽快申请。
+                                    </div>
+                                    <div class="message-meta">
+                                        推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 审核操作按钮 -->
+                            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #f1f3f4;">
+                                <button class="btn btn-success" onclick="approveTask('TASK20251107004')">✅ 通过审核</button>
+                                <button class="btn btn-danger" onclick="rejectTask('TASK20251107004')">❌ 驳回申请</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div style="text-align: center; margin-top: 20px;">
-                    <button class="btn btn-outline" onclick="viewHistoryApplications()">
-                        📋 查看历史申请任务
-                    </button>
+                    <button class="btn btn-outline" onclick="batchApprove()">📋 批量审核</button>
+                    <button class="btn btn-secondary" onclick="exportAuditReport()">📊 导出审核报告</button>
+                    <button class="btn btn-outline" onclick="viewHistoryApplications()">📋 查看历史申请任务</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">任务详情</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalBody">
+                <!-- 动态内容 -->
             </div>
         </div>
     </div>
@@ -952,6 +2143,139 @@
             selectedRegion: {},
             uploadedData: null,
             taskConfig: {}
+        };
+
+        // 虚拟数据
+        const mockData = {
+            tasks: {
+                'TASK20251107001': {
+                    id: 'TASK20251107001',
+                    applicant: '张三',
+                    submitTime: '2025-11-07 14:30',
+                    method: '按地区下发',
+                    region: '河北省石家庄市',
+                    villageCount: 156,
+                    totalAmount: 15600,
+                    unitAmount: 100,
+                    status: 'pending',
+                    validity: '7天',
+                    remarks: '针对河北省石家庄市所有5星级村庄进行助力金下发，用于激励村庄积极参与平台活动。',
+                    villages: [
+                        { id: 'V001', name: '张家村', amount: 100, star: 5 },
+                        { id: 'V002', name: '李家村', amount: 100, star: 5 },
+                        { id: 'V003', name: '王家村', amount: 100, star: 4 },
+                        { id: 'V004', name: '赵家村', amount: 100, star: 5 },
+                        { id: 'V005', name: '钱家村', amount: 100, star: 4 }
+                    ]
+                },
+                'TASK20251107002': {
+                    id: 'TASK20251107002',
+                    applicant: '李四',
+                    submitTime: '2025-11-07 13:15',
+                    method: 'Excel导入',
+                    villageCount: 89,
+                    totalAmount: 12450,
+                    status: 'approved',
+                    validity: '14天',
+                    remarks: '根据Excel文件导入的村庄列表进行定向助力金发放。',
+                    approver: '审核员A',
+                    approveTime: '2025-11-07 14:20',
+                    villages: [
+                        { id: 'V101', name: '赵家村', amount: 150, star: 5 },
+                        { id: 'V102', name: '钱家村', amount: 120, star: 4 },
+                        { id: 'V103', name: '孙家村', amount: 180, star: 5 },
+                        { id: 'V104', name: '李家村', amount: 140, star: 4 },
+                        { id: 'V105', name: '周家村', amount: 160, star: 5 }
+                    ]
+                },
+                'TASK20251107003': {
+                    id: 'TASK20251107003',
+                    applicant: '王五',
+                    submitTime: '2025-11-07 11:45',
+                    method: '按地区下发',
+                    region: '山东省济南市',
+                    villageCount: 234,
+                    totalAmount: 23400,
+                    unitAmount: 100,
+                    status: 'processing',
+                    validity: '7天',
+                    remarks: '针对山东省济南市全部星级村庄进行助力金下发，促进当地公益项目发展。',
+                    approver: '审核员B',
+                    approveTime: '2025-11-07 12:30'
+                },
+                'TASK20251106001': {
+                    id: 'TASK20251106001',
+                    applicant: '赵六',
+                    submitTime: '2025-11-06 16:20',
+                    method: 'Excel导入',
+                    villageCount: 67,
+                    totalAmount: 8040,
+                    status: 'rejected',
+                    validity: '14天',
+                    remarks: '根据Excel导入村庄列表，但部分村庄信息不完整，需要重新核实。',
+                    rejectReason: '村庄信息不完整，请核实后重新提交',
+                    rejectTime: '2025-11-06 17:15'
+                },
+                'TASK20251106002': {
+                    id: 'TASK20251106002',
+                    applicant: '孙七',
+                    submitTime: '2025-11-06 14:10',
+                    method: '按地区下发',
+                    region: '云南省昆明市',
+                    villageCount: 123,
+                    totalAmount: 18450,
+                    unitAmount: 150,
+                    status: 'processing',
+                    validity: '7天',
+                    remarks: '云南省昆明市优秀村庄助力金发放，重点支持脱贫攻坚成果巩固。',
+                    approver: '审核员C',
+                    approveTime: '2025-11-06 15:30'
+                }
+            },
+            activities: {
+                'ACT001': {
+                    id: 'ACT001',
+                    title: '村委首次获取助力金奖励',
+                    type: 'first_time_reward',
+                    status: 'active',
+                    createTime: '2025-10-15',
+                    amount: 50,
+                    validity: '30天',
+                    participantCount: 156,
+                    totalReward: 7800,
+                    description: '为鼓励更多村庄参与平台活动，对首次获取助力金的村委给予额外奖励。',
+                    participants: [
+                        { village: '张家村', rewardTime: '2025-10-16', amount: 50 },
+                        { village: '李家村', rewardTime: '2025-10-18', amount: 50 },
+                        { village: '王家村', rewardTime: '2025-10-20', amount: 50 }
+                    ]
+                },
+                'ACT002': {
+                    id: 'ACT002',
+                    title: '春节特别奖励活动',
+                    type: 'festival_reward',
+                    status: 'active',
+                    createTime: '2025-01-20',
+                    endTime: '2025-02-29',
+                    amount: 100,
+                    validity: '7天',
+                    participantCount: 89,
+                    totalReward: 8900,
+                    description: '春节期间特别活动，为活跃村庄提供额外奖励。'
+                },
+                'ACT003': {
+                    id: 'ACT003',
+                    title: '优秀村庄月度奖励',
+                    type: 'monthly_reward',
+                    status: 'active',
+                    createTime: '2025-10-01',
+                    amount: 500,
+                    validity: '30天',
+                    participantCount: 23,
+                    totalReward: 11500,
+                    description: '每月评选优秀村庄，给予特别奖励。'
+                }
+            }
         };
 
         // 数字转汉字大写
@@ -1013,11 +2337,26 @@
         
         // 格式化万元显示
         function formatWanAmount(num) {
-            if (num >= 10000) {
-                const wan = (num / 10000).toFixed(2);
-                return `${wan} 万元`;
+            if (num >= 1000) {
+                const wan = (num / 10000).toFixed(1);
+                const originalWan = num / 10000;
+                const isApproximate = Math.abs(originalWan - parseFloat(wan)) > 0.001;
+                return {
+                    text: `${wan}万元`,
+                    isApproximate: isApproximate
+                };
             }
-            return '';
+            return null;
+        }
+        
+        // 新增：格式化金额显示（用于Excel解析结果和任务预览）
+        function formatAmountForDisplay(amount) {
+            if (amount >= 10000) {
+                const wan = (amount / 10000).toFixed(1);
+                return `${wan}万元`;
+            } else {
+                return `<strong>¥${amount.toFixed(2)}</strong>`;
+            }
         }
         
         // 更新金额显示
@@ -1038,14 +2377,17 @@
             
             chineseAmount.textContent = numberToChinese(amount);
             
-            if (amount >= 10000) {
-                wanAmount.textContent = formatWanAmount(amount);
+            const wanFormat = formatWanAmount(amount);
+            if (wanFormat) {
+                wanAmount.textContent = wanFormat.text;
+                wanAmount.className = wanFormat.isApproximate ? 'wan-amount approximate' : 'wan-amount';
                 wanAmount.style.display = 'block';
             } else {
                 wanAmount.style.display = 'none';
             }
             
             updateTaskSummary();
+            updateTaskPreviewMessage();
         }
 
         // 切换标签页
@@ -1103,6 +2445,9 @@
             // 模拟获取村庄数量
             const mockVillageCount = Math.floor(Math.random() * 500) + 50;
             
+            // 更新村庄选择信息
+            updateVillageSelectionInfo();
+            
             document.getElementById('villageCountNumber').textContent = mockVillageCount;
             document.getElementById('villageCountDisplay').className = 'village-count-display visible-section';
             document.getElementById('regionAmountConfig').className = 'visible-section';
@@ -1112,6 +2457,183 @@
             
             appState.selectedRegion.villageCount = mockVillageCount;
             updateTaskSummary();
+        }
+
+        // 更新村庄选择信息显示
+        function updateVillageSelectionInfo() {
+            const province = document.getElementById('province');
+            const city = document.getElementById('city');
+            const county = document.getElementById('county');
+            const town = document.getElementById('town');
+            const village = document.getElementById('village');
+            
+            const selectedStars = getSelectedStars();
+            const starText = selectedStars.length === 6 ? '全星级' : selectedStars.map(star => {
+                const starNames = {'5': '五星', '4': '四星', '3': '三星', '2': '二星', '1': '一星', '0': '零星'};
+                return starNames[star];
+            }).join('和');
+            
+            let locationText = '选择了 ';
+            
+            if (province.value && province.value !== 'all') {
+                locationText += province.options[province.selectedIndex].text;
+            }
+            if (city.value && city.value !== 'all') {
+                locationText += ' ' + city.options[city.selectedIndex].text;
+            }
+            if (county.value && county.value !== 'all') {
+                locationText += ' ' + county.options[county.selectedIndex].text;
+            }
+            if (town.value && town.value !== 'all') {
+                locationText += ' ' + town.options[town.selectedIndex].text;
+            }
+            if (village.value && village.value !== 'all') {
+                locationText += ' ' + village.options[village.selectedIndex].text;
+            }
+            
+            locationText += ` 的 ${starText} 村庄`;
+            
+            const infoElement = document.getElementById('villageSelectionInfo');
+            if (infoElement) {
+                infoElement.textContent = locationText;
+            }
+        }
+
+        // 地区数据
+        const regionData = {
+            yunnan: {
+                name: '云南省',
+                cities: {
+                    qujing: {
+                        name: '曲靖市',
+                        counties: {
+                            xuanwei: {
+                                name: '宣威市',
+                                towns: {
+                                    shuanghe: { name: '双河乡', villages: { zhangjiazhuang: '张家庄', lijiazhuang: '李家庄' } }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            hebei: {
+                name: '河北省',
+                cities: {
+                    shijiazhuang: {
+                        name: '石家庄市',
+                        counties: {
+                            zhengding: {
+                                name: '正定县',
+                                towns: {
+                                    xincheng: { name: '新城铺镇', villages: { zhangcun: '张村', licun: '李村' } }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // 更新地区选择器
+        function updateRegionSelector(level, parentValue) {
+            const selectors = {
+                province: document.getElementById('province'),
+                city: document.getElementById('city'),
+                county: document.getElementById('county'),
+                town: document.getElementById('town'),
+                village: document.getElementById('village')
+            };
+
+            if (level === 'city') {
+                const citySelect = selectors.city;
+                citySelect.innerHTML = '<option value="">选择市</option><option value="all">✅ 全部市</option>';
+                if (parentValue && parentValue !== 'all' && regionData[parentValue]) {
+                    Object.keys(regionData[parentValue].cities).forEach(cityKey => {
+                        const city = regionData[parentValue].cities[cityKey];
+                        citySelect.innerHTML += `<option value="${cityKey}">${city.name}</option>`;
+                    });
+                }
+                // 清空后续选择器
+                selectors.county.innerHTML = '<option value="">选择县</option><option value="all">✅ 全部县</option>';
+                selectors.town.innerHTML = '<option value="">选择镇</option><option value="all">✅ 全部镇</option>';
+                selectors.village.innerHTML = '<option value="">选择村</option><option value="all">✅ 全部村</option>';
+            } else if (level === 'county') {
+                const countySelect = selectors.county;
+                countySelect.innerHTML = '<option value="">选择县</option><option value="all">✅ 全选</option>';
+                // 这里可以根据实际需要添加县级数据
+                selectors.town.innerHTML = '<option value="">选择镇</option><option value="all">✅ 全部镇</option>';
+                selectors.village.innerHTML = '<option value="">选择村</option><option value="all">✅ 全部村</option>';
+            } else if (level === 'town') {
+                const townSelect = selectors.town;
+                townSelect.innerHTML = '<option value="">选择镇</option><option value="all">✅ 全选</option>';
+                // 这里可以根据实际需要添加镇级数据
+                selectors.village.innerHTML = '<option value="">选择村</option><option value="all">✅ 全部村</option>';
+            } else if (level === 'village') {
+                const villageSelect = selectors.village;
+                villageSelect.innerHTML = '<option value="">选择村</option><option value="all">✅ 全选</option>';
+                // 这里可以根据实际需要添加村级数据
+            }
+            
+            // 更新村庄选择信息
+            updateVillageSelectionInfo();
+        }
+
+        // 加载虚拟成功数据
+        function loadVirtualSuccessData() {
+            const mockSuccessData = [
+                { id: 'V001', name: '张家村', amount: 12000.00, status: 'success' },
+                { id: 'V002', name: '李家村', amount: 15000.00, status: 'success' },
+                { id: 'V003', name: '王家村', amount: 800.00, status: 'success' },
+                { id: 'V004', name: '赵家村', amount: 20000.00, status: 'success' },
+                { id: 'V005', name: '钱家村', amount: 1800.00, status: 'success' },
+                { id: 'V006', name: '孙家村', amount: 11000.00, status: 'success' },
+                { id: 'V007', name: '周家村', amount: 1600.00, status: 'success' },
+                { id: 'V008', name: '吴家村', amount: 14000.00, status: 'success' },
+                { id: 'V009', name: '郑家村', amount: 1300.00, status: 'success' },
+                { id: 'V010', name: '冯家村', amount: 17000.00, status: 'success' }
+            ];
+            
+            // 只显示成功结果，不显示错误信息
+            displaySuccessResults(mockSuccessData);
+            document.getElementById('excelResultSection').className = 'visible-section';
+            document.getElementById('validitySection').className = 'form-section visible-section';
+            document.getElementById('messageSection').className = 'form-section visible-section';
+            document.getElementById('taskSummary').className = 'task-summary visible-section';
+            
+            appState.uploadedData = mockSuccessData;
+            updateTaskSummary();
+            updateTaskPreviewMessage();
+            
+            // 显示附件信息
+            document.getElementById('excelAttachmentDisplay').className = 'visible-section';
+            document.getElementById('attachmentName').textContent = '虚拟成功数据.xlsx';
+            document.getElementById('attachmentSize').textContent = '文件大小: 1.2MB | 生成时间: ' + new Date().toLocaleString();
+        }
+
+        // 加载虚拟错误数据
+        function loadVirtualErrorData() {
+            // 直接显示解析失败结果
+            document.getElementById('excelResultSection').className = 'visible-section';
+            document.getElementById('failureResult').className = 'visible-section';
+            document.getElementById('successResult').className = 'hidden-section';
+            
+            const failureCount = 4;
+            const successCount = 2;
+            document.getElementById('failureSummary').innerHTML = `
+                解析完成：共 ${failureCount + successCount} 条记录，成功 ${successCount} 条，失败 ${failureCount} 条<br>
+                失败原因包括：村庄名称为空、金额格式错误、村庄ID缺失等
+            `;
+            
+            // 显示附件信息
+            document.getElementById('excelAttachmentDisplay').className = 'visible-section';
+            document.getElementById('attachmentName').textContent = '虚拟错误数据.xlsx';
+            document.getElementById('attachmentSize').textContent = '文件大小: 0.8MB | 生成时间: ' + new Date().toLocaleString();
+        }
+
+        // 下载附件
+        function downloadAttachment() {
+            alert('正在下载附件...');
         }
 
         // 下载Excel模板
@@ -1156,15 +2678,20 @@
             
             // 模拟文件解析
             setTimeout(() => {
-                const mockData = [
+                const mockExcelData = [
                     { id: 'V001', name: '张家村', amount: 100.00, status: 'success' },
                     { id: 'V002', name: '李家村', amount: 150.00, status: 'success' },
                     { id: 'V003', name: '王家村', amount: 120.00, status: 'success' },
                     { id: 'V004', name: '赵家村', amount: 200.00, status: 'success' },
-                    { id: 'V005', name: '钱家村', amount: 80.00, status: 'success' }
+                    { id: 'V005', name: '钱家村', amount: 80.00, status: 'success' },
+                    { id: 'V006', name: '孙家村', amount: 180.00, status: 'success' },
+                    { id: 'V007', name: '周家村', amount: 160.00, status: 'success' },
+                    { id: 'V008', name: '吴家村', amount: 140.00, status: 'success' },
+                    { id: 'V009', name: '郑家村', amount: 110.00, status: 'success' },
+                    { id: 'V010', name: '冯家村', amount: 130.00, status: 'success' }
                 ];
                 
-                displayExcelResults(mockData);
+                displayExcelResults(mockExcelData);
             }, 1000);
         }
 
@@ -1188,6 +2715,14 @@
             
             appState.uploadedData = data;
             updateTaskSummary();
+            updateTaskPreviewMessage();
+            
+            // 显示Excel附件（如果是真实文件上传）
+            if (data.length > 0 && !document.getElementById('excelAttachmentDisplay').classList.contains('visible-section')) {
+                document.getElementById('excelAttachmentDisplay').className = 'visible-section';
+                document.getElementById('attachmentName').textContent = '助力金下发名单.xlsx';
+                document.getElementById('attachmentSize').textContent = '文件大小: 2.5MB | 上传时间: ' + new Date().toLocaleString();
+            }
         }
 
         // 显示成功解析结果
@@ -1201,9 +2736,9 @@
             const maxVillages = data.filter(item => item.amount === maxAmount).slice(0, 3);
             const minVillages = data.filter(item => item.amount === minAmount).slice(0, 3);
             
-            // 生成摘要
-            let summary = `共 ${totalVillages} 个村庄，涉及 ${new Set(data.map(item => item.id.substring(0, 2))).size} 个城市，共计助力金金额 ${(totalAmount/10000).toFixed(2)} 万元。<br>`;
-            summary += `平均每村庄 ${(avgAmount/10000).toFixed(2)} 万元，最高村庄获取 ${(maxAmount/10000).toFixed(2)} 万元，最低村庄获取 ${(minAmount/10000).toFixed(2)} 万元<br>`;
+            // 生成摘要 - 使用新的金额格式化函数
+            let summary = `共 ${totalVillages} 个村庄，涉及 ${new Set(data.map(item => item.id.substring(0, 2))).size} 个城市，共计助力金金额 ${formatAmountForDisplay(totalAmount)}。<br>`;
+            summary += `平均每村庄 ${formatAmountForDisplay(avgAmount)}，最高村庄获取 ${formatAmountForDisplay(maxAmount)}，最低村庄获取 ${formatAmountForDisplay(minAmount)}<br>`;
             summary += `最高村庄为：${maxVillages.map(v => v.name).join('、')}`;
             if (data.filter(item => item.amount === maxAmount).length > 3) {
                 summary += ` 等 ${data.filter(item => item.amount === maxAmount).length} 个`;
@@ -1211,18 +2746,13 @@
             
             document.getElementById('successSummary').innerHTML = summary;
             
-            // 生成表格
+            // 生成表格 - 使用新的金额格式化
             const tbody = document.getElementById('resultTableBody');
             tbody.innerHTML = data.map(item => `
                 <tr>
                     <td>${item.id}</td>
                     <td>${item.name}</td>
-                    <td>¥${item.amount.toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="removeRow('${item.id}')">
-                            删除
-                        </button>
-                    </td>
+                    <td>${formatAmountForDisplay(item.amount)}</td>
                 </tr>
             `).join('');
             
@@ -1232,7 +2762,8 @@
         // 显示失败解析结果
         function displayFailureResults(data) {
             const summary = `解析失败 ${data.length} 条记录，请检查数据格式`;
-            document.getElementById('failureSummary').textContent = summary;
+            document.getElementById('failureSummary').innerHTML = summary + '<br>错误详情：' + 
+                data.map(item => `${item.id || '空ID'}: ${item.error}`).join('；');
             document.getElementById('failureResult').className = 'visible-section';
         }
 
@@ -1267,6 +2798,7 @@
             const summaryVillageInfo = document.getElementById('summaryVillageInfo');
             const summaryAmountInfo = document.getElementById('summaryAmountInfo');
             const summaryValidity = document.getElementById('summaryValidity');
+            const summaryMethod = document.getElementById('summaryMethod');
             
             if (!summaryVillageCount) return;
             
@@ -1274,34 +2806,73 @@
             let totalAmount = 0;
             let villageInfo = '未选择';
             let amountInfo = '未设置';
+            let methodInfo = '未选择';
             
             if (appState.sendMethod === 'region' && appState.selectedRegion.villageCount) {
+                methodInfo = '地区选择';
                 villageCount = appState.selectedRegion.villageCount;
                 const regionAmount = parseFloat(document.getElementById('regionAmount').value) || 0;
                 totalAmount = villageCount * regionAmount;
-                villageInfo = '按地区批量下发，包含河北省石家庄市全部村庄';
+                
+                // 获取选中的星级
+                const selectedStars = getSelectedStars();
+                const starText = selectedStars.length === 6 ? '全星级' : selectedStars.map(star => {
+                    const starNames = {'5': '五星', '4': '四星', '3': '三星', '2': '二星', '1': '一星', '0': '零星'};
+                    return starNames[star];
+                }).join('、');
+                
+                // 获取选中的地区信息
+                const province = document.getElementById('province');
+                const city = document.getElementById('city');
+                const county = document.getElementById('county');
+                const town = document.getElementById('town');
+                
+                let locationParts = [];
+                if (province.value && province.value !== 'all') {
+                    locationParts.push(province.options[province.selectedIndex].text);
+                }
+                if (city.value && city.value !== 'all') {
+                    locationParts.push(city.options[city.selectedIndex].text);
+                }
+                if (county.value && county.value !== 'all') {
+                    locationParts.push(county.options[county.selectedIndex].text);
+                }
+                if (town.value && town.value !== 'all') {
+                    locationParts.push(town.options[town.selectedIndex].text);
+                }
+                
+                const locationText = locationParts.join(' ');
+                villageInfo = `${locationText} 的 ${villageCount} 个村庄`;
+                
                 if (regionAmount > 0) {
-                    amountInfo = `每个村庄均为 ${formatWanAmount(regionAmount) || regionAmount + '元'}`;
+                    const wanFormat = formatWanAmount(regionAmount);
+                    if (wanFormat) {
+                        amountInfo = `每个村庄均为 ${wanFormat.isApproximate ? '近似' : ''}${wanFormat.text}`;
+                    } else {
+                        amountInfo = `每个村庄均为 ${regionAmount}元`;
+                    }
                 }
             } else if (appState.sendMethod === 'excel' && appState.uploadedData) {
+                methodInfo = 'Excel导入';
                 const successData = appState.uploadedData.filter(item => item.status === 'success');
                 villageCount = successData.length;
                 totalAmount = successData.reduce((sum, item) => sum + item.amount, 0);
                 
                 const uniqueVillages = successData.slice(0, 3).map(item => item.name);
-                const remainingCount = Math.max(0, successData.length - 3);
                 
-                villageInfo = `Excel导入数据，包含 ${uniqueVillages.join('、')}`;
-                if (remainingCount > 0) {
-                    villageInfo += ` 等 ${remainingCount} 个村庄`;
-                }
+                villageInfo = `导入了 ${uniqueVillages.join('、')} 等 ${successData.length} 个村庄`;
                 
                 // 检查金额是否一致
                 const amounts = successData.map(item => item.amount);
                 const isUniformAmount = amounts.every(amount => amount === amounts[0]);
                 
                 if (isUniformAmount) {
-                    amountInfo = `每个村庄均为 ${formatWanAmount(amounts[0]) || amounts[0] + '元'}`;
+                    const wanFormat = formatWanAmount(amounts[0]);
+                    if (wanFormat) {
+                        amountInfo = `每个村庄均为 ${wanFormat.isApproximate ? '近似' : ''}${wanFormat.text}`;
+                    } else {
+                        amountInfo = `每个村庄均为 ${amounts[0]}元`;
+                    }
                 } else {
                     const avgAmount = totalAmount / villageCount;
                     const maxAmount = Math.max(...amounts);
@@ -1316,8 +2887,17 @@
             }
             
             summaryVillageCount.textContent = villageCount;
-            summaryTotalAmount.textContent = `¥${totalAmount.toLocaleString()}`;
+            
+            // 更新总助力金显示，添加万元括号显示
+            let totalAmountText = `¥${totalAmount.toLocaleString()}`;
+            if (totalAmount >= 10000) {
+                const wanAmount = (totalAmount / 10000).toFixed(1);
+                totalAmountText += ` (${wanAmount}万元)`;
+            }
+            summaryTotalAmount.innerHTML = totalAmountText;
+            
             summaryVillageInfo.textContent = villageInfo;
+            if (summaryMethod) summaryMethod.textContent = methodInfo;
             
             if (summaryAmountInfo.innerHTML !== undefined) {
                 summaryAmountInfo.innerHTML = amountInfo;
@@ -1338,14 +2918,63 @@
             
             // 检查是否可以提交
             const canSubmit = appState.sendMethod && villageCount > 0 && totalAmount > 0 && validity;
-            document.getElementById('submitBtn').disabled = !canSubmit;
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = !canSubmit;
+            }
         }
 
         // 提交任务
         function submitTask() {
-            if (confirm('确认提交此任务到审核队列？')) {
-                alert('任务提交成功！正在跳转到任务详情页面...');
-                // 这里应该跳转到任务详情页面
+            // 验证必填项
+            const sendMethod = document.getElementById('sendMethod').value;
+            const validityPeriod = document.getElementById('validityPeriod').value;
+            
+            if (!sendMethod) {
+                alert('❌ 请选择下发方式');
+                return;
+            }
+            
+            if (!validityPeriod) {
+                alert('❌ 请选择有效期');
+                return;
+            }
+            
+            // 根据下发方式验证不同的条件
+            if (sendMethod === 'region') {
+                const regionAmount = document.getElementById('regionAmount').value;
+                if (!regionAmount || regionAmount <= 0) {
+                    alert('❌ 请输入有效的助力金金额');
+                    return;
+                }
+                if (!appState.selectedRegion.villageCount || appState.selectedRegion.villageCount <= 0) {
+                    alert('❌ 请先确认地区选择，加载村庄列表');
+                    return;
+                }
+            } else if (sendMethod === 'excel') {
+                if (!appState.uploadedData || appState.uploadedData.length === 0) {
+                    alert('❌ 请先上传Excel文件并确保解析成功');
+                    return;
+                }
+            }
+            
+            if (confirm('✅ 确认提交此任务到审核队列？\n\n任务将提交给管理员审核，审核通过后将自动发放助力金。')) {
+                // 获取备注信息
+                const taskRemarks = document.getElementById('taskRemarks').value.trim();
+                
+                // 生成任务ID
+                const taskId = 'TASK' + new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14) + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                
+                // 显示提交成功信息
+                alert(`🎉 任务提交成功！\n\n任务ID：${taskId}\n状态：等待审核\n\n您可以在"历史任务"页面查看任务进度。`);
+                
+                // 重置表单
+                resetForm();
+                
+                // 跳转到历史任务页面
+                setTimeout(() => {
+                    switchTab('history-tasks');
+                }, 1500);
             }
         }
 
@@ -1401,8 +3030,53 @@
             document.getElementById('previewContent').textContent = previewContent;
         }
 
+        // 更新任务预览消息
+        function updateTaskPreviewMessage() {
+            const title = document.getElementById('messageTitle')?.value || '🎉 您有新的助力金到账！';
+            const template = document.getElementById('messageTemplate')?.value || 
+                '恭喜您！{village_name} 村两委为您下发助力金 ¥{amount} 元，有效期至 {expire_date}，请及时查看并兑换。感谢您对善治美平台公益的支持！';
+            
+            let amount = '100.00';
+            let validity = '7';
+            
+            if (appState.sendMethod === 'region') {
+                amount = document.getElementById('regionAmount')?.value || '100.00';
+            } else if (appState.sendMethod === 'excel' && appState.uploadedData) {
+                const successData = appState.uploadedData.filter(item => item.status === 'success');
+                if (successData.length > 0) {
+                    amount = successData[0].amount.toFixed(2);
+                }
+            }
+            
+            validity = document.getElementById('validityPeriod')?.value || '7';
+            
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + parseInt(validity));
+            
+            const previewContent = template
+                .replace('{village_name}', '张家村')
+                .replace('{amount}', amount)
+                .replace('{expire_date}', expireDate.toLocaleDateString());
+            
+            const taskPreviewTitle = document.getElementById('taskPreviewTitle');
+            const taskPreviewContent = document.getElementById('taskPreviewContent');
+            
+            if (taskPreviewTitle) taskPreviewTitle.textContent = title;
+            if (taskPreviewContent) taskPreviewContent.textContent = previewContent;
+        }
+
         // 页面初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // 隐藏加载器
+            setTimeout(() => {
+                const pageLoader = document.getElementById('pageLoader');
+                if (pageLoader) {
+                    pageLoader.classList.add('hidden');
+                    setTimeout(() => {
+                        pageLoader.style.display = 'none';
+                    }, 500);
+                }
+            }, 1000);
             // 绑定下发方式选择事件
             const sendMethodSelect = document.getElementById('sendMethod');
             if (sendMethodSelect) {
@@ -1422,6 +3096,7 @@
             if (regionAmountInput) {
                 regionAmountInput.addEventListener('input', () => {
                     updateAmountDisplay('regionAmount', 'regionChineseAmount', 'regionWanAmount');
+                    updateTaskSummary();
                 });
             }
             
@@ -1479,8 +3154,27 @@
             // 绑定消息预览更新事件
             const messageTitleInput = document.getElementById('messageTitle');
             if (messageTitleInput) {
-                messageTitleInput.addEventListener('input', updateMessagePreview);
+                messageTitleInput.addEventListener('input', () => {
+                    updateMessagePreview();
+                    updateTaskPreviewMessage();
+                });
             }
+            
+            // 绑定地区选择联动事件
+            const provinceSelect = document.getElementById('province');
+            if (provinceSelect) {
+                provinceSelect.addEventListener('change', function() {
+                    updateRegionSelector('city', this.value);
+                });
+            }
+            
+            // 初始化星级模块状态
+            const starModules = document.querySelectorAll('.star-module');
+            starModules.forEach(module => {
+                module.addEventListener('click', function() {
+                    toggleStarModule(this);
+                });
+            });
             
             // 更新时间
             setInterval(() => {
@@ -1490,7 +3184,523 @@
                     timeElement.textContent = now.toLocaleString();
                 }
             }, 1000);
+            
+            // 点击模态框外部关闭
+            window.onclick = function(event) {
+                const modal = document.getElementById('detailModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+            
+            // 初始化时更新任务摘要和按钮状态
+            updateTaskSummary();
         });
+
+        // 查看任务详情
+        function viewTaskDetail(taskId) {
+            const task = mockData.tasks[taskId];
+            if (!task) {
+                alert('任务数据不存在');
+                return;
+            }
+
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = `任务详情 - ${taskId}`;
+            
+            const statusText = {
+                'pending': '待审核',
+                'approved': '已通过待执行',
+                'rejected': '审核驳回',
+                'processing': '已完成下发'
+            };
+            
+            const statusClass = {
+                'pending': 'task-status-badge status-pending-review',
+                'approved': 'task-status-badge status-approved-pending',
+                'rejected': 'task-status-badge status-review-rejected',
+                'processing': 'task-status-badge status-completed'
+            };
+
+            // 使用任务预览样式
+            modalBody.innerHTML = `
+                <div class="task-summary-title">📋 任务详情 - ${taskId}</div>
+                
+                <!-- 任务提交人单独一行 -->
+                <div class="summary-row" style="margin-bottom: 15px;">
+                    <div class="summary-item-inline">
+                        <span class="summary-label">任务提交人：</span>
+                        <span class="summary-value">${task.applicant}</span>
+                    </div>
+                </div>
+                
+                <!-- 后续三个信息单独一行，字体变大 -->
+                <div class="summary-row" style="font-size: 18px; font-weight: 600;">
+                    <div class="summary-item-inline">
+                        <span class="summary-label">任务覆盖村庄数：</span>
+                        <span class="summary-value">${task.villageCount}</span>
+                    </div>
+                    <div class="summary-item-inline">
+                        <span class="summary-label">任务助力金：</span>
+                        <span class="summary-value">
+                            ${task.totalAmount >= 10000 ? 
+                                `¥${task.totalAmount.toLocaleString()} (${(task.totalAmount/10000).toFixed(1)}万元)` : 
+                                `<strong>¥${task.totalAmount.toLocaleString()}</strong>`
+                            }
+                        </span>
+                    </div>
+                    <div class="summary-item-inline">
+                        <span class="summary-label">有效期：</span>
+                        <span class="summary-value">${task.validity}</span>
+                    </div>
+                </div>
+                
+                <!-- 任务状态信息 -->
+                <div class="task-status-info" style="margin: 15px 0;">
+                    <div class="task-status-left">
+                        <div>
+                            <div class="task-submit-time">提交时间：${task.submitTime}</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 2px;">任务ID：${task.id}</div>
+                        </div>
+                    </div>
+                    <div class="task-status-right">
+                        <div class="${statusClass[task.status]}">${statusText[task.status]}</div>
+                    </div>
+                </div>
+                
+                <!-- 备注信息 -->
+                ${task.remarks ? `
+                <div class="detail-section">
+                    <h4 class="detail-title">📝 备注信息</h4>
+                    <div class="detail-item">
+                        <span class="detail-value" style="line-height: 1.6;">${task.remarks}</span>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <!-- 执行说明 -->
+                <div class="execution-notice">
+                    <div class="notice-icon">⏰</div>
+                    <div class="notice-content">
+                        <strong>执行说明：</strong>审批通过后，系统将在每日早上8点～晚上6点期间自动执行下发。有效期为执行成功后开始计算的有效期时间。
+                    </div>
+                </div>
+                
+                <!-- 详细信息 -->
+                <div class="detail-section">
+                    <h4 class="detail-title">📍 村庄明细</h4>
+                    <div class="detail-item">
+                        <span class="detail-label">下发方式：</span>
+                        <span class="detail-value">${task.method}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">村庄范围：</span>
+                        <span class="detail-value">${task.region || '导入村庄列表'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">金额详情：</span>
+                        <span class="detail-value">每个村庄均为 ${task.unitAmount || (task.totalAmount / task.villageCount).toFixed(0)}元</span>
+                    </div>
+                </div>
+                
+                <!-- 模版消息预览 -->
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
+                    <div class="message-preview">
+                        <div class="message-header">🎉 您有新的助力金到账！</div>
+                        <div class="message-content">
+                            恭喜你，张家村获得了助力金 ${task.unitAmount || (task.totalAmount / task.villageCount).toFixed(0)} 元，有效期为${task.validity === '7天' ? '7' : '14'}天，近期有老年人助老公益项目可供申请，请尽快申请。
+                        </div>
+                        <div class="message-meta">
+                            推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
+                        </div>
+                    </div>
+                </div>
+                
+                ${task.method === 'Excel导入' ? `
+                <!-- Excel附件展示 -->
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">📎 Excel附件</h4>
+                    <div class="attachment-display">
+                        <div class="attachment-item">
+                            <div class="attachment-icon">📊</div>
+                            <div class="attachment-info">
+                                <div class="attachment-name">助力金下发名单.xlsx</div>
+                                <div class="attachment-size">文件大小: 2.5MB | 上传时间: ${task.submitTime}</div>
+                            </div>
+                            <button class="btn btn-outline btn-small" onclick="downloadAttachment()">
+                                📥 下载
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+                
+
+                
+                ${task.approver ? `
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">✅ 审核信息</h4>
+                    <p>审核人：${task.approver}</p>
+                    <p>审核时间：${task.approveTime}</p>
+                </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    ${task.status === 'pending' ? `
+                        <button class="btn btn-success" onclick="approveTask('${task.id}')">✅ 通过审核</button>
+                        <button class="btn btn-danger" onclick="rejectTask('${task.id}')">❌ 驳回申请</button>
+                    ` : ''}
+                    <button class="btn btn-outline" onclick="exportTaskDetail('${task.id}')">📊 导出详情</button>
+                </div>
+            `;
+            
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        // 查看活动详情
+        function viewActivityDetail(activityId) {
+            const activity = mockData.activities[activityId];
+            if (!activity) {
+                alert('活动数据不存在');
+                return;
+            }
+
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = `活动详情 - ${activity.title}`;
+            
+            modalBody.innerHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">活动ID</div>
+                        <div class="detail-value">${activity.id}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">活动类型</div>
+                        <div class="detail-value">${activity.type === 'first_time_reward' ? '首次奖励' : activity.type === 'festival_reward' ? '节日活动' : '月度奖励'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">创建时间</div>
+                        <div class="detail-value">${activity.createTime}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">状态</div>
+                        <div class="detail-value">
+                            <span class="status-badge status-approved">进行中</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">单次奖励</div>
+                        <div class="detail-value">¥${activity.amount}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">奖励有效期</div>
+                        <div class="detail-value">${activity.validity}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">参与村庄</div>
+                        <div class="detail-value">${activity.participantCount}个</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">总发放金额</div>
+                        <div class="detail-value">¥${activity.totalReward.toLocaleString()}</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">📝 活动描述</h4>
+                    <p>${activity.description}</p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">📊 参与统计</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${activity.participantCount}</div>
+                            <div class="stat-label">参与村庄数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">¥${activity.totalReward.toLocaleString()}</div>
+                            <div class="stat-label">总发放金额</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">¥${activity.amount}</div>
+                            <div class="stat-label">单次奖励</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${Math.round(activity.participantCount / 1247 * 100)}%</div>
+                            <div class="stat-label">参与率</div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${activity.participants ? `
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">🏘️ 最近参与村庄</h4>
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>村庄名称</th>
+                                <th>获得奖励时间</th>
+                                <th>奖励金额</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${activity.participants.map(p => `
+                                <tr>
+                                    <td>${p.village}</td>
+                                    <td>${p.rewardTime}</td>
+                                    <td>¥${p.amount}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-warning" onclick="pauseActivity('${activity.id}')">⏸️ 暂停活动</button>
+                    <button class="btn btn-outline" onclick="exportActivityDetail('${activity.id}')">📊 导出数据</button>
+                    <button class="btn btn-secondary" onclick="editActivity('${activity.id}')">✏️ 编辑活动</button>
+                </div>
+            `;
+            
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        // 审核操作
+        function approveTask(taskId) {
+            if (confirm(`确认通过任务 ${taskId} 的审核？`)) {
+                alert('任务审核通过！助力金将开始发放。');
+                // 更新任务状态
+                if (mockData.tasks[taskId]) {
+                    mockData.tasks[taskId].status = 'approved';
+                    mockData.tasks[taskId].approver = '当前审核员';
+                    mockData.tasks[taskId].approveTime = new Date().toLocaleString();
+                }
+                closeModal();
+                // 刷新页面数据
+                location.reload();
+            }
+        }
+
+        function rejectTask(taskId) {
+            const reason = prompt('请输入拒绝原因：');
+            if (reason) {
+                alert(`任务 ${taskId} 已拒绝。拒绝原因：${reason}`);
+                // 更新任务状态
+                if (mockData.tasks[taskId]) {
+                    mockData.tasks[taskId].status = 'rejected';
+                    mockData.tasks[taskId].rejectReason = reason;
+                }
+                closeModal();
+                location.reload();
+            }
+        }
+
+        // 活动操作
+        function pauseActivity(activityId) {
+            if (confirm(`确认暂停活动 ${activityId}？`)) {
+                alert('活动已暂停！');
+                location.reload();
+            }
+        }
+
+        function createNewActivity() {
+            alert('跳转到活动创建页面...');
+        }
+
+        function editActivity(activityId) {
+            alert(`编辑活动 ${activityId}...`);
+        }
+
+        // 导出功能
+        function exportTaskDetail(taskId) {
+            alert(`正在导出任务 ${taskId} 的详细信息...`);
+        }
+
+        function exportActivityDetail(activityId) {
+            alert(`正在导出活动 ${activityId} 的详细数据...`);
+        }
+
+        function exportAuditReport() {
+            alert('正在导出审核报告...');
+        }
+
+        // 批量操作
+        function batchApprove() {
+            alert('跳转到批量审核页面...');
+        }
+
+        // 显示提交成功页面
+        function showSubmitSuccessPage(taskId) {
+            // 创建成功页面内容
+            const successPageHtml = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; border-radius: 20px; padding: 60px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.3); max-width: 600px; width: 90%;">
+                        <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
+                        <h2 style="color: #2c5aa0; margin-bottom: 20px; font-size: 28px;">任务提交成功！</h2>
+                        <div style="background: #f8f9fa; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #28a745;">
+                            <div style="font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px;">任务ID：${taskId}</div>
+                            <div style="color: #666; margin-bottom: 8px;">状态：<span style="color: #ffc107; font-weight: bold;">等待审核</span></div>
+                            <div style="color: #666;">提交时间：${new Date().toLocaleString()}</div>
+                        </div>
+                        <p style="color: #666; margin: 20px 0; line-height: 1.6;">
+                            您的任务已成功提交到审核队列，管理员将在24小时内完成审核。<br>
+                            审核通过后，系统将自动发放助力金并发送通知消息。
+                        </p>
+                        <div style="margin-top: 30px;">
+                            <button onclick="closeSuccessPageAndGoToHistory()" style="background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-right: 15px;">
+                                📋 查看历史任务
+                            </button>
+                            <button onclick="closeSuccessPageAndReset()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                                🔄 创建新任务
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 添加到页面
+            const successPage = document.createElement('div');
+            successPage.id = 'submitSuccessPage';
+            successPage.innerHTML = successPageHtml;
+            document.body.appendChild(successPage);
+        }
+
+        // 关闭成功页面并跳转到历史任务
+        function closeSuccessPageAndGoToHistory() {
+            const successPage = document.getElementById('submitSuccessPage');
+            if (successPage) {
+                successPage.remove();
+            }
+            switchTab('history-tasks');
+        }
+
+        // 关闭成功页面并重置表单
+        function closeSuccessPageAndReset() {
+            const successPage = document.getElementById('submitSuccessPage');
+            if (successPage) {
+                successPage.remove();
+            }
+            resetForm();
+        }
+
+        // 星级模块切换函数
+        function toggleStarModule(element) {
+            element.classList.toggle('active');
+            updateVillageSelectionInfo();
+            updateTaskSummary();
+        }
+
+        // 获取选中的星级
+        function getSelectedStars() {
+            const modules = document.querySelectorAll('.star-module.active');
+            return Array.from(modules).map(module => module.getAttribute('data-star'));
+        }
+
+        // 更新任务预览消息（重写版本）
+        function updateTaskPreviewMessage() {
+            const title = document.getElementById('messageTitle')?.value || '🎉 您有新的助力金到账！';
+            const template = document.getElementById('messageTemplate')?.value || 
+                '恭喜你，{village_name}获得了助力金 {amount} 元，有效期为{validity_days}天，近期有老年人助老公益项目可供申请，请尽快申请。';
+            
+            let amount = '100.00';
+            const validity = document.getElementById('validityPeriod')?.value || '7';
+            
+            if (appState.sendMethod === 'region') {
+                amount = document.getElementById('regionAmount')?.value || '100.00';
+            } else if (appState.sendMethod === 'excel' && appState.uploadedData) {
+                const successData = appState.uploadedData.filter(item => item.status === 'success');
+                if (successData.length > 0) {
+                    amount = successData[0].amount.toFixed(2);
+                }
+            }
+            
+            const previewContent = template
+                .replace('{village_name}', '张家村')
+                .replace('{amount}', amount)
+                .replace('{validity_days}', validity);
+            
+            const taskPreviewTitle = document.getElementById('taskPreviewTitle');
+            const taskPreviewContent = document.getElementById('taskPreviewContent');
+            
+            if (taskPreviewTitle) taskPreviewTitle.textContent = title;
+            if (taskPreviewContent) taskPreviewContent.textContent = previewContent;
+        }
+
+        // 重写显示成功解析结果函数（移除删除按钮）
+        function displaySuccessResults(data) {
+            const totalVillages = data.length;
+            const totalAmount = data.reduce((sum, item) => sum + item.amount, 0);
+            const avgAmount = totalAmount / totalVillages;
+            const maxAmount = Math.max(...data.map(item => item.amount));
+            const minAmount = Math.min(...data.map(item => item.amount));
+            
+            const maxVillages = data.filter(item => item.amount === maxAmount).slice(0, 3);
+            const minVillages = data.filter(item => item.amount === minAmount).slice(0, 3);
+            
+            // 生成摘要
+            let summary = `共 ${totalVillages} 个村庄，涉及 ${new Set(data.map(item => item.id.substring(0, 2))).size} 个城市，共计助力金金额 ${(totalAmount/10000).toFixed(2)} 万元。<br>`;
+            summary += `平均每村庄 ${(avgAmount/10000).toFixed(2)} 万元，最高村庄获取 ${(maxAmount/10000).toFixed(2)} 万元，最低村庄获取 ${(minAmount/10000).toFixed(2)} 万元<br>`;
+            summary += `最高村庄为：${maxVillages.map(v => v.name).join('、')}`;
+            if (data.filter(item => item.amount === maxAmount).length > 3) {
+                summary += ` 等 ${data.filter(item => item.amount === maxAmount).length} 个`;
+            }
+            
+            document.getElementById('successSummary').innerHTML = summary;
+            
+            // 生成表格（无删除按钮）
+            const tbody = document.getElementById('resultTableBody');
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td>¥${item.amount.toFixed(2)}</td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('successResult').className = 'visible-section';
+        }
+        
+        // 显示任务状态信息
+        function showTaskStatusInfo(taskId, status) {
+            const statusInfo = document.getElementById('taskStatusInfo');
+            const submitTimeElement = document.getElementById('taskSubmitTime');
+            const taskIdElement = document.getElementById('taskIdDisplay');
+            const statusBadge = document.getElementById('taskStatusBadge');
+            
+            if (!statusInfo) return;
+            
+            // 更新任务ID和提交时间
+            taskIdElement.textContent = taskId;
+            submitTimeElement.textContent = `提交时间：${new Date().toLocaleString()}`;
+            
+            // 更新状态显示
+            const statusConfig = {
+                'submitted': { text: '待审核', class: 'status-pending-review' },
+                'pending': { text: '待审核', class: 'status-pending-review' },
+                'rejected': { text: '审核驳回', class: 'status-review-rejected' },
+                'approved': { text: '已通过待执行', class: 'status-approved-pending' },
+                'completed': { text: '已完成下发', class: 'status-completed' }
+            };
+            
+            const config = statusConfig[status] || statusConfig['pending'];
+            statusBadge.textContent = config.text;
+            statusBadge.className = `task-status-badge ${config.class}`;
+            
+            // 显示状态信息
+            statusInfo.className = 'task-status-info visible-section';
+        }
     </script>
 </body>
 </html>
