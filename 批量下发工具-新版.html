@@ -1360,7 +1360,7 @@
         <div class="nav-tabs-container">
             <div class="nav-tab active" data-tab="batch-send">📤 批量下发配置</div>
             <div class="nav-tab" data-tab="activity-config">⚙️ 运营活动配置</div>
-            <div class="nav-tab" data-tab="history-tasks">📋 历史任务</div>
+            <div class="nav-tab" data-tab="history-tasks">📋 发放任务列表</div>
             <div class="nav-tab" data-tab="audit-management">🔍 审核管理</div>
         </div>
     </div>
@@ -1793,10 +1793,11 @@
             </div>
         </div>
 
-        <!-- 历史任务 -->
+        <!-- 发放任务列表 -->
         <div id="history-tasks" class="tab-content">
             <div class="card">
-                <div class="card-title">📋 历史任务</div>
+                <div class="card-title">📋 发放任务列表</div>
+                <p style="color: #666; margin-bottom: 30px;">查看所有助力金发放任务的历史记录和执行状态</p>
                 
                 <!-- F3.1 审核数据看板 -->
                 <div class="stats-grid">
@@ -1818,7 +1819,7 @@
                     </div>
                 </div>
                 
-                <!-- F3.2 历史任务列表 -->
+                <!-- F3.2 发放任务列表 -->
                 <div class="form-section">
                     <div class="section-title">📝 任务列表</div>
                     
@@ -2977,12 +2978,12 @@
                 const taskId = 'TASK' + new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14) + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
                 
                 // 显示提交成功信息
-                alert(`🎉 任务提交成功！\n\n任务ID：${taskId}\n状态：等待审核\n\n您可以在"历史任务"页面查看任务进度。`);
+                alert(`🎉 任务提交成功！\n\n任务ID：${taskId}\n状态：等待审核\n\n您可以在"发放任务列表"页面查看任务进度。`);
                 
                 // 重置表单
                 resetForm();
                 
-                // 跳转到历史任务页面
+                // 跳转到发放任务列表页面
                 setTimeout(() => {
                     switchTab('history-tasks');
                 }, 1500);
@@ -3360,11 +3361,8 @@
                 ` : ''}
                 
                 <div style="text-align: center; margin-top: 30px;">
-                    ${task.status === 'pending' ? `
-                        <button class="btn btn-success" onclick="approveTask('${task.id}')">✅ 通过审核</button>
-                        <button class="btn btn-danger" onclick="rejectTask('${task.id}')">❌ 驳回申请</button>
-                    ` : ''}
                     <button class="btn btn-outline" onclick="exportTaskDetail('${task.id}')">📊 导出详情</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
                 </div>
             `;
             
@@ -3571,7 +3569,7 @@
                         </p>
                         <div style="margin-top: 30px;">
                             <button onclick="closeSuccessPageAndGoToHistory()" style="background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-right: 15px;">
-                                📋 查看历史任务
+                                📋 查看发放任务列表
                             </button>
                             <button onclick="closeSuccessPageAndReset()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;">
                                 🔄 创建新任务
@@ -3588,7 +3586,7 @@
             document.body.appendChild(successPage);
         }
 
-        // 关闭成功页面并跳转到历史任务
+        // 关闭成功页面并跳转到发放任务列表
         function closeSuccessPageAndGoToHistory() {
             const successPage = document.getElementById('submitSuccessPage');
             if (successPage) {
