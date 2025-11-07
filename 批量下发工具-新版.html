@@ -2749,12 +2749,8 @@
             const minVillages = data.filter(item => item.amount === minAmount).slice(0, 3);
             
             // 生成摘要 - 使用新的金额格式化函数
-            let summary = `共 ${totalVillages} 个村庄，涉及 ${new Set(data.map(item => item.id.substring(0, 2))).size} 个城市，共计助力金金额 ${formatAmountForDisplay(totalAmount)}。<br>`;
-            summary += `平均每村庄 ${formatAmountForDisplay(avgAmount)}，最高村庄获取 ${formatAmountForDisplay(maxAmount)}，最低村庄获取 ${formatAmountForDisplay(minAmount)}<br>`;
-            summary += `最高村庄为：${maxVillages.map(v => v.name).join('、')}`;
-            if (data.filter(item => item.amount === maxAmount).length > 3) {
-                summary += ` 等 ${data.filter(item => item.amount === maxAmount).length} 个`;
-            }
+            let summary = `共 ${totalVillages} 个村庄，共计助力金金额 ${formatAmountForDisplay(totalAmount)}。<br>`;
+            summary += `平均每村庄 ${formatAmountForDisplay(avgAmount)}，最高村庄获取 ${formatAmountForDisplay(maxAmount)}，最低村庄获取 ${formatAmountForDisplay(minAmount)}`;
             
             document.getElementById('successSummary').innerHTML = summary;
             
@@ -2892,9 +2888,7 @@
                     const maxVillages = successData.filter(item => item.amount === maxAmount).slice(0, 3);
                     const minVillages = successData.filter(item => item.amount === minAmount).slice(0, 3);
                     
-                    amountInfo = `平均每村庄 ${(avgAmount/10000).toFixed(2)} 万元，最高村庄获取 ${(maxAmount/10000).toFixed(2)} 万元，最低村庄获取 ${(minAmount/10000).toFixed(2)} 万元<br>`;
-                    amountInfo += `助力金最高村庄为：${maxVillages.map(v => v.name).join('、')}<br>`;
-                    amountInfo += `助力金最低村庄为：${minVillages.map(v => v.name).join('、')}`;
+                    amountInfo = `平均每村庄 ${(avgAmount/10000).toFixed(2)} 万元，最高村庄获取 ${(maxAmount/10000).toFixed(2)} 万元，最低村庄获取 ${(minAmount/10000).toFixed(2)} 万元`;
                 }
             }
             
@@ -3659,12 +3653,8 @@
             const minVillages = data.filter(item => item.amount === minAmount).slice(0, 3);
             
             // 生成摘要
-            let summary = `共 ${totalVillages} 个村庄，涉及 ${new Set(data.map(item => item.id.substring(0, 2))).size} 个城市，共计助力金金额 ${(totalAmount/10000).toFixed(2)} 万元。<br>`;
-            summary += `平均每村庄 ${(avgAmount/10000).toFixed(2)} 万元，最高村庄获取 ${(maxAmount/10000).toFixed(2)} 万元，最低村庄获取 ${(minAmount/10000).toFixed(2)} 万元<br>`;
-            summary += `最高村庄为：${maxVillages.map(v => v.name).join('、')}`;
-            if (data.filter(item => item.amount === maxAmount).length > 3) {
-                summary += ` 等 ${data.filter(item => item.amount === maxAmount).length} 个`;
-            }
+            let summary = `共 ${totalVillages} 个村庄，共计助力金金额 ${(totalAmount/10000).toFixed(2)} 万元。<br>`;
+            summary += `平均每村庄 ${(avgAmount/10000).toFixed(2)} 万元，最高村庄获取 ${(maxAmount/10000).toFixed(2)} 万元，最低村庄获取 ${(minAmount/10000).toFixed(2)} 万元`;
             
             document.getElementById('successSummary').innerHTML = summary;
             
