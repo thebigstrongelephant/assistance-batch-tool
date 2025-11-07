@@ -1103,6 +1103,104 @@
             color: #666;
         }
         
+        .activity-config-details {
+            margin: 20px 0;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .config-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .config-label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+            font-size: 14px;
+        }
+        
+        .config-value {
+            flex: 1;
+            text-align: right;
+            color: #28a745;
+            font-weight: 500;
+        }
+        
+        .message-template {
+            text-align: left;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 3px solid #28a745;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .message-title {
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .message-content {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .activity-status-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(40, 167, 69, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #28a745;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #28a745;
+            font-weight: 500;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.status-active {
+            background: #28a745;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+        
         .status-badge {
             padding: 6px 12px;
             border-radius: 20px;
@@ -1626,156 +1724,69 @@
         <div id="activity-config" class="tab-content">
             <div class="card">
                 <div class="card-title">⚙️ 运营活动配置</div>
-                <p style="color: #666; margin-bottom: 30px;">配置自动化运营活动，激励特定用户行为或在特定节日活跃气氛</p>
+                <p style="color: #666; margin-bottom: 30px;">自动化运营活动配置，系统将根据设定规则自动执行</p>
                 
-                <!-- 活动统计 -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">进行中活动</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">12</div>
-                        <div class="stat-label">历史活动</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">¥5.2万</div>
-                        <div class="stat-label">活动总投入</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">89%</div>
-                        <div class="stat-label">参与率</div>
-                    </div>
-                </div>
-                
-                <!-- 已生效活动展示 -->
+                <!-- 自动任务展示 -->
                 <div class="form-section">
-                    <div class="section-title">✅ 已生效活动</div>
+                    <div class="section-title">🤖 自动执行任务</div>
                     
                     <div class="activity-card">
-                        <div class="activity-title">🎯 村委首次获取助力金奖励</div>
+                        <div class="activity-title">🏘️ 新村创建自动奖励</div>
                         <div class="activity-meta">
-                            创建时间：2025-10-15 | 状态：<span class="status-badge status-approved">进行中</span> | 有效期：长期有效
+                            触发条件：新村创建成功 | 状态：<span class="status-badge status-approved">已启用</span> | 创建时间：2025-11-07
                         </div>
-                        <div class="activity-stats">
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">156</div>
-                                <div class="activity-stat-label">已参与村庄</div>
+                        
+                        <div class="activity-config-details">
+                            <div class="config-item">
+                                <div class="config-label">🎯 触发事件</div>
+                                <div class="config-value">新村创建成功</div>
                             </div>
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">¥7,800</div>
-                                <div class="activity-stat-label">已发放奖励</div>
+                            <div class="config-item">
+                                <div class="config-label">💰 奖励金额</div>
+                                <div class="config-value">¥1,000 元</div>
                             </div>
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">¥50</div>
-                                <div class="activity-stat-label">单次奖励</div>
+                            <div class="config-item">
+                                <div class="config-label">⏰ 有效期</div>
+                                <div class="config-value">1个月</div>
                             </div>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <button class="btn btn-outline btn-small" onclick="viewActivityDetail('ACT001')">📊 查看详情</button>
-                            <button class="btn btn-warning btn-small" onclick="pauseActivity('ACT001')">⏸️ 暂停活动</button>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-title">🎊 春节特别奖励活动</div>
-                        <div class="activity-meta">
-                            创建时间：2025-01-20 | 状态：<span class="status-badge status-approved">进行中</span> | 有效期：2025-02-29
-                        </div>
-                        <div class="activity-stats">
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">89</div>
-                                <div class="activity-stat-label">已参与村庄</div>
+                            <div class="config-item">
+                                <div class="config-label">📱 消息推送</div>
+                                <div class="config-value">推送给村支书</div>
                             </div>
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">¥8,900</div>
-                                <div class="activity-stat-label">已发放奖励</div>
-                            </div>
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">¥100</div>
-                                <div class="activity-stat-label">单次奖励</div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <button class="btn btn-outline btn-small" onclick="viewActivityDetail('ACT002')">📊 查看详情</button>
-                            <button class="btn btn-warning btn-small" onclick="pauseActivity('ACT002')">⏸️ 暂停活动</button>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-title">🏆 优秀村庄月度奖励</div>
-                        <div class="activity-meta">
-                            创建时间：2025-10-01 | 状态：<span class="status-badge status-approved">进行中</span> | 有效期：长期有效
-                        </div>
-                        <div class="activity-stats">
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">23</div>
-                                <div class="activity-stat-label">已参与村庄</div>
-                            </div>
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">¥11,500</div>
-                                <div class="activity-stat-label">已发放奖励</div>
-                            </div>
-                            <div class="activity-stat">
-                                <div class="activity-stat-value">¥500</div>
-                                <div class="activity-stat-label">单次奖励</div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <button class="btn btn-outline btn-small" onclick="viewActivityDetail('ACT003')">📊 查看详情</button>
-                            <button class="btn btn-warning btn-small" onclick="pauseActivity('ACT003')">⏸️ 暂停活动</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 30px;">
-                    <button class="btn btn-primary" onclick="createNewActivity()">➕ 创建新活动</button>
-                </div>
-                
-                <!-- F2.1 村委首次获取助力金 -->
-                <div class="form-section">
-                    <div class="section-title">🎯 村委首次获取助力金活动</div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                        <label class="switch">
-                            <input type="checkbox" id="firstTimeActivity">
-                            <span class="slider"></span>
-                        </label>
-                        <span>启用村委首次获取助力金自动奖励</span>
-                    </div>
-                    
-                    <div id="firstTimeConfig" class="hidden-section">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label">奖励金额（元）<span style="color: red;">*</span></label>
-                                <input type="number" class="form-input" id="firstTimeAmount" 
-                                       value="50" min="0.01" step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">奖励有效期<span style="color: red;">*</span></label>
-                                <select class="form-select" id="firstTimeValidity" required>
-                                    <option value="7">1周</option>
-                                    <option value="30" selected>1个月</option>
-                                </select>
+                            <div class="config-item">
+                                <div class="config-label">📝 消息模板</div>
+                                <div class="config-value">
+                                    <div class="message-template">
+                                        <div class="message-title">🎉 新村创建奖励到账！</div>
+                                        <div class="message-content">
+                                            恭喜您成功创建新村！系统为您自动发放助力金 ¥1,000 元，有效期1个月。
+                                            请及时使用，感谢您对乡村公益平台的支持！
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- 模板消息配置 -->
-                        <div class="form-group">
-                            <label class="form-label">消息标题</label>
-                            <input type="text" class="form-input" id="firstTimeMessageTitle" 
-                                   value="🎉 首次获取奖励到账！">
+                        <div class="activity-stats">
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">0</div>
+                                <div class="activity-stat-label">今日触发次数</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">0</div>
+                                <div class="activity-stat-label">本月触发次数</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-stat-value">¥0</div>
+                                <div class="activity-stat-label">累计发放金额</div>
+                            </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label class="form-label">消息内容模板</label>
-                            <textarea class="form-textarea" id="firstTimeMessageTemplate" readonly>恭喜您首次获取助力金！系统为您额外奖励 ¥{amount} 元，有效期至 {expire_date}。感谢您对善治美平台公益的支持！</textarea>
-                        </div>
-                        
-                        <div style="text-align: center; margin-top: 20px;">
-                            <button class="btn btn-primary" onclick="submitFirstTimeActivity()">
-                                🚀 提交审核
-                            </button>
+                        <div class="activity-status-info">
+                            <div class="status-indicator">
+                                <span class="status-dot status-active"></span>
+                                <span>系统监控中，将自动执行奖励发放</span>
+                            </div>
                         </div>
                     </div>
                 </div>
