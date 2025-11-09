@@ -1189,6 +1189,158 @@
             background: #28a745;
         }
         
+        /* 审核管理页面样式 */
+        .expandable-section {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .expandable-section:hover {
+            color: #2c5aa0;
+        }
+        
+        .task-count {
+            background: #2c5aa0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .expand-icon {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        
+        .expand-icon.rotated {
+            transform: rotate(90deg);
+        }
+        
+        .expandable-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .expandable-content.collapsed {
+            max-height: 0;
+        }
+        
+        .audit-task-item {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e9ecef;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .audit-task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .task-id {
+            font-weight: 600;
+            color: #2c5aa0;
+            font-size: 16px;
+        }
+        
+        .task-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .task-status.pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .task-status.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .task-status.completed {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .task-status.rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .task-info {
+            margin-bottom: 15px;
+        }
+        
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .task-meta span {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .task-description {
+            color: #495057;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .audit-info {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        
+        .audit-result {
+            color: #28a745;
+        }
+        
+        .execution-result {
+            color: #17a2b8;
+        }
+        
+        .reject-reason {
+            color: #dc3545;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
         @keyframes pulse {
             0% {
                 box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
@@ -1892,228 +2044,203 @@
         <div id="audit-management" class="tab-content">
             <div class="card">
                 <div class="card-title">🔍 审核管理</div>
-                <p style="color: #666; margin-bottom: 30px;">此页面为管理者专用，用于审核待处理的助力金下发申请</p>
+                <p style="color: #666; margin-bottom: 30px;">管理和审核助力金下发申请</p>
                 
-                <!-- 审核统计 -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">23</div>
-                        <div class="stat-label">待审核任务</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">8</div>
-                        <div class="stat-label">今日已审核</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">2.5小时</div>
-                        <div class="stat-label">平均审核时长</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">92%</div>
-                        <div class="stat-label">通过率</div>
-                    </div>
-                </div>
-                
+                <!-- 未审核任务 -->
                 <div class="form-section">
-                    <div class="section-title">⏳ 待审核任务</div>
+                    <div class="section-title expandable-section" onclick="toggleSection('pendingTasks')">
+                        ⏳ 未审核任务 <span class="task-count">(2)</span>
+                        <span class="expand-icon" id="pendingTasksIcon">▼</span>
+                    </div>
                     
-                    <!-- 待审核任务列表 - 展开式显示 -->
-                    <div id="auditTasksList">
-                        <!-- 任务1 -->
-                        <div class="task-summary" style="margin-bottom: 30px;">
-                            <div class="task-summary-title">📋 任务详情 - TASK20251107001</div>
-                            
-                            <!-- 任务提交人和提交时间 -->
-                            <div class="summary-row" style="margin-bottom: 15px;">
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">任务提交人：</span>
-                                    <span class="summary-value">张三</span>
+                    <div id="pendingTasks" class="expandable-content">
+                        <!-- 未审核任务1 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251107001</div>
+                                <div class="task-status pending">待审核</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：张三</span>
+                                    <span>提交时间：2025-11-07 14:30</span>
+                                    <span>村庄数：156个</span>
+                                    <span>总金额：¥15,600</span>
                                 </div>
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">提交时间：</span>
-                                    <span class="summary-value">2025-11-07 14:30</span>
+                                <div class="task-description">
+                                    按地区下发 - 河北省石家庄市，每村100元，有效期一周
                                 </div>
                             </div>
-                            
-                            <!-- 后续三个信息单独一行，字体变大 -->
-                            <div class="summary-row" style="font-size: 18px; font-weight: 600;">
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">任务覆盖村庄数：</span>
-                                    <span class="summary-value">156</span>
-                                </div>
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">任务助力金：</span>
-                                    <span class="summary-value">¥15,600 (1.6万元)</span>
-                                </div>
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">有效期：</span>
-                                    <span class="summary-value">一周</span>
-                                </div>
-                            </div>
-                            
-                            <!-- 执行说明 -->
-                            <div class="execution-notice">
-                                <div class="notice-icon">⏰</div>
-                                <div class="notice-content">
-                                    <strong>执行说明：</strong>审批通过后，系统将在每日早上10点～晚上6点期间自动执行下发。有效期为执行成功后开始计算的有效期时间。
-                                </div>
-                            </div>
-                            
-                            <!-- 详细信息 -->
-                            <div class="detail-section">
-                                <h4 class="detail-title">📍 村庄明细</h4>
-                                <div class="detail-item">
-                                    <span class="detail-label">下发方式：</span>
-                                    <span class="detail-value">按地区下发</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">村庄范围：</span>
-                                    <span class="detail-value">河北省石家庄市 的 156 个村庄</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">金额详情：</span>
-                                    <span class="detail-value">每个村庄均为 100元</span>
-                                </div>
-                            </div>
-                            
-                            <!-- 备注信息 -->
-                            <div class="detail-section">
-                                <h4 class="detail-title">📝 备注信息</h4>
-                                <div class="detail-item">
-                                    <span class="detail-value" style="line-height: 1.6;">针对河北省石家庄市所有5星级村庄进行助力金下发，用于激励村庄积极参与平台活动。</span>
-                                </div>
-                            </div>
-                            
-                            <!-- 模版消息预览 -->
-                            <div style="margin: 20px 0;">
-                                <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
-                                <div class="message-preview">
-                                    <div class="message-header">🎉 您有新的助力金到账！</div>
-                                    <div class="message-content">
-                                        恭喜你，张家村获得了助力金 100 元，有效期为7天，近期有老年人助老公益项目可供申请，请尽快申请。
-                                    </div>
-                                    <div class="message-meta">
-                                        推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- 审核操作按钮 -->
-                            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #f1f3f4;">
-                                <button class="btn btn-success" onclick="approveTask('TASK20251107001')">✅ 通过审核</button>
-                                <button class="btn btn-danger" onclick="rejectTask('TASK20251107001')">❌ 驳回申请</button>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107001')">📊 查看详情</button>
+                                <button class="btn btn-success btn-small" onclick="approveTask('TASK20251107001')">✅ 通过</button>
+                                <button class="btn btn-danger btn-small" onclick="rejectTask('TASK20251107001')">❌ 驳回</button>
                             </div>
                         </div>
                         
-                        <!-- 任务2 -->
-                        <div class="task-summary" style="margin-bottom: 30px;">
-                            <div class="task-summary-title">📋 任务详情 - TASK20251107004</div>
-                            
-                            <!-- 任务提交人和提交时间 -->
-                            <div class="summary-row" style="margin-bottom: 15px;">
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">任务提交人：</span>
-                                    <span class="summary-value">周八</span>
+                        <!-- 未审核任务2 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251107004</div>
+                                <div class="task-status pending">待审核</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：周八</span>
+                                    <span>提交时间：2025-11-07 16:45</span>
+                                    <span>村庄数：45个</span>
+                                    <span>总金额：¥6,750</span>
                                 </div>
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">提交时间：</span>
-                                    <span class="summary-value">2025-11-07 16:45</span>
+                                <div class="task-description">
+                                    Excel导入 - 45个村庄，每村150元，有效期两周
                                 </div>
                             </div>
-                            
-                            <!-- 后续三个信息单独一行，字体变大 -->
-                            <div class="summary-row" style="font-size: 18px; font-weight: 600;">
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">任务覆盖村庄数：</span>
-                                    <span class="summary-value">45</span>
-                                </div>
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">任务助力金：</span>
-                                    <span class="summary-value"><strong>¥6,750</strong></span>
-                                </div>
-                                <div class="summary-item-inline">
-                                    <span class="summary-label">有效期：</span>
-                                    <span class="summary-value">两周</span>
-                                </div>
-                            </div>
-                            
-                            <!-- 执行说明 -->
-                            <div class="execution-notice">
-                                <div class="notice-icon">⏰</div>
-                                <div class="notice-content">
-                                    <strong>执行说明：</strong>审批通过后，系统将在每日早上10点～晚上6点期间自动执行下发。有效期为执行成功后开始计算的有效期时间。
-                                </div>
-                            </div>
-                            
-                            <!-- 详细信息 -->
-                            <div class="detail-section">
-                                <h4 class="detail-title">📍 村庄明细</h4>
-                                <div class="detail-item">
-                                    <span class="detail-label">下发方式：</span>
-                                    <span class="detail-value">Excel导入</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">村庄范围：</span>
-                                    <span class="detail-value">导入了 张家村、李家村、王家村 等 45 个村庄</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">金额详情：</span>
-                                    <span class="detail-value">每个村庄均为 150元</span>
-                                </div>
-                            </div>
-                            
-                            <!-- 备注信息 -->
-                            <div class="detail-section">
-                                <h4 class="detail-title">📝 备注信息</h4>
-                                <div class="detail-item">
-                                    <span class="detail-value" style="line-height: 1.6;">根据Excel文件导入的村庄列表进行定向助力金发放，主要针对近期活跃度较高的村庄。</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Excel附件展示 -->
-                            <div style="margin: 20px 0;">
-                                <h4 style="color: #2c5aa0; margin-bottom: 10px;">📎 Excel附件</h4>
-                                <div class="attachment-display">
-                                    <div class="attachment-item">
-                                        <div class="attachment-icon">📊</div>
-                                        <div class="attachment-info">
-                                            <div class="attachment-name">助力金下发名单.xlsx</div>
-                                            <div class="attachment-size">文件大小: 1.2MB | 上传时间: 2025-11-07 15:45</div>
-                                        </div>
-                                        <button class="btn btn-outline btn-small" onclick="downloadAttachment()">
-                                            📥 下载
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- 模版消息预览 -->
-                            <div style="margin: 20px 0;">
-                                <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
-                                <div class="message-preview">
-                                    <div class="message-header">🎉 您有新的助力金到账！</div>
-                                    <div class="message-content">
-                                        恭喜你，张家村获得了助力金 150 元，有效期为14天，近期有老年人助老公益项目可供申请，请尽快申请。
-                                    </div>
-                                    <div class="message-meta">
-                                        推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- 审核操作按钮 -->
-                            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #f1f3f4;">
-                                <button class="btn btn-success" onclick="approveTask('TASK20251107004')">✅ 通过审核</button>
-                                <button class="btn btn-danger" onclick="rejectTask('TASK20251107004')">❌ 驳回申请</button>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107004')">📊 查看详情</button>
+                                <button class="btn btn-success btn-small" onclick="approveTask('TASK20251107004')">✅ 通过</button>
+                                <button class="btn btn-danger btn-small" onclick="rejectTask('TASK20251107004')">❌ 驳回</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <div style="text-align: center; margin-top: 20px;">
-                    <button class="btn btn-outline" onclick="batchApprove()">📋 批量审核</button>
-                    <button class="btn btn-secondary" onclick="exportAuditReport()">📊 导出审核报告</button>
-                    <button class="btn btn-outline" onclick="viewHistoryApplications()">📋 查看历史申请任务</button>
+                <!-- 已审核任务 -->
+                <div class="form-section">
+                    <div class="section-title expandable-section" onclick="toggleSection('reviewedTasks')">
+                        ✅ 已审核任务 <span class="task-count">(5)</span>
+                        <span class="expand-icon" id="reviewedTasksIcon">▶</span>
+                    </div>
+                    
+                    <div id="reviewedTasks" class="expandable-content collapsed">
+                        <!-- 已审核任务1 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251107002</div>
+                                <div class="task-status approved">已通过</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：李四</span>
+                                    <span>审核时间：2025-11-07 15:20</span>
+                                    <span>村庄数：89个</span>
+                                    <span>总金额：¥12,450</span>
+                                </div>
+                                <div class="task-description">
+                                    Excel导入 - 89个村庄，每村140元，有效期一周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107002')">📊 查看详情</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审核任务2 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251107003</div>
+                                <div class="task-status completed">已完成</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：王五</span>
+                                    <span>完成时间：2025-11-07 18:30</span>
+                                    <span>村庄数：234个</span>
+                                    <span>总金额：¥23,400</span>
+                                </div>
+                                <div class="task-description">
+                                    按地区下发 - 山东省济南市，每村100元，有效期一周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                    <span class="execution-result">已执行完成</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107003')">📊 查看详情</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审核任务3 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251106001</div>
+                                <div class="task-status rejected">已驳回</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：赵六</span>
+                                    <span>审核时间：2025-11-06 17:15</span>
+                                    <span>村庄数：67个</span>
+                                    <span>总金额：¥8,040</span>
+                                </div>
+                                <div class="task-description">
+                                    Excel导入 - 67个村庄，每村120元，有效期一周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                    <span class="reject-reason">驳回原因：Excel文件格式不正确</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251106001')">📊 查看详情</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审核任务4 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251106002</div>
+                                <div class="task-status completed">已完成</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：孙七</span>
+                                    <span>完成时间：2025-11-06 20:10</span>
+                                    <span>村庄数：123个</span>
+                                    <span>总金额：¥18,450</span>
+                                </div>
+                                <div class="task-description">
+                                    按地区下发 - 江苏省南京市，每村150元，有效期两周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                    <span class="execution-result">已执行完成</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251106002')">📊 查看详情</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审核任务5 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251105001</div>
+                                <div class="task-status completed">已完成</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：钱九</span>
+                                    <span>完成时间：2025-11-05 16:45</span>
+                                    <span>村庄数：78个</span>
+                                    <span>总金额：¥11,700</span>
+                                </div>
+                                <div class="task-description">
+                                    Excel导入 - 78个村庄，每村150元，有效期一周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                    <span class="execution-result">已执行完成</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251105001')">📊 查看详情</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2133,6 +2260,22 @@
     </div>
 
     <script>
+        // 展开/折叠功能
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId);
+            const icon = document.getElementById(sectionId + 'Icon');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                icon.textContent = '▼';
+                icon.classList.remove('rotated');
+            } else {
+                content.classList.add('collapsed');
+                icon.textContent = '▶';
+                icon.classList.add('rotated');
+            }
+        }
+        
         // 全局状态管理
         const appState = {
             currentTab: 'batch-send',
