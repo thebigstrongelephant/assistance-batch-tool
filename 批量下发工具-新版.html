@@ -3889,48 +3889,7 @@
         }
 
         // 重写显示成功解析结果函数（移除删除按钮）
-        function displaySuccessResults(data) {
-            const totalVillages = data.length;
-            const totalAmount = data.reduce((sum, item) => sum + item.amount, 0);
-            const avgAmount = totalAmount / totalVillages;
-            const maxAmount = Math.max(...data.map(item => item.amount));
-            const minAmount = Math.min(...data.map(item => item.amount));
-            
-            const maxVillages = data.filter(item => item.amount === maxAmount).slice(0, 3);
-            const minVillages = data.filter(item => item.amount === minAmount).slice(0, 3);
-            
-            // 格式化金额显示函数（低于1000显示原始数据，否则显示万级数据）
-            function formatAmountDisplay(amount) {
-                if (amount < 1000) {
-                    return `${Math.round(amount)} 元`;
-                } else {
-                    return `${(amount/10000).toFixed(2)} 万元`;
-                }
-            }
-            
-            // 生成摘要
-            let summary = `共 ${totalVillages} 个村庄，共计助力金金额 ${(totalAmount/10000).toFixed(2)} 万元。<br>`;
-            summary += `平均每村庄 ${formatAmountDisplay(avgAmount)}，最高村庄获取 ${formatAmountDisplay(maxAmount)}，最低村庄获取 ${formatAmountDisplay(minAmount)}。`;
-            
-            // 添加最高和最低村庄名称
-            const maxVillageNames = maxVillages.map(v => v.name).join('、');
-            const minVillageNames = minVillages.map(v => v.name).join('、');
-            summary += `最高村庄是 ${maxVillageNames}。最低村庄是 ${minVillageNames}。`;
-            
-            document.getElementById('successSummary').innerHTML = summary;
-            
-            // 生成表格（无删除按钮）
-            const tbody = document.getElementById('resultTableBody');
-            tbody.innerHTML = data.map(item => `
-                <tr>
-                    <td>${item.id}</td>
-                    <td>${item.name}</td>
-                    <td>¥${item.amount.toFixed(2)}</td>
-                </tr>
-            `).join('');
-            
-            document.getElementById('successResult').className = 'visible-section';
-        }
+
         
         // 显示任务状态信息
         function showTaskStatusInfo(taskId, status) {
