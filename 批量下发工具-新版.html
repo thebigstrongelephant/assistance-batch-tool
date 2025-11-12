@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>助力金批量下发工具 - 修复版</title>
+    <title>助力金批量下发工具 - 新版</title>
     <style>
         * {
             margin: 0;
@@ -25,6 +25,20 @@
             color: white;
             padding: 25px 0;
             box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            z-index: -1;
         }
         
         .header-content {
@@ -124,6 +138,11 @@
             transition: all 0.3s ease;
         }
         
+        .form-section:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
         .section-title {
             font-size: 16px;
             font-weight: 600;
@@ -134,10 +153,15 @@
             gap: 8px;
         }
         
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
         .form-group {
             display: flex;
             flex-direction: column;
-            margin-bottom: 20px;
         }
         
         .form-label {
@@ -164,6 +188,16 @@
             transform: translateY(-2px);
         }
         
+        .form-input:hover, .form-select:hover, .form-textarea:hover {
+            border-color: rgba(44, 90, 160, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
         .btn {
             padding: 14px 28px;
             border: none;
@@ -180,6 +214,21 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
         .btn-primary {
             background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
             color: white;
@@ -189,6 +238,31 @@
             background: linear-gradient(135deg, #1e3f73 0%, #2c5aa0 100%);
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(44, 90, 160, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-outline {
+            background: rgba(255,255,255,0.1);
+            color: #2c5aa0;
+            border: 2px solid rgba(44, 90, 160, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(44, 90, 160, 0.1);
+            border-color: #2c5aa0;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(44, 90, 160, 0.2);
         }
         
         .hidden-section {
@@ -211,13 +285,562 @@
             }
         }
         
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px;
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .card {
+            animation: slideInFromLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* 加载动画 */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+
+        
+        .upload-area {
+            border: 2px dashed #2c5aa0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f8f9ff;
+        }
+        
+        .upload-area:hover {
+            border-color: #1e3f73;
+            background: #f0f4ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #1e3f73;
+            background: #e6f0ff;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
+            border-left: 4px solid #2c5aa0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(44, 90, 160, 0.05) 0%, rgba(44, 90, 160, 0.02) 100%);
+            z-index: -1;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            border-left-color: #1e3f73;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .amount-display {
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8f9fa;
             border-radius: 6px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .chinese-amount {
+            font-size: 16px;
+            color: #495057;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .wan-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        
+        .wan-amount.approximate::before {
+            content: "近似 ";
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 多选下拉框样式 */
+        select[multiple] {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid rgba(233,236,239,0.5);
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        select[multiple] option {
+            padding: 8px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+        }
+        
+        select[multiple] option:checked {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
+            color: white;
+        }
+        
+        /* 地区选择层级样式 */
+        .region-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .region-arrow {
+            color: #666;
+            font-weight: bold;
+        }
+        
+        /* 附件展示样式 */
+        .attachment-display {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .attachment-item:last-child {
+            border-bottom: none;
+        }
+        
+        .attachment-icon {
+            font-size: 24px;
+        }
+        
+        .attachment-info {
+            flex: 1;
+        }
+        
+        .attachment-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .attachment-size {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 星级筛选模块样式 */
+        .star-filter-modules {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .star-module {
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 80px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .star-module:hover {
+            border-color: #2c5aa0;
+            background: rgba(44, 90, 160, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 90, 160, 0.15);
+        }
+        
+        .star-module.active {
+            border-color: #2c5aa0;
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
+        }
+        
+        .star-module.active:hover {
+            background: linear-gradient(135deg, #1e3f73 0%, #2c5aa0 100%);
+        }
+        
+        .star-text {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        /* 任务单预览新样式 */
+        .summary-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(44, 90, 160, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .summary-item-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .summary-item-inline .summary-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .summary-item-inline .summary-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+        
+        .execution-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .execution-notice-small {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 11px;
+            color: #666;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            max-width: 200px;
+            line-height: 1.3;
+            z-index: 10;
+        }
+        
+        .notice-icon {
+            font-size: 20px;
+            color: #ffc107;
+        }
+        
+        .notice-content {
+            flex: 1;
+            font-size: 14px;
+            color: #856404;
+            line-height: 1.5;
+        }
+        
+        .detail-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(233, 236, 239, 0.5);
+        }
+        
+        .detail-title {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .detail-item {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+        
+        .detail-label {
+            min-width: 80px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        /* 村庄数量显示优化 */
+        .village-count-display {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .village-selection-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .village-count-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
             margin: 10px 0;
-            border: 1px solid #c3e6cb;
+        }
+        
+        .village-count-text {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+        }
+        
+        .result-table th,
+        .result-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(233,236,239,0.3);
+        }
+        
+        .result-table th {
+            background: linear-gradient(135deg, rgba(248,249,250,0.9) 0%, rgba(233,236,239,0.5) 100%);
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        
+        .result-table tr {
+            transition: all 0.2s ease;
+        }
+        
+        .result-table tr:hover {
+            background: rgba(44, 90, 160, 0.05);
+            transform: scale(1.01);
+        }
+        
+        .result-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .message-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-top: 15px;
+        }
+        
+        .message-header {
+            font-weight: bold;
+            color: #2c5aa0;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .message-content {
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .message-meta {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 10px;
+        }
+        
+        .task-summary {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .task-summary-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 20px;
+        }
+        
+        /* 任务状态样式 */
+        .task-status-info {
+            background: rgba(44, 90, 160, 0.05);
+            border: 1px solid rgba(44, 90, 160, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .task-status-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .task-status-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .task-submit-time {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .task-status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-submitted {
+            background: linear-gradient(135deg, rgba(255,243,205,0.9) 0%, rgba(255,243,205,0.7) 100%);
+            color: #856404;
+            border: 1px solid rgba(133,100,4,0.2);
+        }
+        
+        .status-pending-review {
+            background: linear-gradient(135deg, rgba(255,243,205,0.9) 0%, rgba(255,243,205,0.7) 100%);
+            color: #856404;
+            border: 1px solid rgba(133,100,4,0.2);
+        }
+        
+        .status-review-rejected {
+            background: linear-gradient(135deg, rgba(248,215,218,0.9) 0%, rgba(248,215,218,0.7) 100%);
+            color: #721c24;
+            border: 1px solid rgba(114,28,36,0.2);
+        }
+        
+        .status-approved-pending {
+            background: linear-gradient(135deg, rgba(209,236,241,0.9) 0%, rgba(209,236,241,0.7) 100%);
+            color: #0c5460;
+            border: 1px solid rgba(12,84,96,0.2);
+        }
+        
+        .status-completed {
+            background: linear-gradient(135deg, rgba(212,237,218,0.9) 0%, rgba(212,237,218,0.7) 100%);
+            color: #155724;
+            border: 1px solid rgba(21,87,36,0.2);
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0e68c;
+        }
+        
+        .summary-label {
+            font-weight: 500;
+            color: #856404;
+        }
+        
+        .summary-value {
+            font-weight: bold;
+            color: #333;
         }
         
         .error-message {
@@ -228,16 +851,619 @@
             margin: 10px 0;
             border: 1px solid #f5c6cb;
         }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #e0a800 0%, #ffc107 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(20px);
+            margin: 3% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 85%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .detail-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .activity-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.03) 0%, rgba(40, 167, 69, 0.01) 100%);
+            z-index: -1;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            border-left-color: #20c997;
+        }
+        
+        .activity-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 10px;
+        }
+        
+        .activity-meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .activity-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .activity-stat {
+            text-align: center;
+        }
+        
+        .activity-stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .activity-stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .activity-config-details {
+            margin: 20px 0;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .config-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .config-label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+            font-size: 14px;
+        }
+        
+        .config-value {
+            flex: 1;
+            text-align: right;
+            color: #28a745;
+            font-weight: 500;
+        }
+        
+        .message-template {
+            text-align: left;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 3px solid #28a745;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .message-title {
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .message-content {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .activity-status-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(40, 167, 69, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #28a745;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #28a745;
+            font-weight: 500;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.status-active {
+            background: #28a745;
+        }
+        
+        /* 审核管理页面样式 */
+        .expandable-section {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .expandable-section:hover {
+            color: #2c5aa0;
+        }
+        
+        .task-count {
+            background: #2c5aa0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .expand-icon {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        
+        .expand-icon.rotated {
+            transform: rotate(90deg);
+        }
+        
+        .expandable-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .expandable-content.collapsed {
+            max-height: 0;
+        }
+        
+        .audit-task-item {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e9ecef;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .audit-task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .task-id {
+            font-weight: 600;
+            color: #2c5aa0;
+            font-size: 16px;
+        }
+        
+        .task-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .task-status.pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .task-status.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .task-status.completed {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .task-status.rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .task-info {
+            margin-bottom: 15px;
+        }
+        
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .task-meta span {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .task-description {
+            color: #495057;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .audit-info {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        
+        .audit-result {
+            color: #28a745;
+        }
+        
+        .execution-result {
+            color: #17a2b8;
+        }
+        
+        .reject-reason {
+            color: #dc3545;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, rgba(255,243,205,0.9) 0%, rgba(255,243,205,0.7) 100%);
+            color: #856404;
+            border-color: rgba(133,100,4,0.2);
+        }
+        
+        .status-approved {
+            background: linear-gradient(135deg, rgba(212,237,218,0.9) 0%, rgba(212,237,218,0.7) 100%);
+            color: #155724;
+            border-color: rgba(21,87,36,0.2);
+        }
+        
+        .status-rejected {
+            background: linear-gradient(135deg, rgba(248,215,218,0.9) 0%, rgba(248,215,218,0.7) 100%);
+            color: #721c24;
+            border-color: rgba(114,28,36,0.2);
+        }
+        
+        .status-processing {
+            background: linear-gradient(135deg, rgba(209,236,241,0.9) 0%, rgba(209,236,241,0.7) 100%);
+            color: #0c5460;
+            border-color: rgba(12,84,96,0.2);
+        }
+        
+        .status-warning {
+            background: linear-gradient(135deg, rgba(255,243,205,0.9) 0%, rgba(255,193,7,0.3) 100%);
+            color: #856404;
+            border-color: rgba(255,193,7,0.3);
+        }
+        
+        .download-link {
+            color: #2c5aa0;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .download-link:hover {
+            text-decoration: underline;
+        }
+        
+        .village-count-display {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .village-count-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c5aa0;
+        }
+        
+        .village-count-text {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* 开关按钮样式 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #2c5aa0;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
     </style>
 </head>
 <body>
+
+
     <div class="header">
         <div class="header-content">
             <h1>🎯 善治美平台公益 to C 开放 - 助力金发放工具</h1>
             <div class="user-info">
                 <span>管理员：张三</span>
                 <span>|</span>
-                <span id="currentTime">2025-11-12 15:30</span>
+                <span id="currentTime">2025-11-05 15:30</span>
             </div>
         </div>
     </div>
@@ -258,7 +1484,7 @@
                 <div class="card-title">📤 批量下发配置</div>
                 <p style="color: #666; margin-bottom: 30px;">配置助力金批量下发任务，支持按地区下发和Excel导入两种方式</p>
                 
-                <!-- 下发方式选择 -->
+                <!-- F1.1 下发方式选择 -->
                 <div class="form-section">
                     <div class="section-title">📋 下发方式选择</div>
                     <div class="form-group">
@@ -274,98 +1500,1027 @@
                     </div>
                 </div>
 
-                <!-- 按地区下发 -->
+                <!-- F1.2 按地区下发 -->
                 <div class="form-section hidden-section" id="regionSendSection">
                     <div class="section-title">🌍 选择地区下发</div>
+                    
+                    <!-- 地区选择 - 层级结构一行显示 -->
                     <div class="form-group">
                         <label class="form-label">选择地区</label>
-                        <select class="form-select" id="province">
-                            <option value="">选择省份</option>
-                            <option value="all">✅ 全国</option>
-                            <option value="yunnan">云南省</option>
-                            <option value="hebei">河北省</option>
-                            <option value="beijing">北京市</option>
-                        </select>
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <select class="form-select" id="province" style="min-width: 120px;" onchange="updateRegionSelector('city', this.value)">
+                                <option value="">选择省份</option>
+                                <option value="all">✅ 全国</option>
+                                <option value="yunnan">云南省</option>
+                                <option value="hebei">河北省</option>
+                                <option value="beijing">北京市</option>
+                                <option value="shandong">山东省</option>
+                                <option value="henan">河南省</option>
+                                <option value="shanxi">山西省</option>
+                            </select>
+                            <span style="color: #666;">></span>
+                            <select class="form-select" id="city" style="min-width: 120px;" onchange="updateRegionSelector('county', this.value)">
+                                <option value="">选择市</option>
+                                <option value="all">✅ 全部市</option>
+                            </select>
+                            <span style="color: #666;">></span>
+                            <select class="form-select" id="county" style="min-width: 120px;" onchange="updateRegionSelector('town', this.value)">
+                                <option value="">选择县</option>
+                                <option value="all">✅ 全部县</option>
+                            </select>
+                            <span style="color: #666;">></span>
+                            <select class="form-select" id="town" style="min-width: 120px;" onchange="updateRegionSelector('village', this.value)">
+                                <option value="">选择镇</option>
+                                <option value="all">✅ 全部镇</option>
+                            </select>
+                            <span style="color: #666;">></span>
+                            <select class="form-select" id="village" style="min-width: 120px;">
+                                <option value="">选择村</option>
+                                <option value="all">✅ 全部村</option>
+                            </select>
+                        </div>
                     </div>
+                    
+                    <!-- 村庄星级筛选 - 模块化展示 -->
                     <div class="form-group">
-                        <label class="form-label">助力金金额（元）</label>
-                        <input type="number" class="form-input" id="regionAmount" placeholder="请输入统一金额" min="0.01" step="0.01">
+                        <label class="form-label">村庄星级筛选</label>
+                        <div class="star-filter-modules" id="starFilterModules">
+                            <div class="star-module active" data-star="5" onclick="toggleStarModule(this)">
+                                <div class="star-text">五星</div>
+                            </div>
+                            <div class="star-module active" data-star="4" onclick="toggleStarModule(this)">
+                                <div class="star-text">四星</div>
+                            </div>
+                            <div class="star-module active" data-star="3" onclick="toggleStarModule(this)">
+                                <div class="star-text">三星</div>
+                            </div>
+                            <div class="star-module active" data-star="2" onclick="toggleStarModule(this)">
+                                <div class="star-text">二星</div>
+                            </div>
+                            <div class="star-module active" data-star="1" onclick="toggleStarModule(this)">
+                                <div class="star-text">一星</div>
+                            </div>
+                            <div class="star-module active" data-star="0" onclick="toggleStarModule(this)">
+                                <div class="star-text">零星</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-top: 10px;">
+                            点击模块选择/取消选择对应星级，默认全选
+                        </div>
                     </div>
-                    <button class="btn btn-primary" onclick="submitRegionTask()">
-                        ✅ 提交任务
-                    </button>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-primary" onclick="confirmRegionSelection()">
+                            ✅ 确认选择
+                        </button>
+                    </div>
+                    
+                    <!-- 村庄数量显示 -->
+                    <div class="village-count-display hidden-section" id="villageCountDisplay">
+                        <div class="village-selection-info" id="villageSelectionInfo">
+                            选择了 云南省 曲靖市 宣威市 双河乡 的 全星级 村庄
+                        </div>
+                        <div class="village-count-number" id="villageCountNumber">0</div>
+                        <div class="village-count-text" id="villageCountText">个村庄</div>
+                    </div>
+                    
+                    <!-- 助力金金额配置 -->
+                    <div class="hidden-section" id="regionAmountConfig">
+                        <div class="form-group">
+                            <label class="form-label">助力金金额（元）<span style="color: red;">*</span></label>
+                            <input type="number" class="form-input" id="regionAmount" placeholder="请输入统一金额" min="0.01" step="0.01" required>
+                            <div class="amount-display" id="regionAmountDisplay">
+                                <div class="chinese-amount" id="regionChineseAmount">请输入金额</div>
+                                <div class="wan-amount" id="regionWanAmount" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Excel导入 -->
+                <!-- F1.3 Excel数据导入 -->
                 <div class="form-section hidden-section" id="excelImportSection">
                     <div class="section-title">📊 Excel数据导入</div>
+                    
                     <div class="form-group">
                         <label class="form-label">上传Excel文件</label>
-                        <input type="file" class="form-input" id="fileInput" accept=".xlsx,.xls">
+                        <div class="upload-area" id="uploadArea">
+                            <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                            <div style="font-size: 16px; margin-bottom: 10px;">点击上传或拖拽文件到此处</div>
+                            <div style="font-size: 14px; color: #666;">
+                                支持格式：.xlsx, .xls | 文件大小：≤10MB
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <a href="#" class="download-link" onclick="downloadTemplate()">📥 下载Excel模板</a>
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                        
+                        <!-- 虚拟数据按钮 -->
+                        <div style="margin-top: 15px; text-align: center; display: flex; gap: 10px; justify-content: center;">
+                            <button class="btn btn-success btn-small" onclick="loadVirtualSuccessData()">
+                                ✅ 虚拟成功数据
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="loadVirtualErrorData()">
+                                ❌ 虚拟错误数据
+                            </button>
+                        </div>
                     </div>
-                    <button class="btn btn-primary" onclick="processExcelFile()">
-                        📤 处理文件
-                    </button>
+                    
+                    <!-- F1.3.1 Excel解析结果 -->
+                    <div class="hidden-section" id="excelResultSection">
+                        <div class="section-title">📊 解析结果</div>
+                        
+                        <!-- 成功解析结果 -->
+                        <div class="hidden-section" id="successResult">
+                            <div class="success-message" id="successSummary">
+                                <!-- 动态生成成功摘要 -->
+                            </div>
+                            
+                            <table class="result-table" id="resultTable">
+                                <thead>
+                                    <tr>
+                                        <th>村庄ID</th>
+                                        <th>村庄名称</th>
+                                        <th>助力金金额</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultTableBody">
+                                    <!-- 动态生成表格内容 -->
+                                </tbody>
+                            </table>
+                            
+                            <div style="text-align: center; margin: 20px 0;">
+                                <button class="btn btn-outline" onclick="clearUploadData()">
+                                    🗑️ 清除上传数据
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 失败解析结果 -->
+                        <div class="hidden-section" id="failureResult">
+                            <div class="error-message" id="failureSummary">
+                                <!-- 动态生成失败摘要 -->
+                            </div>
+                            
+                            <div style="margin: 15px 0;">
+                                <a href="#" class="download-link" onclick="downloadFailureReport()">
+                                    📥 下载失败报告
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 结果显示 -->
-                <div id="resultSection" class="hidden-section">
-                    <div class="success-message" id="successMessage"></div>
+                <!-- F1.4 助力金有效期配置 -->
+                <div class="form-section hidden-section" id="validitySection" style="position: relative;">
+                    <div class="section-title">⏰ 助力金有效期配置</div>
+                    
+                    <!-- 执行说明 - 右上角小提醒 -->
+                    <div class="execution-notice-small">
+                        审批通过后，系统将在每日早上10点～晚上6点期间自动执行下发
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">有效期<span style="color: red;">*</span></label>
+                        <select class="form-select" id="validityPeriod" required>
+                            <option value="">请选择有效期</option>
+                            <option value="3">三天</option>
+                            <option value="7">一周</option>
+                            <option value="14">两周</option>
+                            <option value="30">一个月</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- F1.5 模板消息配置 -->
+                <div class="form-section hidden-section" id="messageSection">
+                    <div class="section-title">📱 模板消息配置</div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">消息标题<span style="color: red;">*</span></label>
+                            <input type="text" class="form-input" id="messageTitle" 
+                                   placeholder="请输入消息标题" value="待处理通知" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">推送对象</label>
+                            <select class="form-select" id="pushTarget" disabled>
+                                <option value="village_committee">村两委+村支书身份</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">消息内容模板</label>
+                        <textarea class="form-textarea" id="messageTemplate" readonly>待处理任务：村庄成功获得{amount}助力金，有效期为{validity_days}天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看</textarea>
+                    </div>
+                    
+                    <!-- F1.5.1 消息预览 -->
+                    <div class="section-title" style="margin-top: 20px;">👀 消息预览</div>
+                    <div class="message-preview">
+                        <div class="message-header" id="previewTitle">待处理通知</div>
+                        <div class="message-content" id="previewContent">
+                            待处理任务：村庄成功获得100助力金，有效期为7天
+通知类型：助力金可用于公益项目申请使用
+通知时间：2025年11月12日
+助力金已到位，点击详情查看
+                        </div>
+                        <div class="message-meta">
+                            推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 整体任务单展示 -->
+                <div class="task-summary hidden-section" id="taskSummary">
+                    <div class="task-summary-title">📋 任务单预览</div>
+                    
+                    <!-- 任务提交人单独一行 -->
+                    <div class="summary-row" style="margin-bottom: 15px;">
+                        <div class="summary-item-inline">
+                            <span class="summary-label">任务提交人：</span>
+                            <span class="summary-value" id="summarySubmitter">张三</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 后续三个信息单独一行，字体变大 -->
+                    <div class="summary-row" style="font-size: 18px; font-weight: 600;">
+                        <div class="summary-item-inline">
+                            <span class="summary-label">任务覆盖村庄数：</span>
+                            <span class="summary-value" id="summaryVillageCount">0</span>
+                        </div>
+                        <div class="summary-item-inline">
+                            <span class="summary-label">任务助力金：</span>
+                            <span class="summary-value" id="summaryTotalAmount">¥0.00</span>
+                        </div>
+                        <div class="summary-item-inline">
+                            <span class="summary-label">有效期：</span>
+                            <span class="summary-value" id="summaryValidity">未设置</span>
+                        </div>
+                    </div>
+                    
+
+                    
+                    <!-- 执行说明移到任务单预览下方 -->
+                    <div class="execution-notice">
+                        <div class="notice-icon">⏰</div>
+                        <div class="notice-content">
+                            <strong>执行说明：</strong>审批通过后，系统将在每日早上10点～晚上6点期间自动执行下发。有效期为执行成功后开始计算的有效期时间。
+                        </div>
+                    </div>
+                    
+                    <!-- 详细信息 -->
+                    <div class="detail-section">
+                        <h4 class="detail-title">📍 村庄明细</h4>
+                        <div class="detail-item">
+                            <span class="detail-label">下发方式：</span>
+                            <span class="detail-value" id="summaryMethod">未选择</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">村庄范围：</span>
+                            <span class="detail-value" id="summaryVillageInfo">未选择</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">金额详情：</span>
+                            <span class="detail-value" id="summaryAmountInfo">未设置</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 模版消息预览 -->
+                    <div style="margin: 20px 0;">
+                        <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
+                        <div class="message-preview">
+                            <div class="message-header" id="taskPreviewTitle">待处理通知</div>
+                            <div class="message-content" id="taskPreviewContent">
+                                待处理任务：村庄成功获得100助力金，有效期为7天
+通知类型：助力金可用于公益项目申请使用
+通知时间：2025年11月12日
+助力金已到位，点击详情查看
+                            </div>
+                            <div class="message-meta">
+                                推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Excel附件展示 -->
+                    <div class="hidden-section" id="excelAttachmentDisplay" style="margin: 20px 0;">
+                        <h4 style="color: #2c5aa0; margin-bottom: 10px;">📎 Excel附件</h4>
+                        <div class="attachment-display">
+                            <div class="attachment-item" id="attachmentItem">
+                                <div class="attachment-icon">📊</div>
+                                <div class="attachment-info">
+                                    <div class="attachment-name" id="attachmentName">助力金下发名单.xlsx</div>
+                                    <div class="attachment-size" id="attachmentSize">文件大小: 2.5MB | 上传时间: 2025-11-07 15:30</div>
+                                </div>
+                                <button class="btn btn-outline btn-small" onclick="downloadAttachment()">
+                                    📥 下载
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">备注说明</label>
+                        <textarea class="form-textarea" id="taskRemarks" 
+                                  placeholder="请填写备注信息，供审批人查看..."></textarea>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px; padding-top: 20px; border-top: 2px solid #f1f3f4;">
+                    <button class="btn btn-outline" onclick="resetForm()">🔄 重置</button>
+                    <button class="btn btn-secondary" onclick="saveDraft()">💾 保存草稿</button>
+                    <button class="btn btn-primary" id="submitBtn" onclick="submitTask()" disabled>
+                        🚀 提交审核
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- 其他标签页内容 -->
+        <!-- 运营活动配置 -->
         <div id="activity-config" class="tab-content">
             <div class="card">
                 <div class="card-title">⚙️ 运营活动配置</div>
-                <p>运营活动配置功能开发中...</p>
+                <p style="color: #666; margin-bottom: 30px;">自动化运营活动配置，系统将根据设定规则自动执行</p>
+                
+                <!-- 自动任务展示 -->
+                <div class="form-section">
+                    <div class="section-title">🤖 自动执行任务</div>
+                    
+                    <div class="activity-card">
+                        <div class="activity-title">🏘️ 新村创建自动奖励</div>
+                        <div class="activity-meta">
+                            触发条件：新村创建成功 | 状态：<span class="status-badge status-approved">已启用</span> | 创建时间：2025-11-07
+                        </div>
+                        
+                        <div class="activity-config-details">
+                            <div class="config-item">
+                                <div class="config-label">🎯 触发事件</div>
+                                <div class="config-value">新村创建成功</div>
+                            </div>
+                            <div class="config-item">
+                                <div class="config-label">💰 奖励金额</div>
+                                <div class="config-value">¥1,000 元</div>
+                            </div>
+                            <div class="config-item">
+                                <div class="config-label">⏰ 有效期</div>
+                                <div class="config-value">1个月</div>
+                            </div>
+                            <div class="config-item">
+                                <div class="config-label">📱 消息推送</div>
+                                <div class="config-value">推送给村支书</div>
+                            </div>
+                            <div class="config-item">
+                                <div class="config-label">📝 消息模板</div>
+                                <div class="config-value">
+                                    <div class="message-template">
+                                        <div class="message-title">待处理通知</div>
+                                        <div class="message-content">
+                                            待处理任务：村庄成功获得1000助力金，有效期为30天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-status-info">
+                            <div class="status-indicator">
+                                <span class="status-dot status-active"></span>
+                                <span>系统监控中，将自动执行奖励发放</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- 发放任务列表 -->
         <div id="history-tasks" class="tab-content">
             <div class="card">
                 <div class="card-title">📋 发放任务列表</div>
-                <p>发放任务列表功能开发中...</p>
+                <p style="color: #666; margin-bottom: 30px;">查看所有助力金发放任务的历史记录和执行状态</p>
+                
+                <!-- F3.1 审核数据看板 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">待审核任务</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">今日已审核</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">本月总任务</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">审核通过率</div>
+                    </div>
+                </div>
+                
+                <!-- F3.2 发放任务列表 -->
+                <div class="form-section">
+                    <div class="section-title">📝 任务列表</div>
+                    
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>任务ID</th>
+                                <th>申请人</th>
+                                <th>提交时间</th>
+                                <th>下发方式</th>
+                                <th>涉及村庄</th>
+                                <th>总金额</th>
+                                <th>任务状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTasksBody">
+                            <tr>
+                                <td>TASK20251107001</td>
+                                <td>张三</td>
+                                <td>2025-11-07 14:30</td>
+                                <td>按地区下发</td>
+                                <td>156个</td>
+                                <td>¥15,600 (1.6万元)</td>
+                                <td><span class="task-status-badge status-pending-review">待审核</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107001')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TASK20251107002</td>
+                                <td>李四</td>
+                                <td>2025-11-07 13:15</td>
+                                <td>Excel导入</td>
+                                <td>89个</td>
+                                <td>¥12,450 (1.2万元)</td>
+                                <td><span class="task-status-badge status-approved-pending">已通过待执行</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107002')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TASK20251107003</td>
+                                <td>王五</td>
+                                <td>2025-11-07 11:45</td>
+                                <td>按地区下发</td>
+                                <td>234个</td>
+                                <td>¥23,400 (2.3万元)</td>
+                                <td><span class="task-status-badge status-completed">已完成下发</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107003')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TASK20251106001</td>
+                                <td>赵六</td>
+                                <td>2025-11-06 16:20</td>
+                                <td>Excel导入</td>
+                                <td>67个</td>
+                                <td><strong>¥8,040</strong></td>
+                                <td><span class="task-status-badge status-review-rejected">审核驳回</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251106001')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TASK20251106002</td>
+                                <td>孙七</td>
+                                <td>2025-11-06 14:10</td>
+                                <td>按地区下发</td>
+                                <td>123个</td>
+                                <td>¥18,450 (1.8万元)</td>
+                                <td><span class="task-status-badge status-completed">已完成下发</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251106002')">📊 查看详情</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
+        <!-- 审核管理 -->
         <div id="audit-management" class="tab-content">
             <div class="card">
                 <div class="card-title">🔍 审核管理</div>
-                <p>审核管理功能开发中...</p>
+                <p style="color: #666; margin-bottom: 30px;">管理和审核助力金下发申请</p>
+                
+                <!-- 未审核任务 -->
+                <div class="form-section">
+                    <div class="section-title expandable-section" onclick="toggleSection('pendingTasks')">
+                        ⏳ 未审核任务 <span class="task-count">(2)</span>
+                        <span class="expand-icon" id="pendingTasksIcon">▼</span>
+                    </div>
+                    
+                    <div id="pendingTasks" class="expandable-content">
+                        <!-- 未审核任务1 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251107001</div>
+                                <div class="task-status pending">待审核</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：张三</span>
+                                    <span>提交时间：2025-11-07 14:30</span>
+                                    <span>村庄数：156个</span>
+                                    <span>总金额：¥15,600</span>
+                                </div>
+                                <div class="task-description">
+                                    按地区下发 - 河北省石家庄市，每村100元，有效期一周
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107001')">📊 查看详情</button>
+                                <button class="btn btn-success btn-small" onclick="approveTask('TASK20251107001')">✅ 通过</button>
+                                <button class="btn btn-danger btn-small" onclick="rejectTask('TASK20251107001')">❌ 驳回</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 未审核任务2 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251107004</div>
+                                <div class="task-status pending">待审核</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：周八</span>
+                                    <span>提交时间：2025-11-07 16:45</span>
+                                    <span>村庄数：45个</span>
+                                    <span>总金额：¥6,750</span>
+                                </div>
+                                <div class="task-description">
+                                    Excel导入 - 45个村庄，每村150元，有效期两周
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107004')">📊 查看详情</button>
+                                <button class="btn btn-success btn-small" onclick="approveTask('TASK20251107004')">✅ 通过</button>
+                                <button class="btn btn-danger btn-small" onclick="rejectTask('TASK20251107004')">❌ 驳回</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 已审核任务 -->
+                <div class="form-section">
+                    <div class="section-title expandable-section" onclick="toggleSection('reviewedTasks')">
+                        ✅ 已审核任务 <span class="task-count">(5)</span>
+                        <span class="expand-icon" id="reviewedTasksIcon">▶</span>
+                    </div>
+                    
+                    <div id="reviewedTasks" class="expandable-content collapsed">
+                        <!-- 已审核任务1 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251107002</div>
+                                <div class="task-status approved">已通过</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：李四</span>
+                                    <span>审核时间：2025-11-07 15:20</span>
+                                    <span>村庄数：89个</span>
+                                    <span>总金额：¥12,450</span>
+                                </div>
+                                <div class="task-description">
+                                    Excel导入 - 89个村庄，每村140元，有效期一周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107002')">📊 查看详情</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审核任务2 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251107003</div>
+                                <div class="task-status completed">已完成</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：王五</span>
+                                    <span>完成时间：2025-11-07 18:30</span>
+                                    <span>村庄数：234个</span>
+                                    <span>总金额：¥23,400</span>
+                                </div>
+                                <div class="task-description">
+                                    按地区下发 - 山东省济南市，每村100元，有效期一周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                    <span class="execution-result">已执行完成</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251107003')">📊 查看详情</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审核任务3 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251106001</div>
+                                <div class="task-status rejected">已驳回</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：赵六</span>
+                                    <span>审核时间：2025-11-06 17:15</span>
+                                    <span>村庄数：67个</span>
+                                    <span>总金额：¥8,040</span>
+                                </div>
+                                <div class="task-description">
+                                    Excel导入 - 67个村庄，每村120元，有效期一周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                    <span class="reject-reason">驳回原因：Excel文件格式不正确</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251106001')">📊 查看详情</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审核任务4 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251106002</div>
+                                <div class="task-status completed">已完成</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：孙七</span>
+                                    <span>完成时间：2025-11-06 20:10</span>
+                                    <span>村庄数：123个</span>
+                                    <span>总金额：¥18,450</span>
+                                </div>
+                                <div class="task-description">
+                                    按地区下发 - 江苏省南京市，每村150元，有效期两周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                    <span class="execution-result">已执行完成</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251106002')">📊 查看详情</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审核任务5 -->
+                        <div class="audit-task-item">
+                            <div class="task-header">
+                                <div class="task-id">TASK20251105001</div>
+                                <div class="task-status completed">已完成</div>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-meta">
+                                    <span>提交人：钱九</span>
+                                    <span>完成时间：2025-11-05 16:45</span>
+                                    <span>村庄数：78个</span>
+                                    <span>总金额：¥11,700</span>
+                                </div>
+                                <div class="task-description">
+                                    Excel导入 - 78个村庄，每村150元，有效期一周
+                                </div>
+                                <div class="audit-info">
+                                    <span class="audit-result">审核人：管理员</span>
+                                    <span class="execution-result">已执行完成</span>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-outline btn-small" onclick="viewTaskDetail('TASK20251105001')">📊 查看详情</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">任务详情</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalBody">
+                <!-- 动态内容 -->
             </div>
         </div>
     </div>
 
     <script>
-        console.log('🚀 页面开始加载...');
+        // 展开/折叠功能
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId);
+            const icon = document.getElementById(sectionId + 'Icon');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                icon.textContent = '▼';
+                icon.classList.remove('rotated');
+            } else {
+                content.classList.add('collapsed');
+                icon.textContent = '▶';
+                icon.classList.add('rotated');
+            }
+        }
+        
+        // 全局状态管理
+        const appState = {
+            currentTab: 'batch-send',
+            sendMethod: '',
+            selectedRegion: {},
+            uploadedData: null,
+            taskConfig: {}
+        };
+
+        // 虚拟数据
+        const mockData = {
+            tasks: {
+                'TASK20251107001': {
+                    id: 'TASK20251107001',
+                    applicant: '张三',
+                    submitTime: '2025-11-07 14:30',
+                    method: '按地区下发',
+                    region: '河北省石家庄市',
+                    villageCount: 156,
+                    totalAmount: 15600,
+                    unitAmount: 100,
+                    status: 'pending',
+                    validity: '7天',
+                    remarks: '针对河北省石家庄市所有5星级村庄进行助力金下发，用于激励村庄积极参与平台活动。',
+                    villages: [
+                        { id: 'V001', name: '张家村', amount: 100, star: 5 },
+                        { id: 'V002', name: '李家村', amount: 100, star: 5 },
+                        { id: 'V003', name: '王家村', amount: 100, star: 4 },
+                        { id: 'V004', name: '赵家村', amount: 100, star: 5 },
+                        { id: 'V005', name: '钱家村', amount: 100, star: 4 }
+                    ]
+                },
+                'TASK20251107002': {
+                    id: 'TASK20251107002',
+                    applicant: '李四',
+                    submitTime: '2025-11-07 13:15',
+                    method: 'Excel导入',
+                    villageCount: 89,
+                    totalAmount: 12450,
+                    status: 'approved',
+                    validity: '14天',
+                    remarks: '根据Excel文件导入的村庄列表进行定向助力金发放。',
+                    approver: '审核员A',
+                    approveTime: '2025-11-07 14:20',
+                    villages: [
+                        { id: 'V101', name: '赵家村', amount: 150, star: 5 },
+                        { id: 'V102', name: '钱家村', amount: 120, star: 4 },
+                        { id: 'V103', name: '孙家村', amount: 180, star: 5 },
+                        { id: 'V104', name: '李家村', amount: 140, star: 4 },
+                        { id: 'V105', name: '周家村', amount: 160, star: 5 }
+                    ]
+                },
+                'TASK20251107003': {
+                    id: 'TASK20251107003',
+                    applicant: '王五',
+                    submitTime: '2025-11-07 11:45',
+                    method: '按地区下发',
+                    region: '山东省济南市',
+                    villageCount: 234,
+                    totalAmount: 23400,
+                    unitAmount: 100,
+                    status: 'processing',
+                    validity: '7天',
+                    remarks: '针对山东省济南市全部星级村庄进行助力金下发，促进当地公益项目发展。',
+                    approver: '审核员B',
+                    approveTime: '2025-11-07 12:30'
+                },
+                'TASK20251106001': {
+                    id: 'TASK20251106001',
+                    applicant: '赵六',
+                    submitTime: '2025-11-06 16:20',
+                    method: 'Excel导入',
+                    villageCount: 67,
+                    totalAmount: 8040,
+                    status: 'rejected',
+                    validity: '14天',
+                    remarks: '根据Excel导入村庄列表，但部分村庄信息不完整，需要重新核实。',
+                    rejectReason: '村庄信息不完整，请核实后重新提交',
+                    rejectTime: '2025-11-06 17:15'
+                },
+                'TASK20251106002': {
+                    id: 'TASK20251106002',
+                    applicant: '孙七',
+                    submitTime: '2025-11-06 14:10',
+                    method: '按地区下发',
+                    region: '云南省昆明市',
+                    villageCount: 123,
+                    totalAmount: 18450,
+                    unitAmount: 150,
+                    status: 'processing',
+                    validity: '7天',
+                    remarks: '云南省昆明市优秀村庄助力金发放，重点支持脱贫攻坚成果巩固。',
+                    approver: '审核员C',
+                    approveTime: '2025-11-06 15:30'
+                }
+            },
+            activities: {
+                'ACT001': {
+                    id: 'ACT001',
+                    title: '村委首次获取助力金奖励',
+                    type: 'first_time_reward',
+                    status: 'active',
+                    createTime: '2025-10-15',
+                    amount: 50,
+                    validity: '30天',
+                    participantCount: 156,
+                    totalReward: 7800,
+                    description: '为鼓励更多村庄参与平台活动，对首次获取助力金的村委给予额外奖励。',
+                    participants: [
+                        { village: '张家村', rewardTime: '2025-10-16', amount: 50 },
+                        { village: '李家村', rewardTime: '2025-10-18', amount: 50 },
+                        { village: '王家村', rewardTime: '2025-10-20', amount: 50 }
+                    ]
+                },
+                'ACT002': {
+                    id: 'ACT002',
+                    title: '春节特别奖励活动',
+                    type: 'festival_reward',
+                    status: 'active',
+                    createTime: '2025-01-20',
+                    endTime: '2025-02-29',
+                    amount: 100,
+                    validity: '7天',
+                    participantCount: 89,
+                    totalReward: 8900,
+                    description: '春节期间特别活动，为活跃村庄提供额外奖励。'
+                },
+                'ACT003': {
+                    id: 'ACT003',
+                    title: '优秀村庄月度奖励',
+                    type: 'monthly_reward',
+                    status: 'active',
+                    createTime: '2025-10-01',
+                    amount: 500,
+                    validity: '30天',
+                    participantCount: 23,
+                    totalReward: 11500,
+                    description: '每月评选优秀村庄，给予特别奖励。'
+                }
+            }
+        };
+
+        // 数字转汉字大写
+        function numberToChinese(num) {
+            if (isNaN(num) || num < 0) return '';
+            
+            const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+            const units = ['', '拾', '佰', '仟'];
+            const bigUnits = ['', '万', '亿'];
+            
+            if (num === 0) return '零元整';
+            
+            const parts = num.toString().split('.');
+            let integerPart = parseInt(parts[0]);
+            let decimalPart = parts[1] || '';
+            
+            let result = '';
+            let unitIndex = 0;
+            
+            while (integerPart > 0) {
+                const section = integerPart % 10000;
+                if (section > 0) {
+                    let sectionStr = '';
+                    let tempSection = section;
+                    let localUnitIndex = 0;
+                    
+                    while (tempSection > 0) {
+                        const digit = tempSection % 10;
+                        if (digit > 0) {
+                            sectionStr = digits[digit] + units[localUnitIndex] + sectionStr;
+                        } else if (sectionStr && tempSection > 0) {
+                            sectionStr = '零' + sectionStr;
+                        }
+                        tempSection = Math.floor(tempSection / 10);
+                        localUnitIndex++;
+                    }
+                    
+                    result = sectionStr + bigUnits[unitIndex] + result;
+                }
+                integerPart = Math.floor(integerPart / 10000);
+                unitIndex++;
+            }
+            
+            result += '元';
+            
+            if (decimalPart) {
+                if (decimalPart.length >= 1 && decimalPart[0] !== '0') {
+                    result += digits[parseInt(decimalPart[0])] + '角';
+                }
+                if (decimalPart.length >= 2 && decimalPart[1] !== '0') {
+                    result += digits[parseInt(decimalPart[1])] + '分';
+                }
+            } else {
+                result += '整';
+            }
+            
+            return result;
+        }
+        
+        // 格式化万元显示
+        function formatWanAmount(num) {
+            if (num >= 1000) {
+                const wan = (num / 10000).toFixed(1);
+                const originalWan = num / 10000;
+                const isApproximate = Math.abs(originalWan - parseFloat(wan)) > 0.001;
+                return {
+                    text: `${wan}万元`,
+                    isApproximate: isApproximate
+                };
+            }
+            return null;
+        }
+        
+        // 新增：格式化金额显示（用于Excel解析结果和任务预览）
+        function formatAmountForDisplay(amount) {
+            if (amount < 1000) {
+                return `${Math.round(amount)} 元`;
+            } else {
+                const wan = (amount / 10000).toFixed(2);
+                return `${wan} 万元`;
+            }
+        }
+        
+        // 更新金额显示
+        function updateAmountDisplay(inputId, chineseId, wanId) {
+            const amountInput = document.getElementById(inputId);
+            const chineseAmount = document.getElementById(chineseId);
+            const wanAmount = document.getElementById(wanId);
+            
+            if (!amountInput || !chineseAmount || !wanAmount) return;
+            
+            const amount = parseFloat(amountInput.value);
+            
+            if (isNaN(amount) || amount <= 0) {
+                chineseAmount.textContent = '请输入金额';
+                wanAmount.style.display = 'none';
+                return;
+            }
+            
+            chineseAmount.textContent = numberToChinese(amount);
+            
+            const wanFormat = formatWanAmount(amount);
+            if (wanFormat) {
+                wanAmount.textContent = wanFormat.text;
+                wanAmount.className = wanFormat.isApproximate ? 'wan-amount approximate' : 'wan-amount';
+                wanAmount.style.display = 'block';
+            } else {
+                wanAmount.style.display = 'none';
+            }
+            
+            updateTaskSummary();
+            updateTaskPreviewMessage();
+        }
 
         // 切换标签页
         function switchTab(tabId) {
-            console.log('切换到标签页:', tabId);
-            
-            // 隐藏所有标签页内容
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
-            // 移除所有标签的active类
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // 显示选中的标签页内容
             const targetTab = document.getElementById(tabId);
             if (targetTab) {
                 targetTab.classList.add('active');
             }
             
-            // 添加active类到选中的标签
-            const activeTab = document.querySelector(`[data-tab="${tabId}"]`);
-            if (activeTab) {
-                activeTab.classList.add('active');
+            const activeNavTab = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeNavTab) {
+                activeNavTab.classList.add('active');
             }
+            
+            appState.currentTab = tabId;
         }
 
         // 切换下发方式
@@ -374,14 +2529,17 @@
             const currentMethodSpan = document.getElementById('currentMethod');
             const regionSection = document.getElementById('regionSendSection');
             const excelSection = document.getElementById('excelImportSection');
-            
-            console.log('选择的下发方式:', method);
+            const validitySection = document.getElementById('validitySection');
+            const messageSection = document.getElementById('messageSection');
             
             currentMethodSpan.textContent = method || '未选择';
+            appState.sendMethod = method;
             
             // 隐藏所有区域
             regionSection.className = 'form-section hidden-section';
             excelSection.className = 'form-section hidden-section';
+            validitySection.className = 'form-section hidden-section';
+            messageSection.className = 'form-section hidden-section';
             
             // 显示对应区域
             if (method === 'region') {
@@ -389,76 +2547,670 @@
             } else if (method === 'excel') {
                 excelSection.className = 'form-section visible-section';
             }
+            
+            updateTaskSummary();
         }
 
-        // 提交地区任务
-        function submitRegionTask() {
-            const province = document.getElementById('province').value;
-            const amount = document.getElementById('regionAmount').value;
+        // 确认地区选择
+        function confirmRegionSelection() {
+            // 模拟获取村庄数量
+            const mockVillageCount = Math.floor(Math.random() * 500) + 50;
             
-            if (!province || !amount) {
-                alert('请填写完整信息');
+            // 更新村庄选择信息
+            updateVillageSelectionInfo();
+            
+            document.getElementById('villageCountNumber').textContent = mockVillageCount;
+            document.getElementById('villageCountDisplay').className = 'village-count-display visible-section';
+            document.getElementById('regionAmountConfig').className = 'visible-section';
+            document.getElementById('validitySection').className = 'form-section visible-section';
+            document.getElementById('messageSection').className = 'form-section visible-section';
+            document.getElementById('taskSummary').className = 'task-summary visible-section';
+            
+            appState.selectedRegion.villageCount = mockVillageCount;
+            updateTaskSummary();
+        }
+
+        // 更新村庄选择信息显示
+        function updateVillageSelectionInfo() {
+            const province = document.getElementById('province');
+            const city = document.getElementById('city');
+            const county = document.getElementById('county');
+            const town = document.getElementById('town');
+            const village = document.getElementById('village');
+            
+            const selectedStars = getSelectedStars();
+            const starText = selectedStars.length === 6 ? '全星级' : selectedStars.map(star => {
+                const starNames = {'5': '五星', '4': '四星', '3': '三星', '2': '二星', '1': '一星', '0': '零星'};
+                return starNames[star];
+            }).join('和');
+            
+            let locationText = '选择了 ';
+            
+            if (province.value && province.value !== 'all') {
+                locationText += province.options[province.selectedIndex].text;
+            }
+            if (city.value && city.value !== 'all') {
+                locationText += ' ' + city.options[city.selectedIndex].text;
+            }
+            if (county.value && county.value !== 'all') {
+                locationText += ' ' + county.options[county.selectedIndex].text;
+            }
+            if (town.value && town.value !== 'all') {
+                locationText += ' ' + town.options[town.selectedIndex].text;
+            }
+            if (village.value && village.value !== 'all') {
+                locationText += ' ' + village.options[village.selectedIndex].text;
+            }
+            
+            locationText += ` 的 ${starText} 村庄`;
+            
+            const infoElement = document.getElementById('villageSelectionInfo');
+            if (infoElement) {
+                infoElement.textContent = locationText;
+            }
+        }
+
+        // 地区数据
+        const regionData = {
+            yunnan: {
+                name: '云南省',
+                cities: {
+                    qujing: {
+                        name: '曲靖市',
+                        counties: {
+                            xuanwei: {
+                                name: '宣威市',
+                                towns: {
+                                    shuanghe: { name: '双河乡', villages: { zhangjiazhuang: '张家庄', lijiazhuang: '李家庄' } }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            hebei: {
+                name: '河北省',
+                cities: {
+                    shijiazhuang: {
+                        name: '石家庄市',
+                        counties: {
+                            zhengding: {
+                                name: '正定县',
+                                towns: {
+                                    xincheng: { name: '新城铺镇', villages: { zhangcun: '张村', licun: '李村' } }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // 更新地区选择器
+        function updateRegionSelector(level, parentValue) {
+            const selectors = {
+                province: document.getElementById('province'),
+                city: document.getElementById('city'),
+                county: document.getElementById('county'),
+                town: document.getElementById('town'),
+                village: document.getElementById('village')
+            };
+
+            if (level === 'city') {
+                const citySelect = selectors.city;
+                citySelect.innerHTML = '<option value="">选择市</option><option value="all">✅ 全部市</option>';
+                if (parentValue && parentValue !== 'all' && regionData[parentValue]) {
+                    Object.keys(regionData[parentValue].cities).forEach(cityKey => {
+                        const city = regionData[parentValue].cities[cityKey];
+                        citySelect.innerHTML += `<option value="${cityKey}">${city.name}</option>`;
+                    });
+                }
+                // 清空后续选择器
+                selectors.county.innerHTML = '<option value="">选择县</option><option value="all">✅ 全部县</option>';
+                selectors.town.innerHTML = '<option value="">选择镇</option><option value="all">✅ 全部镇</option>';
+                selectors.village.innerHTML = '<option value="">选择村</option><option value="all">✅ 全部村</option>';
+            } else if (level === 'county') {
+                const countySelect = selectors.county;
+                countySelect.innerHTML = '<option value="">选择县</option><option value="all">✅ 全选</option>';
+                // 这里可以根据实际需要添加县级数据
+                selectors.town.innerHTML = '<option value="">选择镇</option><option value="all">✅ 全部镇</option>';
+                selectors.village.innerHTML = '<option value="">选择村</option><option value="all">✅ 全部村</option>';
+            } else if (level === 'town') {
+                const townSelect = selectors.town;
+                townSelect.innerHTML = '<option value="">选择镇</option><option value="all">✅ 全选</option>';
+                // 这里可以根据实际需要添加镇级数据
+                selectors.village.innerHTML = '<option value="">选择村</option><option value="all">✅ 全部村</option>';
+            } else if (level === 'village') {
+                const villageSelect = selectors.village;
+                villageSelect.innerHTML = '<option value="">选择村</option><option value="all">✅ 全选</option>';
+                // 这里可以根据实际需要添加村级数据
+            }
+            
+            // 更新村庄选择信息
+            updateVillageSelectionInfo();
+        }
+
+        // 加载虚拟成功数据
+        function loadVirtualSuccessData() {
+            const mockSuccessData = [
+                { id: 'V001', name: '张家村', amount: 12000.00, status: 'success' },
+                { id: 'V002', name: '李家村', amount: 15000.00, status: 'success' },
+                { id: 'V003', name: '王家村', amount: 800.00, status: 'success' },
+                { id: 'V004', name: '赵家村', amount: 20000.00, status: 'success' },
+                { id: 'V005', name: '钱家村', amount: 1800.00, status: 'success' },
+                { id: 'V006', name: '孙家村', amount: 11000.00, status: 'success' },
+                { id: 'V007', name: '周家村', amount: 1600.00, status: 'success' },
+                { id: 'V008', name: '吴家村', amount: 14000.00, status: 'success' },
+                { id: 'V009', name: '郑家村', amount: 1300.00, status: 'success' },
+                { id: 'V010', name: '冯家村', amount: 17000.00, status: 'success' }
+            ];
+            
+            // 只显示成功结果，不显示错误信息
+            displaySuccessResults(mockSuccessData);
+            document.getElementById('excelResultSection').className = 'visible-section';
+            document.getElementById('validitySection').className = 'form-section visible-section';
+            document.getElementById('messageSection').className = 'form-section visible-section';
+            document.getElementById('taskSummary').className = 'task-summary visible-section';
+            
+            appState.uploadedData = mockSuccessData;
+            updateTaskSummary();
+            updateTaskPreviewMessage();
+            
+            // 显示附件信息
+            document.getElementById('excelAttachmentDisplay').className = 'visible-section';
+            document.getElementById('attachmentName').textContent = '虚拟成功数据.xlsx';
+            document.getElementById('attachmentSize').textContent = '文件大小: 1.2MB | 生成时间: ' + new Date().toLocaleString();
+        }
+
+        // 加载虚拟错误数据
+        function loadVirtualErrorData() {
+            // 直接显示解析失败结果
+            document.getElementById('excelResultSection').className = 'visible-section';
+            document.getElementById('failureResult').className = 'visible-section';
+            document.getElementById('successResult').className = 'hidden-section';
+            
+            const failureCount = 4;
+            const successCount = 2;
+            document.getElementById('failureSummary').innerHTML = `
+                解析完成：共 ${failureCount + successCount} 条记录，成功 ${successCount} 条，失败 ${failureCount} 条<br>
+                失败原因包括：村庄名称为空、金额格式错误、村庄ID缺失等
+            `;
+            
+            // 显示附件信息
+            document.getElementById('excelAttachmentDisplay').className = 'visible-section';
+            document.getElementById('attachmentName').textContent = '虚拟错误数据.xlsx';
+            document.getElementById('attachmentSize').textContent = '文件大小: 0.8MB | 生成时间: ' + new Date().toLocaleString();
+        }
+
+        // 下载附件
+        function downloadAttachment() {
+            alert('正在下载附件...');
+        }
+
+        // 下载Excel模板
+        function downloadTemplate() {
+            // 创建模板数据
+            const templateData = [
+                ['村庄ID', '村庄名称', '助力金金额（可选）'],
+                ['V001', '张家村', '100.00'],
+                ['V002', '李家村', '150.00'],
+                ['V003', '王家村', '120.00']
+            ];
+            
+            // 创建CSV内容
+            const csvContent = templateData.map(row => row.join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '助力金下发模板.csv';
+            link.click();
+        }
+
+        // 处理文件上传
+        function handleFileUpload(file) {
+            if (!file) return;
+            
+            // 检查文件类型
+            const allowedTypes = ['.xlsx', '.xls', '.csv'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (!allowedTypes.includes(fileExtension)) {
+                alert('不支持的文件格式，请上传 .xlsx, .xls 或 .csv 文件');
                 return;
             }
             
-            const resultSection = document.getElementById('resultSection');
-            const successMessage = document.getElementById('successMessage');
-            
-            successMessage.innerHTML = `
-                ✅ 任务提交成功！<br>
-                地区：${province}<br>
-                金额：${amount}元<br>
-                任务ID：TASK${Date.now()}
-            `;
-            
-            resultSection.className = 'visible-section';
-            
-            console.log('地区任务提交成功');
-        }
-
-        // 处理Excel文件
-        function processExcelFile() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('请选择Excel文件');
+            // 检查文件大小
+            if (file.size > 10 * 1024 * 1024) {
+                alert('文件大小超过10MB限制');
                 return;
             }
             
-            const resultSection = document.getElementById('resultSection');
-            const successMessage = document.getElementById('successMessage');
-            
-            successMessage.innerHTML = `
-                ✅ Excel文件处理成功！<br>
-                文件名：${file.name}<br>
-                文件大小：${(file.size / 1024).toFixed(2)} KB<br>
-                任务ID：TASK${Date.now()}
-            `;
-            
-            resultSection.className = 'visible-section';
-            
-            console.log('Excel文件处理成功');
+            // 模拟文件解析
+            setTimeout(() => {
+                const mockExcelData = [
+                    { id: 'V001', name: '张家村', amount: 100.00, status: 'success' },
+                    { id: 'V002', name: '李家村', amount: 150.00, status: 'success' },
+                    { id: 'V003', name: '王家村', amount: 120.00, status: 'success' },
+                    { id: 'V004', name: '赵家村', amount: 200.00, status: 'success' },
+                    { id: 'V005', name: '钱家村', amount: 80.00, status: 'success' },
+                    { id: 'V006', name: '孙家村', amount: 180.00, status: 'success' },
+                    { id: 'V007', name: '周家村', amount: 160.00, status: 'success' },
+                    { id: 'V008', name: '吴家村', amount: 140.00, status: 'success' },
+                    { id: 'V009', name: '郑家村', amount: 110.00, status: 'success' },
+                    { id: 'V010', name: '冯家村', amount: 130.00, status: 'success' }
+                ];
+                
+                displayExcelResults(mockExcelData);
+            }, 1000);
         }
 
-        // 更新时间
-        function updateTime() {
-            const now = new Date();
-            const timeElement = document.getElementById('currentTime');
-            if (timeElement) {
-                timeElement.textContent = now.toLocaleString();
+        // 显示Excel解析结果
+        function displayExcelResults(data) {
+            const successData = data.filter(item => item.status === 'success');
+            const failureData = data.filter(item => item.status === 'failure');
+            
+            if (successData.length > 0) {
+                displaySuccessResults(successData);
             }
+            
+            if (failureData.length > 0) {
+                displayFailureResults(failureData);
+            }
+            
+            document.getElementById('excelResultSection').className = 'visible-section';
+            document.getElementById('validitySection').className = 'form-section visible-section';
+            document.getElementById('messageSection').className = 'form-section visible-section';
+            document.getElementById('taskSummary').className = 'task-summary visible-section';
+            
+            appState.uploadedData = data;
+            updateTaskSummary();
+            updateTaskPreviewMessage();
+            
+            // 显示Excel附件（如果是真实文件上传）
+            if (data.length > 0 && !document.getElementById('excelAttachmentDisplay').classList.contains('visible-section')) {
+                document.getElementById('excelAttachmentDisplay').className = 'visible-section';
+                document.getElementById('attachmentName').textContent = '助力金下发名单.xlsx';
+                document.getElementById('attachmentSize').textContent = '文件大小: 2.5MB | 上传时间: ' + new Date().toLocaleString();
+            }
+        }
+
+        // 显示成功解析结果
+        function displaySuccessResults(data) {
+            const totalVillages = data.length;
+            const totalAmount = data.reduce((sum, item) => sum + item.amount, 0);
+            const avgAmount = totalAmount / totalVillages;
+            const maxAmount = Math.max(...data.map(item => item.amount));
+            const minAmount = Math.min(...data.map(item => item.amount));
+            
+            const maxVillages = data.filter(item => item.amount === maxAmount).slice(0, 3);
+            const minVillages = data.filter(item => item.amount === minAmount).slice(0, 3);
+            
+            // 生成摘要 - 使用新的金额格式化函数
+            let summary = `共 ${totalVillages} 个村庄，共计助力金金额 ${formatAmountForDisplay(totalAmount)}。<br>`;
+            summary += `平均每村庄 ${formatAmountForDisplay(avgAmount)}，最高村庄获取 ${formatAmountForDisplay(maxAmount)}，最低村庄获取 ${formatAmountForDisplay(minAmount)}。`;
+            
+            // 添加最高和最低村庄名称
+            const maxVillageNames = maxVillages.map(v => v.name).join('、');
+            const minVillageNames = minVillages.map(v => v.name).join('、');
+            summary += `最高村庄是 ${maxVillageNames}。最低村庄是 ${minVillageNames}。`;
+            
+            document.getElementById('successSummary').innerHTML = summary;
+            
+            // 生成表格 - 使用新的金额格式化
+            const tbody = document.getElementById('resultTableBody');
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td>${formatAmountForDisplay(item.amount)}</td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('successResult').className = 'visible-section';
+        }
+
+        // 显示失败解析结果
+        function displayFailureResults(data) {
+            const summary = `解析失败 ${data.length} 条记录，请检查数据格式`;
+            document.getElementById('failureSummary').innerHTML = summary + '<br>错误详情：' + 
+                data.map(item => `${item.id || '空ID'}: ${item.error}`).join('；');
+            document.getElementById('failureResult').className = 'visible-section';
+        }
+
+        // 删除表格行
+        function removeRow(villageId) {
+            if (confirm('确认删除此村庄记录？')) {
+                appState.uploadedData = appState.uploadedData.filter(item => item.id !== villageId);
+                displayExcelResults(appState.uploadedData);
+            }
+        }
+
+        // 下载失败报告
+        function downloadFailureReport() {
+            alert('正在下载失败报告...');
+        }
+
+        // 清除上传数据
+        function clearUploadData() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('excelResultSection').className = 'hidden-section';
+            document.getElementById('validitySection').className = 'form-section hidden-section';
+            document.getElementById('messageSection').className = 'form-section hidden-section';
+            document.getElementById('taskSummary').className = 'task-summary hidden-section';
+            appState.uploadedData = null;
+            updateTaskSummary();
+        }
+
+        // 更新任务摘要
+        function updateTaskSummary() {
+            const summaryVillageCount = document.getElementById('summaryVillageCount');
+            const summaryTotalAmount = document.getElementById('summaryTotalAmount');
+            const summaryVillageInfo = document.getElementById('summaryVillageInfo');
+            const summaryAmountInfo = document.getElementById('summaryAmountInfo');
+            const summaryValidity = document.getElementById('summaryValidity');
+            const summaryMethod = document.getElementById('summaryMethod');
+            
+            if (!summaryVillageCount) return;
+            
+            let villageCount = 0;
+            let totalAmount = 0;
+            let villageInfo = '未选择';
+            let amountInfo = '未设置';
+            let methodInfo = '未选择';
+            
+            if (appState.sendMethod === 'region' && appState.selectedRegion.villageCount) {
+                methodInfo = '地区选择';
+                villageCount = appState.selectedRegion.villageCount;
+                const regionAmount = parseFloat(document.getElementById('regionAmount').value) || 0;
+                totalAmount = villageCount * regionAmount;
+                
+                // 获取选中的星级
+                const selectedStars = getSelectedStars();
+                const starText = selectedStars.length === 6 ? '全星级' : selectedStars.map(star => {
+                    const starNames = {'5': '五星', '4': '四星', '3': '三星', '2': '二星', '1': '一星', '0': '零星'};
+                    return starNames[star];
+                }).join('、');
+                
+                // 获取选中的地区信息
+                const province = document.getElementById('province');
+                const city = document.getElementById('city');
+                const county = document.getElementById('county');
+                const town = document.getElementById('town');
+                
+                let locationParts = [];
+                if (province.value && province.value !== 'all') {
+                    locationParts.push(province.options[province.selectedIndex].text);
+                }
+                if (city.value && city.value !== 'all') {
+                    locationParts.push(city.options[city.selectedIndex].text);
+                }
+                if (county.value && county.value !== 'all') {
+                    locationParts.push(county.options[county.selectedIndex].text);
+                }
+                if (town.value && town.value !== 'all') {
+                    locationParts.push(town.options[town.selectedIndex].text);
+                }
+                
+                const locationText = locationParts.join(' ');
+                villageInfo = `${locationText} 的 ${villageCount} 个村庄`;
+                
+                if (regionAmount > 0) {
+                    const wanFormat = formatWanAmount(regionAmount);
+                    if (wanFormat) {
+                        amountInfo = `每个村庄均为 ${wanFormat.isApproximate ? '近似' : ''}${wanFormat.text}`;
+                    } else {
+                        amountInfo = `每个村庄均为 ${regionAmount}元`;
+                    }
+                }
+            } else if (appState.sendMethod === 'excel' && appState.uploadedData) {
+                methodInfo = 'Excel导入';
+                const successData = appState.uploadedData.filter(item => item.status === 'success');
+                villageCount = successData.length;
+                totalAmount = successData.reduce((sum, item) => sum + item.amount, 0);
+                
+                const uniqueVillages = successData.slice(0, 3).map(item => item.name);
+                
+                villageInfo = `导入了 ${uniqueVillages.join('、')} 等 ${successData.length} 个村庄`;
+                
+                // 检查金额是否一致
+                const amounts = successData.map(item => item.amount);
+                const isUniformAmount = amounts.every(amount => amount === amounts[0]);
+                
+                if (isUniformAmount) {
+                    const wanFormat = formatWanAmount(amounts[0]);
+                    if (wanFormat) {
+                        amountInfo = `每个村庄均为 ${wanFormat.isApproximate ? '近似' : ''}${wanFormat.text}`;
+                    } else {
+                        amountInfo = `每个村庄均为 ${amounts[0]}元`;
+                    }
+                } else {
+                    const avgAmount = totalAmount / villageCount;
+                    const maxAmount = Math.max(...amounts);
+                    const minAmount = Math.min(...amounts);
+                    const maxVillages = successData.filter(item => item.amount === maxAmount).slice(0, 3);
+                    const minVillages = successData.filter(item => item.amount === minAmount).slice(0, 3);
+                    
+                    // 格式化金额显示函数（与解析结果保持一致）
+                    function formatAmountForSummary(amount) {
+                        if (amount < 1000) {
+                            return `${Math.round(amount)} 元`;
+                        } else {
+                            return `${(amount/10000).toFixed(2)} 万元`;
+                        }
+                    }
+                    
+                    const maxVillageNames = maxVillages.map(v => v.name).join('、');
+                    const minVillageNames = minVillages.map(v => v.name).join('、');
+                    
+                    amountInfo = `平均每村庄 ${formatAmountForSummary(avgAmount)}，最高村庄获取 ${formatAmountForSummary(maxAmount)}，最低村庄获取 ${formatAmountForSummary(minAmount)}。最高村庄是 ${maxVillageNames}。最低村庄是 ${minVillageNames}。`;
+                }
+            }
+            
+            summaryVillageCount.textContent = villageCount;
+            
+            // 更新总助力金显示，添加万元括号显示
+            let totalAmountText = `¥${totalAmount.toLocaleString()}`;
+            if (totalAmount >= 10000) {
+                const wanAmount = (totalAmount / 10000).toFixed(1);
+                totalAmountText += ` (${wanAmount}万元)`;
+            }
+            summaryTotalAmount.innerHTML = totalAmountText;
+            
+            summaryVillageInfo.textContent = villageInfo;
+            if (summaryMethod) summaryMethod.textContent = methodInfo;
+            
+            if (summaryAmountInfo.innerHTML !== undefined) {
+                summaryAmountInfo.innerHTML = amountInfo;
+            } else {
+                summaryAmountInfo.textContent = amountInfo;
+            }
+            
+            const validity = document.getElementById('validityPeriod').value;
+            if (validity) {
+                const validityText = {
+                    '3': '三天',
+                    '7': '一周', 
+                    '14': '两周',
+                    '30': '一个月'
+                };
+                summaryValidity.textContent = validityText[validity] || '未设置';
+            }
+            
+            // 检查是否可以提交
+            const canSubmit = appState.sendMethod && villageCount > 0 && totalAmount > 0 && validity;
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = !canSubmit;
+            }
+        }
+
+        // 提交任务
+        function submitTask() {
+            // 验证必填项
+            const sendMethod = document.getElementById('sendMethod').value;
+            const validityPeriod = document.getElementById('validityPeriod').value;
+            
+            if (!sendMethod) {
+                alert('❌ 请选择下发方式');
+                return;
+            }
+            
+            if (!validityPeriod) {
+                alert('❌ 请选择有效期');
+                return;
+            }
+            
+            // 根据下发方式验证不同的条件
+            if (sendMethod === 'region') {
+                const regionAmount = document.getElementById('regionAmount').value;
+                if (!regionAmount || regionAmount <= 0) {
+                    alert('❌ 请输入有效的助力金金额');
+                    return;
+                }
+                if (!appState.selectedRegion.villageCount || appState.selectedRegion.villageCount <= 0) {
+                    alert('❌ 请先确认地区选择，加载村庄列表');
+                    return;
+                }
+            } else if (sendMethod === 'excel') {
+                if (!appState.uploadedData || appState.uploadedData.length === 0) {
+                    alert('❌ 请先上传Excel文件并确保解析成功');
+                    return;
+                }
+            }
+            
+            if (confirm('✅ 确认提交此任务到审核队列？\n\n任务将提交给管理员审核，审核通过后将自动发放助力金。')) {
+                // 获取备注信息
+                const taskRemarks = document.getElementById('taskRemarks').value.trim();
+                
+                // 生成任务ID
+                const taskId = 'TASK' + new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14) + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                
+                // 显示提交成功信息
+                alert(`🎉 任务提交成功！\n\n任务ID：${taskId}\n状态：等待审核\n\n您可以在"发放任务列表"页面查看任务进度。`);
+                
+                // 重置表单
+                resetForm();
+                
+                // 跳转到发放任务列表页面
+                setTimeout(() => {
+                    switchTab('history-tasks');
+                }, 1500);
+            }
+        }
+
+        // 重置表单
+        function resetForm() {
+            if (confirm('确认重置所有配置？')) {
+                location.reload();
+            }
+        }
+
+        // 保存草稿
+        function saveDraft() {
+            alert('草稿保存成功！');
+        }
+
+        // 提交首次活动
+        function submitFirstTimeActivity() {
+            const amount = document.getElementById('firstTimeAmount').value;
+            const validity = document.getElementById('firstTimeValidity').value;
+            
+            if (!amount || amount <= 0) {
+                alert('请输入有效的奖励金额');
+                return;
+            }
+            
+            if (confirm('确认提交首次获取助力金活动配置？')) {
+                alert('活动配置提交成功，等待审核！');
+                // 这里应该提交到后端
+            }
+        }
+
+        // 查看历史申请任务
+        function viewHistoryApplications() {
+            switchTab('history-tasks');
+        }
+
+        // 更新消息预览
+        function updateMessagePreview() {
+            const title = document.getElementById('messageTitle').value;
+            const template = document.getElementById('messageTemplate').value;
+            const amount = document.getElementById('regionAmount').value || '100.00';
+            const validity = document.getElementById('validityPeriod').value || '7';
+            
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + parseInt(validity));
+            
+            const currentDate = new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit', 
+                day: '2-digit'
+            }).replace(/\//g, '年').replace(/年(\d+)月/, '年$1月').replace(/月(\d+)日/, '月$1日');
+            
+            const previewContent = template
+                .replace('{village_name}', '张家村')
+                .replace('{amount}', Math.round(parseFloat(amount)))
+                .replace('{validity_days}', validity)
+                .replace('{{当天日期}}', currentDate);
+            
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewContent').textContent = previewContent;
+        }
+
+        // 更新任务预览消息
+        function updateTaskPreviewMessage() {
+            const title = document.getElementById('messageTitle')?.value || '待处理通知';
+            const template = document.getElementById('messageTemplate')?.value || 
+                '待处理任务：村庄成功获得{amount}助力金，有效期为{validity_days}天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看';
+            
+            let amount = '100.00';
+            let validity = '7';
+            
+            if (appState.sendMethod === 'region') {
+                amount = document.getElementById('regionAmount')?.value || '100.00';
+            } else if (appState.sendMethod === 'excel' && appState.uploadedData) {
+                const successData = appState.uploadedData.filter(item => item.status === 'success');
+                if (successData.length > 0) {
+                    amount = successData[0].amount.toFixed(2);
+                }
+            }
+            
+            validity = document.getElementById('validityPeriod')?.value || '7';
+            
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + parseInt(validity));
+            
+            const currentDate = new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit', 
+                day: '2-digit'
+            }).replace(/\//g, '年').replace(/年(\d+)月/, '年$1月').replace(/月(\d+)日/, '月$1日');
+            
+            const previewContent = template
+                .replace('{village_name}', '张家村')
+                .replace('{amount}', Math.round(parseFloat(amount)))
+                .replace('{validity_days}', validity)
+                .replace('{{当天日期}}', currentDate);
+            
+            const taskPreviewTitle = document.getElementById('taskPreviewTitle');
+            const taskPreviewContent = document.getElementById('taskPreviewContent');
+            
+            if (taskPreviewTitle) taskPreviewTitle.textContent = title;
+            if (taskPreviewContent) taskPreviewContent.textContent = previewContent;
         }
 
         // 页面初始化
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 DOM加载完成，开始初始化...');
-            
+            console.log('🚀 页面初始化开始...');
             // 绑定下发方式选择事件
             const sendMethodSelect = document.getElementById('sendMethod');
             if (sendMethodSelect) {
                 sendMethodSelect.addEventListener('change', toggleSendMethod);
-                console.log('✅ 下发方式选择事件绑定成功');
             }
             
             // 绑定标签页切换事件
@@ -468,16 +3220,657 @@
                     switchTab(tabId);
                 });
             });
-            console.log('✅ 标签页切换事件绑定成功');
+            
+            // 绑定金额输入框事件
+            const regionAmountInput = document.getElementById('regionAmount');
+            if (regionAmountInput) {
+                regionAmountInput.addEventListener('input', () => {
+                    updateAmountDisplay('regionAmount', 'regionChineseAmount', 'regionWanAmount');
+                    updateTaskSummary();
+                });
+            }
+            
+            // 绑定有效期选择事件
+            const validitySelect = document.getElementById('validityPeriod');
+            if (validitySelect) {
+                validitySelect.addEventListener('change', updateTaskSummary);
+            }
+            
+            // 绑定文件上传事件
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (uploadArea && fileInput) {
+                uploadArea.addEventListener('click', () => fileInput.click());
+                
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+                
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+                
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleFileUpload(files[0]);
+                    }
+                });
+                
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        handleFileUpload(e.target.files[0]);
+                    }
+                });
+            }
+            
+            // 绑定首次活动开关事件
+            const firstTimeActivitySwitch = document.getElementById('firstTimeActivity');
+            if (firstTimeActivitySwitch) {
+                firstTimeActivitySwitch.addEventListener('change', function() {
+                    const configSection = document.getElementById('firstTimeConfig');
+                    if (this.checked) {
+                        configSection.className = 'visible-section';
+                    } else {
+                        configSection.className = 'hidden-section';
+                    }
+                });
+            }
+            
+            // 绑定消息预览更新事件
+            const messageTitleInput = document.getElementById('messageTitle');
+            if (messageTitleInput) {
+                messageTitleInput.addEventListener('input', () => {
+                    updateMessagePreview();
+                    updateTaskPreviewMessage();
+                });
+            }
+            
+            // 绑定地区选择联动事件
+            const provinceSelect = document.getElementById('province');
+            if (provinceSelect) {
+                provinceSelect.addEventListener('change', function() {
+                    updateRegionSelector('city', this.value);
+                });
+            }
+            
+            // 初始化星级模块状态
+            const starModules = document.querySelectorAll('.star-module');
+            starModules.forEach(module => {
+                module.addEventListener('click', function() {
+                    toggleStarModule(this);
+                });
+            });
             
             // 更新时间
-            updateTime();
-            setInterval(updateTime, 60000);
+            setInterval(() => {
+                const now = new Date();
+                const timeElement = document.getElementById('currentTime');
+                if (timeElement) {
+                    timeElement.textContent = now.toLocaleString();
+                }
+            }, 1000);
             
-            console.log('🎯 页面初始化完成');
+            // 点击模态框外部关闭
+            window.onclick = function(event) {
+                const modal = document.getElementById('detailModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+            
+            // 初始化时更新任务摘要和按钮状态
+            updateTaskSummary();
         });
 
-        console.log('📄 JavaScript代码加载完成');
+        // 查看任务详情
+        // 获取到期日期
+        function getExpiryDate(validity) {
+            const days = parseInt(validity.replace('天', ''));
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + days);
+            return expireDate.getFullYear() + '年' + (expireDate.getMonth() + 1) + '月' + expireDate.getDate() + '日';
+        }
+
+        // 生成金额详情信息
+        function generateAmountDetails(task) {
+            if (!task.villages || task.villages.length === 0) {
+                // 如果没有村庄详细信息，使用统一金额
+                const unitAmount = task.unitAmount || (task.totalAmount / task.villageCount);
+                if (unitAmount < 1000) {
+                    return `每个村庄均为 ${Math.round(unitAmount)} 元`;
+                } else {
+                    return `每个村庄均为 ${(unitAmount/10000).toFixed(2)} 万元`;
+                }
+            }
+            
+            // 如果有村庄详细信息，计算统计数据
+            const amounts = task.villages.map(v => v.amount);
+            const isUniformAmount = amounts.every(amount => amount === amounts[0]);
+            
+            if (isUniformAmount) {
+                // 统一金额
+                const amount = amounts[0];
+                if (amount < 1000) {
+                    return `每个村庄均为 ${Math.round(amount)} 元`;
+                } else {
+                    return `每个村庄均为 ${(amount/10000).toFixed(2)} 万元`;
+                }
+            } else {
+                // 不同金额，显示统计信息
+                const totalAmount = amounts.reduce((sum, amount) => sum + amount, 0);
+                const avgAmount = totalAmount / amounts.length;
+                const maxAmount = Math.max(...amounts);
+                const minAmount = Math.min(...amounts);
+                
+                const maxVillages = task.villages.filter(v => v.amount === maxAmount).slice(0, 3);
+                const minVillages = task.villages.filter(v => v.amount === minAmount).slice(0, 3);
+                
+                // 格式化金额显示函数
+                function formatAmount(amount) {
+                    if (amount < 1000) {
+                        return `${Math.round(amount)} 元`;
+                    } else {
+                        return `${(amount/10000).toFixed(2)} 万元`;
+                    }
+                }
+                
+                const maxVillageNames = maxVillages.map(v => v.name).join('、');
+                const minVillageNames = minVillages.map(v => v.name).join('、');
+                
+                return `平均每村庄 ${formatAmount(avgAmount)}，最高村庄获取 ${formatAmount(maxAmount)}，最低村庄获取 ${formatAmount(minAmount)}。最高村庄是 ${maxVillageNames}。最低村庄是 ${minVillageNames}。`;
+            }
+        }
+
+        function viewTaskDetail(taskId) {
+            const task = mockData.tasks[taskId];
+            if (!task) {
+                alert('任务数据不存在');
+                return;
+            }
+
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = `任务详情 - ${taskId}`;
+            
+            const statusText = {
+                'pending': '待审核',
+                'approved': '已通过待执行',
+                'rejected': '审核驳回',
+                'processing': '已完成下发'
+            };
+            
+            const statusClass = {
+                'pending': 'task-status-badge status-pending-review',
+                'approved': 'task-status-badge status-approved-pending',
+                'rejected': 'task-status-badge status-review-rejected',
+                'processing': 'task-status-badge status-completed'
+            };
+
+            // 使用任务预览样式
+            modalBody.innerHTML = `
+                <div class="task-summary-title">📋 任务详情 - ${taskId}</div>
+                
+                <!-- 任务提交人单独一行 -->
+                <div class="summary-row" style="margin-bottom: 15px;">
+                    <div class="summary-item-inline">
+                        <span class="summary-label">任务提交人：</span>
+                        <span class="summary-value">${task.applicant}</span>
+                    </div>
+                </div>
+                
+                <!-- 后续三个信息单独一行，字体变大 -->
+                <div class="summary-row" style="font-size: 18px; font-weight: 600;">
+                    <div class="summary-item-inline">
+                        <span class="summary-label">任务覆盖村庄数：</span>
+                        <span class="summary-value">${task.villageCount}</span>
+                    </div>
+                    <div class="summary-item-inline">
+                        <span class="summary-label">任务助力金：</span>
+                        <span class="summary-value">
+                            ${task.totalAmount >= 10000 ? 
+                                `¥${task.totalAmount.toLocaleString()} (${(task.totalAmount/10000).toFixed(1)}万元)` : 
+                                `<strong>¥${task.totalAmount.toLocaleString()}</strong>`
+                            }
+                        </span>
+                    </div>
+                    <div class="summary-item-inline">
+                        <span class="summary-label">有效期：</span>
+                        <span class="summary-value">${task.validity}</span>
+                    </div>
+                </div>
+                
+                <!-- 任务状态信息 -->
+                <div class="task-status-info" style="margin: 15px 0;">
+                    <div class="task-status-left">
+                        <div>
+                            <div class="task-submit-time">提交时间：${task.submitTime}</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 2px;">任务ID：${task.id}</div>
+                        </div>
+                    </div>
+                    <div class="task-status-right">
+                        <div class="${statusClass[task.status]}">${statusText[task.status]}</div>
+                    </div>
+                </div>
+                
+                <!-- 备注信息 -->
+                ${task.remarks ? `
+                <div class="detail-section">
+                    <h4 class="detail-title">📝 备注信息</h4>
+                    <div class="detail-item">
+                        <span class="detail-value" style="line-height: 1.6;">${task.remarks}</span>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <!-- 执行说明 -->
+                <div class="execution-notice">
+                    <div class="notice-icon">⏰</div>
+                    <div class="notice-content">
+                        <strong>执行说明：</strong>审批通过后，系统将在每日早上10点～晚上6点期间自动执行下发。有效期为执行成功后开始计算的有效期时间。
+                    </div>
+                </div>
+                
+                <!-- 详细信息 -->
+                <div class="detail-section">
+                    <h4 class="detail-title">📍 村庄明细</h4>
+                    <div class="detail-item">
+                        <span class="detail-label">下发方式：</span>
+                        <span class="detail-value">${task.method}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">村庄范围：</span>
+                        <span class="detail-value">${task.region || '导入村庄列表'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">金额详情：</span>
+                        <span class="detail-value">${generateAmountDetails(task)}</span>
+                    </div>
+                </div>
+                
+                <!-- 模版消息预览 -->
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
+                    <div class="message-preview">
+                        <div class="message-header">待处理通知</div>
+                        <div class="message-content">
+                            待处理任务：村庄成功获得${Math.round(task.unitAmount || (task.totalAmount / task.villageCount))}助力金，有效期为${task.validity.replace('天', '')}天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看
+                        </div>
+                        <div class="message-meta">
+                            推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
+                        </div>
+                    </div>
+                </div>
+                
+                ${task.method === 'Excel导入' ? `
+                <!-- Excel附件展示 -->
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">📎 Excel附件</h4>
+                    <div class="attachment-display">
+                        <div class="attachment-item">
+                            <div class="attachment-icon">📊</div>
+                            <div class="attachment-info">
+                                <div class="attachment-name">助力金下发名单.xlsx</div>
+                                <div class="attachment-size">文件大小: 2.5MB | 上传时间: ${task.submitTime}</div>
+                            </div>
+                            <button class="btn btn-outline btn-small" onclick="downloadAttachment()">
+                                📥 下载
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+                
+
+                
+                ${task.approver ? `
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">✅ 审核信息</h4>
+                    <p>审核人：${task.approver}</p>
+                    <p>审核时间：${task.approveTime}</p>
+                </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-outline" onclick="exportTaskDetail('${task.id}')">📊 导出详情</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                </div>
+            `;
+            
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        // 查看活动详情
+        function viewActivityDetail(activityId) {
+            const activity = mockData.activities[activityId];
+            if (!activity) {
+                alert('活动数据不存在');
+                return;
+            }
+
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = `活动详情 - ${activity.title}`;
+            
+            modalBody.innerHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">活动ID</div>
+                        <div class="detail-value">${activity.id}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">活动类型</div>
+                        <div class="detail-value">${activity.type === 'first_time_reward' ? '首次奖励' : activity.type === 'festival_reward' ? '节日活动' : '月度奖励'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">创建时间</div>
+                        <div class="detail-value">${activity.createTime}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">状态</div>
+                        <div class="detail-value">
+                            <span class="status-badge status-approved">进行中</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">单次奖励</div>
+                        <div class="detail-value">¥${activity.amount}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">奖励有效期</div>
+                        <div class="detail-value">${activity.validity}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">参与村庄</div>
+                        <div class="detail-value">${activity.participantCount}个</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">总发放金额</div>
+                        <div class="detail-value">¥${activity.totalReward.toLocaleString()}</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">📝 活动描述</h4>
+                    <p>${activity.description}</p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">📊 参与统计</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${activity.participantCount}</div>
+                            <div class="stat-label">参与村庄数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">¥${activity.totalReward.toLocaleString()}</div>
+                            <div class="stat-label">总发放金额</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">¥${activity.amount}</div>
+                            <div class="stat-label">单次奖励</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${Math.round(activity.participantCount / 1247 * 100)}%</div>
+                            <div class="stat-label">参与率</div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${activity.participants ? `
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 10px;">🏘️ 最近参与村庄</h4>
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>村庄名称</th>
+                                <th>获得奖励时间</th>
+                                <th>奖励金额</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${activity.participants.map(p => `
+                                <tr>
+                                    <td>${p.village}</td>
+                                    <td>${p.rewardTime}</td>
+                                    <td>¥${p.amount}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-warning" onclick="pauseActivity('${activity.id}')">⏸️ 暂停活动</button>
+                    <button class="btn btn-outline" onclick="exportActivityDetail('${activity.id}')">📊 导出数据</button>
+                    <button class="btn btn-secondary" onclick="editActivity('${activity.id}')">✏️ 编辑活动</button>
+                </div>
+            `;
+            
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        // 审核操作
+        function approveTask(taskId) {
+            if (confirm(`确认通过任务 ${taskId} 的审核？`)) {
+                alert('任务审核通过！助力金将开始发放。');
+                // 更新任务状态
+                if (mockData.tasks[taskId]) {
+                    mockData.tasks[taskId].status = 'approved';
+                    mockData.tasks[taskId].approver = '当前审核员';
+                    mockData.tasks[taskId].approveTime = new Date().toLocaleString();
+                }
+                closeModal();
+                // 刷新页面数据
+                location.reload();
+            }
+        }
+
+        function rejectTask(taskId) {
+            const reason = prompt('请输入拒绝原因：');
+            if (reason) {
+                alert(`任务 ${taskId} 已拒绝。拒绝原因：${reason}`);
+                // 更新任务状态
+                if (mockData.tasks[taskId]) {
+                    mockData.tasks[taskId].status = 'rejected';
+                    mockData.tasks[taskId].rejectReason = reason;
+                }
+                closeModal();
+                location.reload();
+            }
+        }
+
+        // 活动操作
+        function pauseActivity(activityId) {
+            if (confirm(`确认暂停活动 ${activityId}？`)) {
+                alert('活动已暂停！');
+                location.reload();
+            }
+        }
+
+        function createNewActivity() {
+            alert('跳转到活动创建页面...');
+        }
+
+        function editActivity(activityId) {
+            alert(`编辑活动 ${activityId}...`);
+        }
+
+        // 导出功能
+        function exportTaskDetail(taskId) {
+            alert(`正在导出任务 ${taskId} 的详细信息...`);
+        }
+
+        function exportActivityDetail(activityId) {
+            alert(`正在导出活动 ${activityId} 的详细数据...`);
+        }
+
+        function exportAuditReport() {
+            alert('正在导出审核报告...');
+        }
+
+        // 批量操作
+        function batchApprove() {
+            alert('跳转到批量审核页面...');
+        }
+
+        // 显示提交成功页面
+        function showSubmitSuccessPage(taskId) {
+            // 创建成功页面内容
+            const successPageHtml = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; border-radius: 20px; padding: 60px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.3); max-width: 600px; width: 90%;">
+                        <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
+                        <h2 style="color: #2c5aa0; margin-bottom: 20px; font-size: 28px;">任务提交成功！</h2>
+                        <div style="background: #f8f9fa; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #28a745;">
+                            <div style="font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px;">任务ID：${taskId}</div>
+                            <div style="color: #666; margin-bottom: 8px;">状态：<span style="color: #ffc107; font-weight: bold;">等待审核</span></div>
+                            <div style="color: #666;">提交时间：${new Date().toLocaleString()}</div>
+                        </div>
+                        <p style="color: #666; margin: 20px 0; line-height: 1.6;">
+                            您的任务已成功提交到审核队列，管理员将在24小时内完成审核。<br>
+                            审核通过后，系统将自动发放助力金并发送通知消息。
+                        </p>
+                        <div style="margin-top: 30px;">
+                            <button onclick="closeSuccessPageAndGoToHistory()" style="background: linear-gradient(135deg, #2c5aa0 0%, #1e3f73 100%); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-right: 15px;">
+                                📋 查看发放任务列表
+                            </button>
+                            <button onclick="closeSuccessPageAndReset()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                                🔄 创建新任务
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 添加到页面
+            const successPage = document.createElement('div');
+            successPage.id = 'submitSuccessPage';
+            successPage.innerHTML = successPageHtml;
+            document.body.appendChild(successPage);
+        }
+
+        // 关闭成功页面并跳转到发放任务列表
+        function closeSuccessPageAndGoToHistory() {
+            const successPage = document.getElementById('submitSuccessPage');
+            if (successPage) {
+                successPage.remove();
+            }
+            switchTab('history-tasks');
+        }
+
+        // 关闭成功页面并重置表单
+        function closeSuccessPageAndReset() {
+            const successPage = document.getElementById('submitSuccessPage');
+            if (successPage) {
+                successPage.remove();
+            }
+            resetForm();
+        }
+
+        // 星级模块切换函数
+        function toggleStarModule(element) {
+            element.classList.toggle('active');
+            updateVillageSelectionInfo();
+            updateTaskSummary();
+        }
+
+        // 获取选中的星级
+        function getSelectedStars() {
+            const modules = document.querySelectorAll('.star-module.active');
+            return Array.from(modules).map(module => module.getAttribute('data-star'));
+        }
+
+        // 更新任务预览消息（重写版本）
+        function updateTaskPreviewMessage() {
+            const title = document.getElementById('messageTitle')?.value || '待处理通知';
+            const template = document.getElementById('messageTemplate')?.value || 
+                '待处理任务：村庄成功获得{amount}助力金，有效期为{validity_days}天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看';
+            
+            let amount = '100.00';
+            const validity = document.getElementById('validityPeriod')?.value || '7';
+            
+            if (appState.sendMethod === 'region') {
+                amount = document.getElementById('regionAmount')?.value || '100.00';
+            } else if (appState.sendMethod === 'excel' && appState.uploadedData) {
+                const successData = appState.uploadedData.filter(item => item.status === 'success');
+                if (successData.length > 0) {
+                    amount = successData[0].amount.toFixed(2);
+                }
+            }
+            
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + parseInt(validity));
+            
+            const currentDate = new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit', 
+                day: '2-digit'
+            }).replace(/\//g, '年').replace(/年(\d+)月/, '年$1月').replace(/月(\d+)日/, '月$1日');
+            
+            const previewContent = template
+                .replace('{village_name}', '张家村')
+                .replace('{amount}', Math.round(parseFloat(amount)))
+                .replace('{validity_days}', validity)
+                .replace('{{当天日期}}', currentDate);
+            
+            const taskPreviewTitle = document.getElementById('taskPreviewTitle');
+            const taskPreviewContent = document.getElementById('taskPreviewContent');
+            
+            if (taskPreviewTitle) taskPreviewTitle.textContent = title;
+            if (taskPreviewContent) taskPreviewContent.textContent = previewContent;
+        }
+
+        // 重写显示成功解析结果函数（移除删除按钮）
+
+        
+        // 显示任务状态信息
+        function showTaskStatusInfo(taskId, status) {
+            const statusInfo = document.getElementById('taskStatusInfo');
+            const submitTimeElement = document.getElementById('taskSubmitTime');
+            const taskIdElement = document.getElementById('taskIdDisplay');
+            const statusBadge = document.getElementById('taskStatusBadge');
+            
+            if (!statusInfo) return;
+            
+            // 更新任务ID和提交时间
+            taskIdElement.textContent = taskId;
+            submitTimeElement.textContent = `提交时间：${new Date().toLocaleString()}`;
+            
+            // 更新状态显示
+            const statusConfig = {
+                'submitted': { text: '待审核', class: 'status-pending-review' },
+                'pending': { text: '待审核', class: 'status-pending-review' },
+                'rejected': { text: '审核驳回', class: 'status-review-rejected' },
+                'approved': { text: '已通过待执行', class: 'status-approved-pending' },
+                'completed': { text: '已完成下发', class: 'status-completed' }
+            };
+            
+            const config = statusConfig[status] || statusConfig['pending'];
+            statusBadge.textContent = config.text;
+            statusBadge.className = `task-status-badge ${config.class}`;
+            
+            // 显示状态信息
+            statusInfo.className = 'task-status-info visible-section';
+        }
     </script>
 </body>
 </html>
