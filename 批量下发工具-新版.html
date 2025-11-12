@@ -1740,7 +1740,7 @@
                         <div class="form-group">
                             <label class="form-label">消息标题<span style="color: red;">*</span></label>
                             <input type="text" class="form-input" id="messageTitle" 
-                                   placeholder="请输入消息标题" value="🎉 您有新的助力金到账！" required>
+                                   placeholder="请输入消息标题" value="待处理通知" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">推送对象</label>
@@ -1752,15 +1752,21 @@
                     
                     <div class="form-group">
                         <label class="form-label">消息内容模板</label>
-                        <textarea class="form-textarea" id="messageTemplate" readonly>{village_name}已成功获得【{amount}】助力金，有效期至{expiry_date}，助力金可以用于公益项目申请。申请公益项目，为村庄发展助力。点击详情查看。</textarea>
+                        <textarea class="form-textarea" id="messageTemplate" readonly>待处理任务：村庄成功获得{amount}助力金，有效期为{validity_days}天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看</textarea>
                     </div>
                     
                     <!-- F1.5.1 消息预览 -->
                     <div class="section-title" style="margin-top: 20px;">👀 消息预览</div>
                     <div class="message-preview">
-                        <div class="message-header" id="previewTitle">🎉 您有新的助力金到账！</div>
+                        <div class="message-header" id="previewTitle">待处理通知</div>
                         <div class="message-content" id="previewContent">
-                            村管理员您好！【张家村】已成功获得【100】公益助力金（有效期至2025年11月12日）。请尽快提交公益项目申请，点击详情，即刻申请，共同为村庄发展助力，为村民谋福利！
+                            待处理任务：村庄成功获得100助力金，有效期为7天
+通知类型：助力金可用于公益项目申请使用
+通知时间：2025年11月12日
+助力金已到位，点击详情查看
                         </div>
                         <div class="message-meta">
                             推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
@@ -1827,9 +1833,12 @@
                     <div style="margin: 20px 0;">
                         <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
                         <div class="message-preview">
-                            <div class="message-header" id="taskPreviewTitle">🎉 您有新的助力金到账！</div>
+                            <div class="message-header" id="taskPreviewTitle">待处理通知</div>
                             <div class="message-content" id="taskPreviewContent">
-                                村管理员您好！【张家村】已成功获得【100】公益助力金（有效期至2025年11月12日）。请尽快提交公益项目申请，点击详情，即刻申请，共同为村庄发展助力，为村民谋福利！
+                                待处理任务：村庄成功获得100助力金，有效期为7天
+通知类型：助力金可用于公益项目申请使用
+通知时间：2025年11月12日
+助力金已到位，点击详情查看
                             </div>
                             <div class="message-meta">
                                 推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
@@ -1909,11 +1918,12 @@
                                 <div class="config-label">📝 消息模板</div>
                                 <div class="config-value">
                                     <div class="message-template">
-                                        <div class="message-title">🎉 新村创建奖励到账！</div>
+                                        <div class="message-title">待处理通知</div>
                                         <div class="message-content">
-                                            xxx村已成功获得【1000】助力金，有效期至xxxx年xx月xx日，助力金可以用于公益项目申请。
-                                            申请公益项目，为村庄发展助力。
-                                            点击详情查看。
+                                            待处理任务：村庄成功获得1000助力金，有效期为30天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看
                                         </div>
                                     </div>
                                 </div>
@@ -3173,10 +3183,17 @@
             const expireDate = new Date();
             expireDate.setDate(expireDate.getDate() + parseInt(validity));
             
+            const currentDate = new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit', 
+                day: '2-digit'
+            }).replace(/\//g, '年').replace(/年(\d+)月/, '年$1月').replace(/月(\d+)日/, '月$1日');
+            
             const previewContent = template
                 .replace('{village_name}', '张家村')
                 .replace('{amount}', Math.round(parseFloat(amount)))
-                .replace('{expiry_date}', expireDate.getFullYear() + '年' + (expireDate.getMonth() + 1) + '月' + expireDate.getDate() + '日');
+                .replace('{validity_days}', validity)
+                .replace('{{当天日期}}', currentDate);
             
             document.getElementById('previewTitle').textContent = title;
             document.getElementById('previewContent').textContent = previewContent;
@@ -3184,9 +3201,12 @@
 
         // 更新任务预览消息
         function updateTaskPreviewMessage() {
-            const title = document.getElementById('messageTitle')?.value || '🎉 您有新的助力金到账！';
+            const title = document.getElementById('messageTitle')?.value || '待处理通知';
             const template = document.getElementById('messageTemplate')?.value || 
-                '{village_name}已成功获得【{amount}】助力金，有效期至{expiry_date}，助力金可以用于公益项目申请。申请公益项目，为村庄发展助力。点击详情查看。';
+                '待处理任务：村庄成功获得{amount}助力金，有效期为{validity_days}天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看';
             
             let amount = '100.00';
             let validity = '7';
@@ -3205,10 +3225,17 @@
             const expireDate = new Date();
             expireDate.setDate(expireDate.getDate() + parseInt(validity));
             
+            const currentDate = new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit', 
+                day: '2-digit'
+            }).replace(/\//g, '年').replace(/年(\d+)月/, '年$1月').replace(/月(\d+)日/, '月$1日');
+            
             const previewContent = template
                 .replace('{village_name}', '张家村')
                 .replace('{amount}', Math.round(parseFloat(amount)))
-                .replace('{expiry_date}', expireDate.getFullYear() + '年' + (expireDate.getMonth() + 1) + '月' + expireDate.getDate() + '日');
+                .replace('{validity_days}', validity)
+                .replace('{{当天日期}}', currentDate);
             
             const taskPreviewTitle = document.getElementById('taskPreviewTitle');
             const taskPreviewContent = document.getElementById('taskPreviewContent');
@@ -3519,9 +3546,12 @@
                 <div style="margin: 20px 0;">
                     <h4 style="color: #2c5aa0; margin-bottom: 10px;">📱 模版消息预览</h4>
                     <div class="message-preview">
-                        <div class="message-header">🎉 您有新的助力金到账！</div>
+                        <div class="message-header">待处理通知</div>
                         <div class="message-content">
-                            张家村已成功获得【${Math.round(task.unitAmount || (task.totalAmount / task.villageCount))}】助力金，有效期至${getExpiryDate(task.validity)}，助力金可以用于公益项目申请。申请公益项目，为村庄发展助力。点击详情查看。
+                            待处理任务：村庄成功获得${Math.round(task.unitAmount || (task.totalAmount / task.villageCount))}助力金，有效期为${task.validity.replace('天', '')}天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看
                         </div>
                         <div class="message-meta">
                             推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
@@ -3817,9 +3847,12 @@
 
         // 更新任务预览消息（重写版本）
         function updateTaskPreviewMessage() {
-            const title = document.getElementById('messageTitle')?.value || '🎉 您有新的助力金到账！';
+            const title = document.getElementById('messageTitle')?.value || '待处理通知';
             const template = document.getElementById('messageTemplate')?.value || 
-                '{village_name}已成功获得【{amount}】助力金，有效期至{expiry_date}，助力金可以用于公益项目申请。申请公益项目，为村庄发展助力。点击详情查看。';
+                '待处理任务：村庄成功获得{amount}助力金，有效期为{validity_days}天
+通知类型：助力金可用于公益项目申请使用
+通知时间：{{当天日期}}
+助力金已到位，点击详情查看';
             
             let amount = '100.00';
             const validity = document.getElementById('validityPeriod')?.value || '7';
@@ -3836,10 +3869,17 @@
             const expireDate = new Date();
             expireDate.setDate(expireDate.getDate() + parseInt(validity));
             
+            const currentDate = new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit', 
+                day: '2-digit'
+            }).replace(/\//g, '年').replace(/年(\d+)月/, '年$1月').replace(/月(\d+)日/, '月$1日');
+            
             const previewContent = template
                 .replace('{village_name}', '张家村')
                 .replace('{amount}', Math.round(parseFloat(amount)))
-                .replace('{expiry_date}', expireDate.getFullYear() + '年' + (expireDate.getMonth() + 1) + '月' + expireDate.getDate() + '日');
+                .replace('{validity_days}', validity)
+                .replace('{{当天日期}}', currentDate);
             
             const taskPreviewTitle = document.getElementById('taskPreviewTitle');
             const taskPreviewContent = document.getElementById('taskPreviewContent');
