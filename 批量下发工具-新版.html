@@ -3244,18 +3244,23 @@
             if (taskPreviewContent) taskPreviewContent.textContent = previewContent;
         }
 
+        // 立即隐藏加载器
+        console.log('🚀 开始隐藏加载器...');
+        setTimeout(() => {
+            const pageLoader = document.getElementById('pageLoader');
+            if (pageLoader) {
+                console.log('✅ 找到加载器，开始隐藏');
+                pageLoader.classList.add('hidden');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                    console.log('🎯 加载器已隐藏');
+                }, 500);
+            }
+        }, 1000);
+
         // 页面初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 隐藏加载器
-            setTimeout(() => {
-                const pageLoader = document.getElementById('pageLoader');
-                if (pageLoader) {
-                    pageLoader.classList.add('hidden');
-                    setTimeout(() => {
-                        pageLoader.style.display = 'none';
-                    }, 500);
-                }
-            }, 1000);
+            console.log('🚀 页面开始初始化...');
             // 绑定下发方式选择事件
             const sendMethodSelect = document.getElementById('sendMethod');
             if (sendMethodSelect) {
