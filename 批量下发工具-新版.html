@@ -1752,7 +1752,7 @@
                     
                     <div class="form-group">
                         <label class="form-label">消息内容模板</label>
-                        <textarea class="form-textarea" id="messageTemplate" readonly>恭喜你，{village_name}获得了助力金 {amount} 元，有效期为{validity_days}天，近期有老年人助老公益项目可供申请，请尽快申请。</textarea>
+                        <textarea class="form-textarea" id="messageTemplate" readonly>{village_name}已成功获得【{amount}】助力金，有效期至{expiry_date}，助力金可以用于公益项目申请。申请公益项目，为村庄发展助力。点击详情查看。</textarea>
                     </div>
                     
                     <!-- F1.5.1 消息预览 -->
@@ -1760,7 +1760,7 @@
                     <div class="message-preview">
                         <div class="message-header" id="previewTitle">🎉 您有新的助力金到账！</div>
                         <div class="message-content" id="previewContent">
-                            恭喜您！张家村 村两委为您下发助力金 ¥100.00 元，有效期至 2025-11-12，请及时查看并兑换。感谢您对善治美平台公益的支持！
+                            村管理员您好！【张家村】已成功获得【100】公益助力金（有效期至2025年11月12日）。请尽快提交公益项目申请，点击详情，即刻申请，共同为村庄发展助力，为村民谋福利！
                         </div>
                         <div class="message-meta">
                             推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
@@ -1829,7 +1829,7 @@
                         <div class="message-preview">
                             <div class="message-header" id="taskPreviewTitle">🎉 您有新的助力金到账！</div>
                             <div class="message-content" id="taskPreviewContent">
-                                恭喜您！张家村 村两委为您下发助力金 ¥100.00 元，有效期至 2025-11-12，请及时查看并兑换。感谢您对善治美平台公益的支持！
+                                村管理员您好！【张家村】已成功获得【100】公益助力金（有效期至2025年11月12日）。请尽快提交公益项目申请，点击详情，即刻申请，共同为村庄发展助力，为村民谋福利！
                             </div>
                             <div class="message-meta">
                                 推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
@@ -1911,8 +1911,9 @@
                                     <div class="message-template">
                                         <div class="message-title">🎉 新村创建奖励到账！</div>
                                         <div class="message-content">
-                                            恭喜您成功创建新村！系统为您自动发放助力金 ¥1,000 元，有效期1个月。
-                                            请及时使用，感谢您对乡村公益平台的支持！
+                                            xxx村已成功获得【1000】助力金，有效期至xxxx年xx月xx日，助力金可以用于公益项目申请。
+                                            申请公益项目，为村庄发展助力。
+                                            点击详情查看。
                                         </div>
                                     </div>
                                 </div>
@@ -2491,11 +2492,11 @@
         
         // 新增：格式化金额显示（用于Excel解析结果和任务预览）
         function formatAmountForDisplay(amount) {
-            if (amount >= 10000) {
-                const wan = (amount / 10000).toFixed(1);
-                return `${wan}万元`;
+            if (amount < 1000) {
+                return `${Math.round(amount)} 元`;
             } else {
-                return `<strong>¥${amount.toFixed(2)}</strong>`;
+                const wan = (amount / 10000).toFixed(2);
+                return `${wan} 万元`;
             }
         }
         
@@ -2878,7 +2879,12 @@
             
             // 生成摘要 - 使用新的金额格式化函数
             let summary = `共 ${totalVillages} 个村庄，共计助力金金额 ${formatAmountForDisplay(totalAmount)}。<br>`;
-            summary += `平均每村庄 ${formatAmountForDisplay(avgAmount)}，最高村庄获取 ${formatAmountForDisplay(maxAmount)}，最低村庄获取 ${formatAmountForDisplay(minAmount)}`;
+            summary += `平均每村庄 ${formatAmountForDisplay(avgAmount)}，最高村庄获取 ${formatAmountForDisplay(maxAmount)}，最低村庄获取 ${formatAmountForDisplay(minAmount)}。`;
+            
+            // 添加最高和最低村庄名称
+            const maxVillageNames = maxVillages.map(v => v.name).join('、');
+            const minVillageNames = minVillages.map(v => v.name).join('、');
+            summary += `最高村庄是 ${maxVillageNames}。最低村庄是 ${minVillageNames}。`;
             
             document.getElementById('successSummary').innerHTML = summary;
             
@@ -3016,7 +3022,19 @@
                     const maxVillages = successData.filter(item => item.amount === maxAmount).slice(0, 3);
                     const minVillages = successData.filter(item => item.amount === minAmount).slice(0, 3);
                     
-                    amountInfo = `平均每村庄 ${(avgAmount/10000).toFixed(2)} 万元，最高村庄获取 ${(maxAmount/10000).toFixed(2)} 万元，最低村庄获取 ${(minAmount/10000).toFixed(2)} 万元`;
+                    // 格式化金额显示函数（与解析结果保持一致）
+                    function formatAmountForSummary(amount) {
+                        if (amount < 1000) {
+                            return `${Math.round(amount)} 元`;
+                        } else {
+                            return `${(amount/10000).toFixed(2)} 万元`;
+                        }
+                    }
+                    
+                    const maxVillageNames = maxVillages.map(v => v.name).join('、');
+                    const minVillageNames = minVillages.map(v => v.name).join('、');
+                    
+                    amountInfo = `平均每村庄 ${formatAmountForSummary(avgAmount)}，最高村庄获取 ${formatAmountForSummary(maxAmount)}，最低村庄获取 ${formatAmountForSummary(minAmount)}。最高村庄是 ${maxVillageNames}。最低村庄是 ${minVillageNames}。`;
                 }
             }
             
@@ -3157,8 +3175,8 @@
             
             const previewContent = template
                 .replace('{village_name}', '张家村')
-                .replace('{amount}', amount)
-                .replace('{expire_date}', expireDate.toLocaleDateString());
+                .replace('{amount}', Math.round(parseFloat(amount)))
+                .replace('{expiry_date}', expireDate.getFullYear() + '年' + (expireDate.getMonth() + 1) + '月' + expireDate.getDate() + '日');
             
             document.getElementById('previewTitle').textContent = title;
             document.getElementById('previewContent').textContent = previewContent;
@@ -3168,7 +3186,7 @@
         function updateTaskPreviewMessage() {
             const title = document.getElementById('messageTitle')?.value || '🎉 您有新的助力金到账！';
             const template = document.getElementById('messageTemplate')?.value || 
-                '恭喜您！{village_name} 村两委为您下发助力金 ¥{amount} 元，有效期至 {expire_date}，请及时查看并兑换。感谢您对善治美平台公益的支持！';
+                '{village_name}已成功获得【{amount}】助力金，有效期至{expiry_date}，助力金可以用于公益项目申请。申请公益项目，为村庄发展助力。点击详情查看。';
             
             let amount = '100.00';
             let validity = '7';
@@ -3189,8 +3207,8 @@
             
             const previewContent = template
                 .replace('{village_name}', '张家村')
-                .replace('{amount}', amount)
-                .replace('{expire_date}', expireDate.toLocaleDateString());
+                .replace('{amount}', Math.round(parseFloat(amount)))
+                .replace('{expiry_date}', expireDate.getFullYear() + '年' + (expireDate.getMonth() + 1) + '月' + expireDate.getDate() + '日');
             
             const taskPreviewTitle = document.getElementById('taskPreviewTitle');
             const taskPreviewContent = document.getElementById('taskPreviewContent');
@@ -3332,6 +3350,64 @@
         });
 
         // 查看任务详情
+        // 获取到期日期
+        function getExpiryDate(validity) {
+            const days = parseInt(validity.replace('天', ''));
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + days);
+            return expireDate.getFullYear() + '年' + (expireDate.getMonth() + 1) + '月' + expireDate.getDate() + '日';
+        }
+
+        // 生成金额详情信息
+        function generateAmountDetails(task) {
+            if (!task.villages || task.villages.length === 0) {
+                // 如果没有村庄详细信息，使用统一金额
+                const unitAmount = task.unitAmount || (task.totalAmount / task.villageCount);
+                if (unitAmount < 1000) {
+                    return `每个村庄均为 ${Math.round(unitAmount)} 元`;
+                } else {
+                    return `每个村庄均为 ${(unitAmount/10000).toFixed(2)} 万元`;
+                }
+            }
+            
+            // 如果有村庄详细信息，计算统计数据
+            const amounts = task.villages.map(v => v.amount);
+            const isUniformAmount = amounts.every(amount => amount === amounts[0]);
+            
+            if (isUniformAmount) {
+                // 统一金额
+                const amount = amounts[0];
+                if (amount < 1000) {
+                    return `每个村庄均为 ${Math.round(amount)} 元`;
+                } else {
+                    return `每个村庄均为 ${(amount/10000).toFixed(2)} 万元`;
+                }
+            } else {
+                // 不同金额，显示统计信息
+                const totalAmount = amounts.reduce((sum, amount) => sum + amount, 0);
+                const avgAmount = totalAmount / amounts.length;
+                const maxAmount = Math.max(...amounts);
+                const minAmount = Math.min(...amounts);
+                
+                const maxVillages = task.villages.filter(v => v.amount === maxAmount).slice(0, 3);
+                const minVillages = task.villages.filter(v => v.amount === minAmount).slice(0, 3);
+                
+                // 格式化金额显示函数
+                function formatAmount(amount) {
+                    if (amount < 1000) {
+                        return `${Math.round(amount)} 元`;
+                    } else {
+                        return `${(amount/10000).toFixed(2)} 万元`;
+                    }
+                }
+                
+                const maxVillageNames = maxVillages.map(v => v.name).join('、');
+                const minVillageNames = minVillages.map(v => v.name).join('、');
+                
+                return `平均每村庄 ${formatAmount(avgAmount)}，最高村庄获取 ${formatAmount(maxAmount)}，最低村庄获取 ${formatAmount(minAmount)}。最高村庄是 ${maxVillageNames}。最低村庄是 ${minVillageNames}。`;
+            }
+        }
+
         function viewTaskDetail(taskId) {
             const task = mockData.tasks[taskId];
             if (!task) {
@@ -3435,7 +3511,7 @@
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">金额详情：</span>
-                        <span class="detail-value">每个村庄均为 ${task.unitAmount || (task.totalAmount / task.villageCount).toFixed(0)}元</span>
+                        <span class="detail-value">${generateAmountDetails(task)}</span>
                     </div>
                 </div>
                 
@@ -3445,7 +3521,7 @@
                     <div class="message-preview">
                         <div class="message-header">🎉 您有新的助力金到账！</div>
                         <div class="message-content">
-                            恭喜你，张家村获得了助力金 ${task.unitAmount || (task.totalAmount / task.villageCount).toFixed(0)} 元，有效期为${task.validity === '7天' ? '7' : '14'}天，近期有老年人助老公益项目可供申请，请尽快申请。
+                            张家村已成功获得【${Math.round(task.unitAmount || (task.totalAmount / task.villageCount))}】助力金，有效期至${getExpiryDate(task.validity)}，助力金可以用于公益项目申请。申请公益项目，为村庄发展助力。点击详情查看。
                         </div>
                         <div class="message-meta">
                             推送对象：村两委+村支书身份 | 预计推送时间：审核通过下发执行成功后发送模版消息
@@ -3743,7 +3819,7 @@
         function updateTaskPreviewMessage() {
             const title = document.getElementById('messageTitle')?.value || '🎉 您有新的助力金到账！';
             const template = document.getElementById('messageTemplate')?.value || 
-                '恭喜你，{village_name}获得了助力金 {amount} 元，有效期为{validity_days}天，近期有老年人助老公益项目可供申请，请尽快申请。';
+                '{village_name}已成功获得【{amount}】助力金，有效期至{expiry_date}，助力金可以用于公益项目申请。申请公益项目，为村庄发展助力。点击详情查看。';
             
             let amount = '100.00';
             const validity = document.getElementById('validityPeriod')?.value || '7';
@@ -3757,10 +3833,13 @@
                 }
             }
             
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + parseInt(validity));
+            
             const previewContent = template
                 .replace('{village_name}', '张家村')
-                .replace('{amount}', amount)
-                .replace('{validity_days}', validity);
+                .replace('{amount}', Math.round(parseFloat(amount)))
+                .replace('{expiry_date}', expireDate.getFullYear() + '年' + (expireDate.getMonth() + 1) + '月' + expireDate.getDate() + '日');
             
             const taskPreviewTitle = document.getElementById('taskPreviewTitle');
             const taskPreviewContent = document.getElementById('taskPreviewContent');
@@ -3780,9 +3859,23 @@
             const maxVillages = data.filter(item => item.amount === maxAmount).slice(0, 3);
             const minVillages = data.filter(item => item.amount === minAmount).slice(0, 3);
             
+            // 格式化金额显示函数（低于1000显示原始数据，否则显示万级数据）
+            function formatAmountDisplay(amount) {
+                if (amount < 1000) {
+                    return `${Math.round(amount)} 元`;
+                } else {
+                    return `${(amount/10000).toFixed(2)} 万元`;
+                }
+            }
+            
             // 生成摘要
             let summary = `共 ${totalVillages} 个村庄，共计助力金金额 ${(totalAmount/10000).toFixed(2)} 万元。<br>`;
-            summary += `平均每村庄 ${(avgAmount/10000).toFixed(2)} 万元，最高村庄获取 ${(maxAmount/10000).toFixed(2)} 万元，最低村庄获取 ${(minAmount/10000).toFixed(2)} 万元`;
+            summary += `平均每村庄 ${formatAmountDisplay(avgAmount)}，最高村庄获取 ${formatAmountDisplay(maxAmount)}，最低村庄获取 ${formatAmountDisplay(minAmount)}。`;
+            
+            // 添加最高和最低村庄名称
+            const maxVillageNames = maxVillages.map(v => v.name).join('、');
+            const minVillageNames = minVillages.map(v => v.name).join('、');
+            summary += `最高村庄是 ${maxVillageNames}。最低村庄是 ${minVillageNames}。`;
             
             document.getElementById('successSummary').innerHTML = summary;
             
